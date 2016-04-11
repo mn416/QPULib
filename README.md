@@ -617,25 +617,25 @@ Notice that rotating right by 15 is the same as rotating left by 1.
 
 Now, using cursors the vectorised simulation step is expressed below.
 A slight structural difference from the scalar version is that we no
-longer treat the grid as a 2D array: it is now 1D array with `pitch`
+longer treat the grid as a 2D array: it is now 1D array with a `pitch`
 parameter that gives the increment needed to get from the start of one
 row to the start of the next.
 
 ```C++
-void step(Ptr<Float> map, Ptr<Float> mapOut, Int pitch, Int width, Int height)
+void step(Ptr<Float> grid, Ptr<Float> gridOut, Int pitch, Int width, Int height)
 {
   Cursor row[3];
-  map = map + pitch*me() + index();
+  grid = grid + pitch*me() + index();
 
-  // Skip first row of output map
-  mapOut = mapOut + pitch;
+  // Skip first row of output grid
+  gridOut = gridOut + pitch;
 
   For (Int y = me(), y < height, y=y+numQPUs())
     // Point p to the output row
-    Ptr<Float> p = mapOut + y*pitch;
+    Ptr<Float> p = gridOut + y*pitch;
 
     // Initilaise three cursors for the three input rows
-    for (int i = 0; i < 3; i++) row[i].init(map + i*pitch);
+    for (int i = 0; i < 3; i++) row[i].init(grid + i*pitch);
     for (int i = 0; i < 3; i++) row[i].prime();
 
     // Compute one output row
@@ -662,7 +662,7 @@ void step(Ptr<Float> map, Ptr<Float> mapOut, Int pitch, Int width, Int height)
     for (int i = 0; i < 3; i++) row[i].finish();
 
     // Move to the next input rows
-    map = map + pitch*numQPUs();
+    grid = grid + pitch*numQPUs();
   End
 }
 ```
