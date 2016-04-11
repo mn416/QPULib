@@ -684,7 +684,7 @@ Times taken to simulate a 512x512 surface for 1000 steps:
 The following works were *very* helpful in the development of
 QPULib.
 
-  * The (VideoCore IV manual)[http://www.broadcom.com/docs/support/videocore/VideoCoreIV-AG100-R.pdf) by Broadcom.
+  * The [VideoCore IV manual](http://www.broadcom.com/docs/support/videocore/VideoCoreIV-AG100-R.pdf) by Broadcom.
 
   * The [documentation, demos, and
     assembler](https://github.com/hermanhermitage/videocoreiv-qpu)
