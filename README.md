@@ -76,8 +76,8 @@ The Pi contains 12 QPUs in total, each running at 250MHz.  That's a
 max throughput of 750M vector instructions per second (250M cycles
 divided by 4 cycles-per-instruction times 12 QPUs).  Or: 12B
 operations per second (750M instructions times 16 vector elements).
-As QPU instructions can in some cases deliver two results at a
-time, the Pi's QPUs are often advertised at 24
+QPU instructions can in some cases deliver two results at a
+time, so the Pi's QPUs are often advertised at 24
 [GFLOPS](https://en.wikipedia.org/wiki/FLOPS).
 
 The QPUs are part of the Raspberry Pi's graphics pipeline.  If you're
@@ -102,7 +102,7 @@ We present two versions of the algorithm:
   1. a **scalar** version that runs on the ARM CPU and computes a
      single GCD; and
 
-  2. a **vector** version that runs on the QPUs and computes 16
+  2. a **vector** version that runs on a single QPU and computes 16
      different GCDs in parallel.
 
 ##### Scalar version
