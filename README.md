@@ -6,6 +6,9 @@ Pi](https://www.raspberrypi.org/)'s *Quad Processing Units* (QPUs).
 It is implemented as a C++ library that runs on the Pi's ARM CPU,
 generating and offloading programs to the QPUs at runtime.
 
+This page introduces and documents QPULib.  For build instructions,
+see the [Getting Started Guide](Doc/GettingStarted.md).
+
 ### Contents
 
 1. [Background](#background)
