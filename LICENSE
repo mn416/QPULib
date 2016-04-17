@@ -1,8 +1,10 @@
 QPULib is released under the MIT License below.  This covers all files
-in the QPULib repository, except for: "Doc/teapot.png" and
-"Doc/teapot180.png".
+in the QPULib repository, except for:
 
-
+  * Doc/teapot.png
+  * Doc/teapot180.png
+  * Lib/VideoCore/Mailbox.cpp
+  * Lib/VideoCore/Mailbox.h
 
 MIT License
 
