@@ -1,7 +1,7 @@
 ### Getting started
 
 On recent Raspbian distributions, QPULib should work out-of-the-box.
-It's been tested it on the Pi 1 Model B, the Pi 2, but not yet the Pi
+It's been tested on the Pi 1 Model B, the Pi 2, but not yet the Pi
 3.
 
 ##### Building and running the GCD example
