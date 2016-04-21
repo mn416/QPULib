@@ -93,7 +93,7 @@ project then QPULib is worth a look.  (And so too are
 
 ### Example 1: Euclid's Algorithm
 
-Following tradition, let's introduce QPULib by implementing [Euclid's
+Following tradition, let's start by implementing [Euclid's
 algorithm](https://en.wikipedia.org/wiki/Euclidean_algorithm).  Given
 a pair of positive integers larger then zero, Euclid's algorithm
 computes the largest integer that divides into both without a
@@ -429,7 +429,7 @@ parallel*.
 QPULib provides a simple mechanism to execute the same kernel on
 multiple QPUs in parallel: before invoking a kernel `k`, call
 `k.setNumQPUs(n)` to use `n` QPUs.
-Of course, for this to be useful the programmer needs a way to tell
+For this to be useful the programmer needs a way to tell
 each QPU to compute a different part of the overall result.
 Accordingly,
 QPULib provides the `me()` function which returns the unique id of the
@@ -481,7 +481,7 @@ not entirely sure why, but my suspicion is that the compute-to-memory
 ratio is too low: we do only 2 arithmetic operations for every memory
 access, perhaps overwhelming the memory subsystem.  If there are
 possibilities for QPULib to generate better code here, hopefully they
-will be discovered in due course!  (Do let me know if you
+will be discovered in due course.  (Do let me know if you
 have any suggestions.)
 
 ### Example 3: Heat Flow Simulation
@@ -551,10 +551,10 @@ and supports three main operations:
   1. **advance** the cursor by one vector, i.e. slide the window right
      by one vector;
 
-  2. **shift-left** the `current` vector by one position,
+  2. **shift-left** the `current` vector by one element,
      using the value of the `next` vector;
 
-  3. **shift-right** the `current` vector by one position,
+  3. **shift-right** the `current` vector by one element,
      using the value of the `prev` vector.
 
 Here is a QPULib implementation of a cursor, using a C++ class.
@@ -575,6 +575,7 @@ class Cursor {
   }
 
   // Receive the first vector and fetch the second.
+  // (prime the software pipeline)
   void prime() {
     receive(next);
     gather(cursor);
@@ -594,7 +595,7 @@ class Cursor {
     receive(next);
   }
 
-  // Shift the current vector left one place
+  // Shift the current vector left one element
   void shiftLeft(Float& result) {
     result = rotate(current, 15);
     Float nextRot = rotate(next, 15);
@@ -603,7 +604,7 @@ class Cursor {
     End
   }
 
-  // Shift the current vector right one place
+  // Shift the current vector right one element
   void shiftRight(Float& result) {
     result = rotate(current, 1);
     Float prevRot = rotate(prev, 1);
