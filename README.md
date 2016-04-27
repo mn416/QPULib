@@ -677,7 +677,7 @@ Times taken to simulate a 512x512 surface for 2000 steps:
 
   Version | Number of QPUs | Run-time (s) |
   --------| -------------: | -----------: |
-  Scalar  | 0              | 281.97       |
+  Scalar  | 0              | 431.46       |
   Vector  | 1              | 49.34        |
   Vector  | 2              | 24.91        |
   Vector  | 4              | 20.36        |
