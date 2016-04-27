@@ -673,7 +673,7 @@ void step(Ptr<Float> grid, Ptr<Float> gridOut, Int pitch, Int width, Int height)
 
 ##### Performance
 
-Times taken to simulate a 512x512 surface for 1000 steps:
+Times taken to simulate a 512x512 surface for 2000 steps:
 
   Version | Number of QPUs | Run-time (s) |
   --------| -------------: | -----------: |
