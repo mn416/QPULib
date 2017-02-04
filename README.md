@@ -417,6 +417,9 @@ void rot3D(Int n, Float cosTheta, Float sinTheta, Ptr<Float> x, Ptr<Float> y)
     store(yOld * cosTheta + xOld * sinTheta, q);
     p = p+16; q = q+16;
   End
+
+  // Discard pre-fetched vectors from final iteration
+  receive(xOld); receive(yOld);
 }
 ```
 
@@ -458,6 +461,9 @@ void rot3D(Int n, Float cosTheta, Float sinTheta, Ptr<Float> x, Ptr<Float> y)
     store(yOld * cosTheta + xOld * sinTheta, q);
     p = p+inc; q = q+inc;
   End
+
+  // Discard pre-fetched vectors from final iteration
+  receive(xOld); receive(yOld);
 }
 ```
 
@@ -543,7 +549,7 @@ in memory: `prev`, `current` and `next`.
   cursor  ------>  +---------+---------+---------+
                    |  prev   | current |  next   |
                    +---------+---------+---------+
-                 +0:      +16:      +32:      +64:
+                 +0:      +16:      +32:      +48:
 ```
 
 and supports three main operations:
