@@ -103,14 +103,16 @@ Vec eval(CoreState* s, Expr* e)
       else {
         // Integer operation
         for (int i = 0; i < NUM_LANES; i++) {
-          int32_t x = a.elems[i].intVal;
-          int32_t y = b.elems[i].intVal;
+          int32_t x   = a.elems[i].intVal;
+          int32_t y   = b.elems[i].intVal;
+          uint32_t ux = (uint32_t) x;
           switch (e->apply.op.op) {
             case ADD:  v.elems[i].intVal = x+y; break;
             case SUB:  v.elems[i].intVal = x-y; break;
             case MUL:  v.elems[i].intVal = (x&0xffffff)*(y&0xffffff); break;
             case SHL:  v.elems[i].intVal = x<<y; break;
             case SHR:  v.elems[i].intVal = x>>y; break;
+            case USHR: v.elems[i].intVal = (int32_t) (ux >> y); break;
             case ItoF: v.elems[i].floatVal = (float) a.elems[i].intVal; break;
             case FtoI: v.elems[i].intVal   = (int) a.elems[i].floatVal; break;
             case MIN:  v.elems[i].intVal = x<y?x:y; break;

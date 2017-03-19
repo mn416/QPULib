@@ -178,6 +178,10 @@ IntExpr operator^(IntExpr a, IntExpr b)
 IntExpr operator~(IntExpr a)
   { return mkIntApply(a, mkOp(BNOT, INT32), a); }
 
+// Unsigned shift-right
+IntExpr shr(IntExpr a, IntExpr b)
+  { return mkIntApply(a, mkOp(USHR, INT32), b); }
+
 // Conversion to Int
 IntExpr toInt(FloatExpr a)
 {
