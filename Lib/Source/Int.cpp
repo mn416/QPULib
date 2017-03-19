@@ -182,6 +182,10 @@ IntExpr operator~(IntExpr a)
 IntExpr shr(IntExpr a, IntExpr b)
   { return mkIntApply(a, mkOp(USHR, INT32), b); }
 
+// Bitwise rotate-right
+IntExpr ror(IntExpr a, IntExpr b)
+  { return mkIntApply(a, mkOp(ROR, INT32), b); }
+
 // Conversion to Int
 IntExpr toInt(FloatExpr a)
 {

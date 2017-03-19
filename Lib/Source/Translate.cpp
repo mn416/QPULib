@@ -34,6 +34,7 @@ ALUOp opcode(Op op)
       case SHL:    return A_SHL;
       case SHR:    return A_ASR;
       case USHR:   return A_SHR;
+      case ROR:    return A_ROR;
       case BAND:   return A_BAND;
       case BOR:    return A_BOR;
       case BXOR:   return A_BXOR;

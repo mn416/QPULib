@@ -55,6 +55,13 @@ Vec evalVar(CoreState* s, Var v)
 // Evaluate an arithmetic expression
 // ============================================================================
 
+// Bitwise rotate-right
+inline int32_t rotRight(int32_t x, int32_t n)
+{
+  uint32_t ux = (uint32_t) x;
+  return (ux >> n) | (x << (32-n));
+}
+
 Vec eval(CoreState* s, Expr* e)
 {
   Vec v;
@@ -121,6 +128,7 @@ Vec eval(CoreState* s, Expr* e)
             case BAND: v.elems[i].intVal = x&y; break;
             case BXOR: v.elems[i].intVal = x^y; break;
             case BNOT: v.elems[i].intVal = ~x; break;
+            case ROR: v.elems[i].intVal = rotRight(x, y);
             default: assert(false);
           }
         }

@@ -326,9 +326,10 @@ Vec readRegOrImm(QPUState* s, Seq<int32_t>* uniforms, RegOrImm src)
 // ============================================================================
 
 // Rotate right
-inline int32_t ror(int32_t x, int32_t n)
+inline int32_t rotRight(int32_t x, int32_t n)
 {
-  return (x >> n) || (x << (8*sizeof(int32_t) - n));
+  uint32_t ux = (uint32_t) x;
+  return (ux >> n) | (x << (32-n));
 }
 
 // Count leading zeros
@@ -434,7 +435,7 @@ Vec alu(QPUState* s, Seq<int32_t>* uniforms,
      case A_ROR:
       // Integer rotate right
       for (int i = 0; i < NUM_LANES; i++)
-        c[i].intVal = ror(a[i].intVal, b[i].intVal);
+        c[i].intVal = rotRight(a[i].intVal, b[i].intVal);
       break;
      case A_SHL:
       // Integer shift left

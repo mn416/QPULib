@@ -73,6 +73,7 @@ IntExpr operator|(IntExpr a, IntExpr b);
 IntExpr operator^(IntExpr a, IntExpr b);
 IntExpr operator~(IntExpr a);
 IntExpr shr(IntExpr a, IntExpr b);
+IntExpr ror(IntExpr a, IntExpr b);
 IntExpr toInt(FloatExpr a);
 FloatExpr toFloat(IntExpr a);
 

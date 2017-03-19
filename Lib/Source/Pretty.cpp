@@ -15,6 +15,8 @@ const char* opToString(Op op)
     case ROTATE: return " rotate ";
     case SHL:    return " << ";
     case SHR:    return " >> ";
+    case USHR:   return " _>> ";
+    case ROR:    return " ror ";
     case BOR:    return " | ";
     case BAND:   return " & ";
     case BXOR:   return " ^ ";
