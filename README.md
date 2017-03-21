@@ -14,34 +14,22 @@ see the [Getting Started Guide](Doc/GettingStarted.md).
 1. [Background](#background)
 
 2. [Example 1: Euclid's Algorithm](#example-1-euclids-algorithm)
-
-  2.1. [Scalar version](#scalar-version)
-
-  2.2. [Vector version 1](#vector-version-1)
-
-  2.3. [Invoking the QPUs](#invoking-the-qpus)
-
-  2.4. [Vector version 2: loop unrolling](#vector-version-2-loop-unrolling)
+  * [Scalar version](#scalar-version)
+  * [Vector version 1](#vector-version-1)
+  * [Invoking the QPUs](#invoking-the-qpus)
+  * [Vector version 2: loop unrolling](#vector-version-2-loop-unrolling)
 
 3. [Example 2: 3D Rotation](#example-2-3d-rotation)
-
-  3.1 [Scalar version](#scalar-version-1)
-
-  3.2 [Vector version 1](#vector-version-1-1)
-
-  3.3 [Vector version 2: non-blocking loads and stores](#vector-version-2-non-blocking-loads-and-stores)
-
-  3.4 [Vector version 3: multiple QPUs](#vector-version-3-multiple-qpus)
-
-  3.5 [Performance](#performance)
+  * [Scalar version](#scalar-version-1)
+  * [Vector version 1](#vector-version-1-1)
+  * [Vector version 2: non-blocking loads and stores](#vector-version-2-non-blocking-loads-and-stores)
+  * [Vector version 3: multiple QPUs](#vector-version-3-multiple-qpus)
+  * [Performance](#performance)
 
 4. [Example 3: Heat Flow Simulation](#example-3-heat-flow-simulation)
-
-  4.1 [Scalar version](#scalar-version-2)
-
-  4.2 [Vector version](#vector-version)
-
-  4.3 [Performance](#performance-1)
+  * [Scalar version](#scalar-version-2)
+  * [Vector version](#vector-version)
+  * [Performance](#performance-1)
 
 5. [References](#user-content-references)
 
