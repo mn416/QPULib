@@ -79,11 +79,12 @@ template <> inline Ptr<Float> mkArg< Ptr<Float> >() {
 // Parameter passing
 // ============================================================================
 
-template <typename... ts> void nothing(ts... args) {}
+template <typename... ts> inline void nothing(ts... args) {}
 
 // Pass argument of ARM type 'u' as parameter of QPU type 't'.
 
-template <typename t, typename u> bool passParam(Seq<int32_t>* uniforms, u x);
+template <typename t, typename u> inline bool
+  passParam(Seq<int32_t>* uniforms, u x);
 
 // Pass an int
 template <> inline bool passParam<Int, int>
@@ -103,7 +104,7 @@ template <> inline bool passParam<Float, float>
 }
 
 // Pass a SharedArray<int>*
-template <> bool passParam< Ptr<Int>, SharedArray<int>* >
+template <> inline bool passParam< Ptr<Int>, SharedArray<int>* >
   (Seq<int32_t>* uniforms, SharedArray<int>* p)
 {
   uniforms->append(p->getAddress());
@@ -111,7 +112,7 @@ template <> bool passParam< Ptr<Int>, SharedArray<int>* >
 }
 
 // Pass a SharedArray<int*>*
-template <> bool passParam< Ptr<Ptr<Int>>, SharedArray<int*>* >
+template <> inline bool passParam< Ptr<Ptr<Int>>, SharedArray<int*>* >
   (Seq<int32_t>* uniforms, SharedArray<int*>* p)
 {
   uniforms->append(p->getAddress());
@@ -119,7 +120,7 @@ template <> bool passParam< Ptr<Ptr<Int>>, SharedArray<int*>* >
 }
 
 // Pass a SharedArray<float>*
-template <> bool passParam< Ptr<Float>, SharedArray<float>* >
+template <> inline bool passParam< Ptr<Float>, SharedArray<float>* >
   (Seq<int32_t>* uniforms, SharedArray<float>* p)
 {
   uniforms->append(p->getAddress());
@@ -127,7 +128,7 @@ template <> bool passParam< Ptr<Float>, SharedArray<float>* >
 }
 
 // Pass a SharedArray<float*>*
-template <> bool passParam< Ptr<Ptr<Float>>, SharedArray<float*>* >
+template <> inline bool passParam< Ptr<Ptr<Float>>, SharedArray<float*>* >
   (Seq<int32_t>* uniforms, SharedArray<float*>* p)
 {
   uniforms->append(p->getAddress());
