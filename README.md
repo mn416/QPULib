@@ -26,7 +26,7 @@ see the [Getting Started Guide](Doc/GettingStarted.md).
   * [Vector version 3: multiple QPUs](#vector-version-3-multiple-qpus)
   * [Performance](#performance)
 
-4. [Example 3: Heat Flow Simulation](#example-3-heat-flow-simulation)
+4. [Example 3: 2D Convolution (Heat Transfer)](#example-3-2d-convolution-heat-transfer)
   * [Scalar version](#scalar-version-2)
   * [Vector version](#vector-version)
   * [Performance](#performance-1)
@@ -478,13 +478,10 @@ possibilities for QPULib to generate better code here, hopefully they
 will be discovered in due course.  (Do let me know if you
 have any suggestions.)
 
-### Example 3: Heat Flow Simulation
+### Example 3: 2D Convolution (Heat Transfer)
 
 Let's move to a somewhat more substantial example: modelling the heat
-flow across a 2D surface \[[SpiNNaker
-Project](http://apt.cs.manchester.ac.uk/projects/SpiNNaker/apps_other/)\].
-
-[Newton's law of
+flow across a 2D surface.  [Newton's law of
 cooling](https://en.wikipedia.org/wiki/Newton%27s_law_of_cooling)
 states that an object cools at a rate proportional to the difference
 between its temperature `T` and the temperature of its environment (or
@@ -497,7 +494,7 @@ dT/dt = −k(T − A)
 When simulating this equation below, we will consider each point on
 our 2D surface to be a seperate object, and the ambient temperature of
 each object to be the average of the temperatures of the 8 surrounding
-objects.
+objects.  This is very similar to 2D convolution using a mean filter.
 
 ##### Scalar version
 
