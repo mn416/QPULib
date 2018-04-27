@@ -364,9 +364,9 @@ block until the loads have completed: between `gather(p)`
 and `receive(x)` the program is free to perform computation *in
 parallel* with the slow memory accesses.
 
-Inside the QPU, an 8-element FIFO is used to hold `gather`
+Inside the QPU, an 4-element FIFO is used to hold `gather`
 requests: each call to `gather` will enqueue the FIFO, and each call
-to `receive` will dequeue it.  This means that a maximum of eight
+to `receive` will dequeue it.  This means that a maximum of four
 `gather` calls may be issued before a `receive` must be called.
 
 Non-blocking stores are not as powerfull, but they are
