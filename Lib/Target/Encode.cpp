@@ -294,7 +294,7 @@ void encodeInstr(Instr instr, uint32_t* high, uint32_t* low)
         assert(instr.ALU.srcA.tag == REG && instr.ALU.srcA.reg.tag == ACC &&
                instr.ALU.srcA.reg.regId == 0);
         assert(instr.ALU.srcB.tag == REG ?
-               instr.ALU.srcB.reg.tag == ACC && instr.ALU.srcA.reg.regId == 5
+               instr.ALU.srcB.reg.tag == ACC && instr.ALU.srcB.reg.regId == 5
                : true);
         uint32_t mulOp = encodeMulOp(M_V8MIN) << 29;
         uint32_t raddrb;
