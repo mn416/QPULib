@@ -16,12 +16,14 @@ make QPU=1 GCD
 sudo ./GCD
 ```
 
-The `QPU=1` flag to `make` indicates that the physical QPUs
-on the Raspberry Pi should be used.  Simply using `make` without
-`QPU=1` will default to **emulation mode**.  As the name suggests,
+The `QPU=1` flag to `make` indicates that the physical QPUs on the
+Raspberry Pi should be used to run QPULib kernels.  Simply using
+`make` without `QPU=1`, or setting `QPU` to any value other than 1,
+will lead to **emulation mode** being used.  As the name suggests,
 this means that QPU code will be emulated in software.  This is useful
 for debugging, and also allows you to run QPULib programs on a PC if
-your Pi is not to hand.
+your Pi is not to hand.  If you want to recompile with a different
+flag then do a `make clean` first.
 
 Strictly speaking, any program that works in emulation mode but not on
 the Pi's physical QPUs is probably a bug in QPULib and should be
