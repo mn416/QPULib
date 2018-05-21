@@ -1,39 +1,33 @@
-### QPULib
+# QPULib
 
 QPULib is a programming language and compiler for the [Raspberry
 Pi](https://www.raspberrypi.org/)'s *Quad Processing Units* (QPUs).
-
 It is implemented as a C++ library that runs on the Pi's ARM CPU,
-generating and offloading programs to the QPUs at runtime.
+generating and offloading programs to the QPUs at runtime.  This page
+introduces and documents QPULib.  For build instructions, see the
+[Getting Started Guide](Doc/GettingStarted.md).
 
-This page introduces and documents QPULib.  For build instructions,
-see the [Getting Started Guide](Doc/GettingStarted.md).
+## Contents
 
-### Contents
+* [Background](#background)
+* [Example 1: Euclid's Algorithm](#example-1-euclids-algorithm)
+    * [Scalar version](#scalar-version)
+    * [Vector version 1](#vector-version-1)
+    * [Invoking the QPUs](#invoking-the-qpus)
+    * [Vector version 2: loop unrolling](#vector-version-2-loop-unrolling)
+* [Example 2: 3D Rotation](#example-2-3d-rotation)
+    * [Scalar version](#scalar-version-1)
+    * [Vector version 1](#vector-version-1-1)
+    * [Vector version 2: non-blocking loads and stores](#vector-version-2-non-blocking-loads-and-stores)
+    * [Vector version 3: multiple QPUs](#vector-version-3-multiple-qpus)
+    * [Performance](#performance)
+* [Example 3: 2D Convolution (Heat Transfer)](#example-3-2d-convolution-heat-transfer)
+    * [Scalar version](#scalar-version-2)
+    * [Vector version](#vector-version)
+    * [Performance](#performance-1)
+* [References](#user-content-references)
 
-1. [Background](#background)
-
-2. [Example 1: Euclid's Algorithm](#example-1-euclids-algorithm)
-  * [Scalar version](#scalar-version)
-  * [Vector version 1](#vector-version-1)
-  * [Invoking the QPUs](#invoking-the-qpus)
-  * [Vector version 2: loop unrolling](#vector-version-2-loop-unrolling)
-
-3. [Example 2: 3D Rotation](#example-2-3d-rotation)
-  * [Scalar version](#scalar-version-1)
-  * [Vector version 1](#vector-version-1-1)
-  * [Vector version 2: non-blocking loads and stores](#vector-version-2-non-blocking-loads-and-stores)
-  * [Vector version 3: multiple QPUs](#vector-version-3-multiple-qpus)
-  * [Performance](#performance)
-
-4. [Example 3: 2D Convolution (Heat Transfer)](#example-3-2d-convolution-heat-transfer)
-  * [Scalar version](#scalar-version-2)
-  * [Vector version](#vector-version)
-  * [Performance](#performance-1)
-
-5. [References](#user-content-references)
-
-### Background
+## Background
 
 The
 [QPU](http://www.broadcom.com/docs/support/videocore/VideoCoreIV-AG100-R.pdf)
@@ -42,7 +36,6 @@ processor](https://en.wikipedia.org/wiki/Vector_processor) developed by
 [Broadcom](http://www.broadcom.com/) with
 instructions that operate on 16-element vectors of 32-bit integer or
 floating point values.
-
 For example, given two 16-element vectors
 
 `10 11 12 13` `14 15 16 17` `18 19 20 21` `22 23 24 25`
@@ -79,7 +72,7 @@ But if you'd like to try accellerating a non-graphics part of your Pi
 project then QPULib is worth a look.  (And so too are
 [these references](#user-content-references).)
 
-### Example 1: Euclid's Algorithm
+## Example 1: Euclid's Algorithm
 
 Following tradition, let's start by implementing [Euclid's
 algorithm](https://en.wikipedia.org/wiki/Euclidean_algorithm).  Given
@@ -96,7 +89,7 @@ We present two versions of the algorithm:
   2. a **vector** version that runs on a single QPU and computes 16
      different GCDs in parallel.
 
-##### Scalar version
+### Scalar version
 
 In plain C++, we can express the algorithm as follows.
 
@@ -120,7 +113,7 @@ on pointers to integers rather than integers directly.  However, it
 prepares the way for the vector version which operates on 
 *arrays* of inputs and outputs.
 
-##### Vector version 1
+### Vector version 1
 
 Using QPULib, the algorithm looks as follows.
 
@@ -171,7 +164,7 @@ classes, functions, and macros exported by QPULib.  This kind of
 language is somtimes known as a [Domain Specific Embedded
 Language](http://cs.yale.edu/c2/images/uploads/dsl.pdf).
 
-##### Invoking the QPUs
+### Invoking the QPUs
 
 Now, to compute 16 GCDs on a single QPU, we write the following
 program.
@@ -245,7 +238,7 @@ gcd(167, 135) = 1
 gcd(129, 102) = 3
 ```
 
-##### Vector version 2: loop unrolling
+### Vector version 2: loop unrolling
 
 [Loop unrolling](https://en.wikipedia.org/wiki/Loop_unrolling) is a
 technique for improving performance by reducing the number of costly
@@ -281,7 +274,7 @@ void gcd(Ptr<Int> p, Ptr<Int> q, Ptr<Int> r)
 Using C++ as a meta-language in this way is one of the attractions
 of QPULib.  We will see lots more examples of this later!
 
-### Example 2: 3D Rotation
+## Example 2: 3D Rotation
 
 Let's move to another simple example that helps to introduce
 ideas: a routine to rotate 3D objects.
@@ -291,7 +284,7 @@ ES](https://www.raspberrypi.org/documentation/usage/demos/hello-teapot.md)
 would be a much better path for doing efficient graphics; this is just
 for illustration purposes.)
 
-##### Scalar version
+### Scalar version
 
 The following function will rotate `n` vertices about the Z axis by
 &theta; degrees.
@@ -319,7 +312,7 @@ with &theta; = 180 degrees, then we get
 
 <img src="Doc/teapot180.png" alt="Newell's teapot" width=30%>
 
-##### Vector version 1
+### Vector version 1
 
 Our first vector version is almost identical to the scalar version
 above: the only difference is that each loop iteration now processes
@@ -345,7 +338,7 @@ the current QPULib compiler is not clever enough to do this
 automatically.  We can however solve the problem manually, using
 *non-blocking* load and store operations.
 
-##### Vector version 2: non-blocking loads and stores
+### Vector version 2: non-blocking loads and stores
 
 QPULib supports non-blocking loads through two functions:
 
@@ -415,7 +408,7 @@ While the outputs from one iteration are being computed and written to
 memory, the inputs for the *next* iteration are being loaded *in
 parallel*.
 
-##### Vector version 3: multiple QPUs
+### Vector version 3: multiple QPUs
 
 QPULib provides a simple mechanism to execute the same kernel on
 multiple QPUs in parallel: before invoking a kernel `k`, call
@@ -455,7 +448,7 @@ void rot3D(Int n, Float cosTheta, Float sinTheta, Ptr<Float> x, Ptr<Float> y)
 }
 ```
 
-##### Performance
+### Performance
 
 Times taken to rotate an object with 192,000 vertices:
 
@@ -478,7 +471,7 @@ possibilities for QPULib to generate better code here, hopefully they
 will be discovered in due course.  (Do let me know if you
 have any suggestions.)
 
-### Example 3: 2D Convolution (Heat Transfer)
+## Example 3: 2D Convolution (Heat Transfer)
 
 Let's move to a somewhat more substantial example: modelling the heat
 flow across a 2D surface.  [Newton's law of
@@ -496,7 +489,7 @@ our 2D surface to be a seperate object, and the ambient temperature of
 each object to be the average of the temperatures of the 8 surrounding
 objects.  This is very similar to 2D convolution using a mean filter.
 
-##### Scalar version
+### Scalar version
 
 The following function simulates a single time-step of the
 differential equation, applied to each object in the 2D grid.
@@ -523,7 +516,7 @@ steps we get:
 
 <img src="Doc/heat.png" alt="Heat flow across 2D surface" width=30%>
 
-##### Vector version
+### Vector version
 
 Before vectorising the simulation routine, we will introduce the idea
 of a **cursor** which is useful for implementing sliding window
@@ -662,7 +655,7 @@ void step(Ptr<Float> grid, Ptr<Float> gridOut, Int pitch, Int width, Int height)
 }
 ```
 
-##### Performance
+### Performance
 
 Times taken to simulate a 512x512 surface for 2000 steps:
 
@@ -674,7 +667,7 @@ Times taken to simulate a 512x512 surface for 2000 steps:
   Vector  | 4              | 20.36        |
 
 
-### References
+## References
 
 The following works were *very* helpful in the development of
 QPULib.
