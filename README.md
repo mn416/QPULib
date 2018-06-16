@@ -1,5 +1,7 @@
 # QPULib
 
+Version 0.1.0.
+
 QPULib is a programming language and compiler for the [Raspberry
 Pi](https://www.raspberrypi.org/)'s *Quad Processing Units* (QPUs).
 It is implemented as a C++ library that runs on the Pi's ARM CPU,
