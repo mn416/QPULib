@@ -17,6 +17,8 @@ void tri(Ptr<Int> p)
 
 int main()
 {
+  Debug::enable(true, true, "myout.log");
+
   // Construct kernel
   auto k = compile(tri);
 

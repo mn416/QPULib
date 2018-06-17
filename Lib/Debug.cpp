@@ -2,6 +2,7 @@
 #include <cassert>
 #include <cstdio>
 #include "Source/Pretty.h"
+#include "Target/Pretty.h"
 
 
 const char *Debug::DEFAULT_FILE = "debug.log";  // The default filename to use for file output
@@ -32,11 +33,11 @@ Debug::~Debug()
  */
 void Debug::enable(bool enabled, bool toFile, const std::string &filename)
 {
-  m_instance.enable_intern(enabled, toFile, filename);
+  m_instance.enableIntern(enabled, toFile, filename);
 }
 
 
-void Debug::enable_intern(bool enabled, bool toFile, const std::string &filename)
+void Debug::enableIntern(bool enabled, bool toFile, const std::string &filename)
 {
   if (enabled && toFile)
   {
@@ -56,7 +57,7 @@ void Debug::enable_intern(bool enabled, bool toFile, const std::string &filename
 
 void Debug::emitSourceCode(Stmt *body)
 {
-  FILE *f = m_instance.getFile();
+  FILE *f = m_instance.getFileIntern();
   if (f == nullptr) return;
 
   fprintf(f, "Source code\n");
@@ -67,13 +68,71 @@ void Debug::emitSourceCode(Stmt *body)
 }
 
 
+void Debug::emitTargetCode(Seq<Instr> *targetCode)
+{
+  FILE *f = m_instance.getFileIntern();
+  if (f == nullptr) return;
+
+  fprintf(f, "Target code\n");
+  fprintf(f, "===========\n\n");
+  for (int i = 0; i < targetCode->numElems; i++) {
+    fprintf(f, "%i: ", i);
+    pretty(f, targetCode->elems[i]);
+  }
+  fprintf(f, "\n");
+  fflush(f);
+}
+
+
+void Debug::emitMapmem(unsigned base, void *mem)
+{
+  FILE *f = m_instance.getFileIntern();
+  if (f == nullptr) return;
+
+  fprintf(f, "base=0x%x, mem=%p\n", base, mem);
+  fflush(f);
+}
+
+
+void Debug::emitMboxProperty(void *buf)
+{
+  FILE *f = m_instance.getFileIntern();
+  if (f == nullptr) return;
+
+  unsigned *p = (unsigned*) buf; int i; unsigned size = *(unsigned *)buf;
+  for (i=0; i<size/4; i++)
+     fprintf(f, "%04x: 0x%08x\n", i * (unsigned) sizeof(*p), p[i]);
+  fflush(f);
+}
+
+
+/**
+ * @brief Return a usable file handle for ad-hoc usage
+ *
+ * Not all debug output can be transferred to the Debug class;
+ * the debugging can be external to the libraries.
+ *
+ * This always returns a usable file handle. If the debugging
+ * is not enabled, `stdout` will be returned
+ *
+ * @return a non-null file pointer
+ */
+FILE *Debug::getFile()
+{
+  FILE *f = m_instance.getFileIntern();
+
+  if (f == nullptr) return stdout;
+  return f;
+}
+
+
 /**
  * @brief Determine and return the file pointer for use as output
  *
  * @return null if output not enabled, otherwise a valid file pointer;
  *         can also be stdout.
  */
-FILE *Debug::getFile()
+FILE *Debug::getFileIntern()
 {
   if (!m_enabled) return nullptr;
   if (!m_toFile) return stdout;

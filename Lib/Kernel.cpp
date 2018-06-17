@@ -1,6 +1,4 @@
-#include "Source/Pretty.h"
 #include "Source/Translate.h"
-#include "Target/Pretty.h"
 #include "Target/Emulator.h"
 #include "Target/RemoveLabels.h"
 #include "Target/CFG.h"
@@ -20,12 +18,6 @@
 void compileKernel(Seq<Instr>* targetCode, Stmt* body)
 {
   Debug::emitSourceCode(body);
-  #ifdef DEBUG
-    printf("Source code\n");
-    printf("===========\n\n");
-    pretty(body);
-    printf("\n");
-  #endif
 
   // Translate to target code
   translateStmt(targetCode, body);
@@ -46,15 +38,7 @@ void compileKernel(Seq<Instr>* targetCode, Stmt* body)
   // Satisfy target code constraints
   satisfy(targetCode);
 
-  #ifdef DEBUG
-    printf("Target code\n");
-    printf("===========\n\n");
-    for (int i = 0; i < targetCode->numElems; i++) {
-      printf("%i: ", i);
-      pretty(targetCode->elems[i]);
-    }
-    printf("\n");
-  #endif
+  Debug::emitTargetCode(targetCode);
 
   // Translate branch-to-labels to relative branches
   removeLabels(targetCode);
