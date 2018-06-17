@@ -1,29 +1,31 @@
 ### Getting started
 
 On recent Raspbian distributions, QPULib should work out-of-the-box.
-It's been tested on the Pi 1 Model B, the Pi 2, but not yet the Pi
-3.
+It's been tested on the `Pi 1 Model B`, the `Pi 2` and the `Pi 3 Model B`.
 
 ##### Building and running the GCD example
 
-Try the commands below to build and run the `GCD` example.
+To build and run the `GCD` example, enter the following commands:
 
 ```
 sudo apt-get install git
 git clone https://github.com/mn416/QPULib
-cd QPULib/Tests
 make QPU=1 GCD
-sudo ./GCD
+sudo obj-qpu/bin/GCD
 ```
 
 The `QPU=1` flag to `make` indicates that the physical QPUs on the
-Raspberry Pi should be used to run QPULib kernels.  Simply using
+Raspberry Pi should be used to run QPULib kernels.  Using
 `make` without `QPU=1`, or setting `QPU` to any value other than 1,
 will lead to **emulation mode** being used.  As the name suggests,
 this means that QPU code will be emulated in software.  This is useful
-for debugging, and also allows you to run QPULib programs on a PC if
-your Pi is not to hand.  If you want to recompile with a different
-flag then do a `make clean` first.
+for debugging, and also allows you to run QPULib programs on other platforms
+than a Pi.
+
+Running `make all` will build all the examples under `Tests`.  The output directory
+depends on the make flags passed.  For example, `make all` will output to directory
+`obj`, `make QPU=1 all` will output to directory `obj-qpu`.  Running `make clean` will
+clear out all these output directories.
 
 Strictly speaking, any program that works in emulation mode but not on
 the Pi's physical QPUs is probably a bug in QPULib and should be
