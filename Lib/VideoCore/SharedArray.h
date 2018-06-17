@@ -1,13 +1,13 @@
 #ifndef _SHAREDARRAY_H_
 #define _SHAREDARRAY_H_
 
-#if !defined(DEBUG_MODE) && !defined(EMULATION_MODE)
+#if !defined(QPU_MODE) && !defined(EMULATION_MODE)
 //
 // Detect mode, set default if none defined.
 // This is the best place to test it in the code, since it's
 // the first of the header files to be compiled.
 //
-#pragma message "WARNING: DEBUG_MODE and EMULATION_MODE not defined, defaulting to EMULATION_MODE"
+#pragma message "WARNING: QPU_MODE and EMULATION_MODE not defined, defaulting to EMULATION_MODE"
 #define EMULATION_MODE
 #endif
 
