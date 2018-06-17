@@ -4,9 +4,9 @@
 #include "Source/Syntax.h"
 
 // Pretty printer for the QPULib source language
-void pretty(Expr* e);
-void pretty(BExpr* b);
-void pretty(CExpr* c);
-void pretty(Stmt* s);
+void pretty(FILE *f, Expr* e);
+void pretty(FILE *f, BExpr* b);
+void pretty(FILE *f, CExpr* c);
+void pretty(FILE *f, Stmt* s);
 
 #endif

@@ -11,6 +11,7 @@
 #include "Target/Satisfy.h"
 #include "Target/LoadStore.h"
 #include "Target/Encode.h"
+#include "Debug.h"
 
 // ============================================================================
 // Compile kernel
@@ -18,6 +19,7 @@
 
 void compileKernel(Seq<Instr>* targetCode, Stmt* body)
 {
+  Debug::emitSourceCode(body);
   #ifdef DEBUG
     printf("Source code\n");
     printf("===========\n\n");

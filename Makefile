@@ -25,6 +25,7 @@ endif
 # Object files
 OBJ =                         \
   Kernel.o                    \
+  Debug.o                     \
   Source/Syntax.o             \
   Source/Int.o                \
   Source/Float.o              \
