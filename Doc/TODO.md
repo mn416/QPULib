@@ -7,8 +7,8 @@ Feel free to add points here, or check them off if done.
 ## Makefile
 
 - [x] Raise the makefile one directory level and expand it
-- [ ] Explanatory comment at top
-- [ ] Static library for Lib-files
+- [x] Explanatory comment at top
+- [x] Static library for Lib-files
 - [ ] Add include-file dependencies
 - [ ] Get rid of DEBUG option -> make debug output dynamic
 - [ ] Enable debug-build, for debugging
@@ -48,7 +48,7 @@ Feel free to add points here, or check them off if done.
 
 ## Other
 
-- [ ] Add TODO to project
+- [x] Add TODO to project
 - [ ] Add check in emulator for too many `gather()` calls
 - [ ] `Rot3D` make various versions selectable on command line
 - [ ] Prevent compile on non-RPi
@@ -82,6 +82,6 @@ So the question is how far QPULib programs are off hand-written QPU assembly, an
 
 This blog contains great tips for setting up open source projects: 
 
-[The Bitter Guide to Open Source](https://medium.com/@ken_wheeler/a-bitter-guide-to-open-source-a8e3b6a3c1c4) by Ken Wheeler.
+- [The Bitter Guide to Open Source](https://medium.com/@ken_wheeler/a-bitter-guide-to-open-source-a8e3b6a3c1c4) by Ken Wheeler.
 
 One day, I would like to convert the points mentioned here to a checklist and implement these for `QPULib`.
