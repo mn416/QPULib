@@ -15,21 +15,27 @@ Feel free to add points here, or check them off if done.
 - [ ] Add unit testing, notably `CATCH`
 - [ ] Add optional doc generation with `doxygen`
 
+
 ## Documentation
 
-- [ ] document openGL issue on RPi 3
-- [ ] explanation code
+- [ ] Document openGL issue on RPi 3
+- [ ] Explanation code
   - [ ] 16-item vectors
   - [ ] Code Generation, not direct run
-- [ ] drill-down of the bare essentials for understanding VideCore
+- [ ] Drill-down of the bare essentials for understanding `VideoCore`
 - [ ] 'Getting Started' to front page
 - [ ] Examples to separate page under Docs
 
+
 ## Unit Tests
+
+- [ ] Convert `AutoStart` to unit test
+- [ ] Test same output for the various versions of `Rot3D`
+
 ### Unit testing for Debug
-- [ ] all combinations of options for `Debug::enable()`
-- [ ] open to file, open to other file
-- [ ] stdout, to file, stdout
+- [ ] All combinations of options for `Debug::enable()`
+- [ ] Open to file, open to other file
+- [ ] Stdout, to file, stdout
 
 
 ## Debug class
@@ -42,6 +48,7 @@ Feel free to add points here, or check them off if done.
 
 - [ ] Add TODO to project
 - [ ] Add check in emulator for too many `gather()` calls
+- [ ] `Rot3D` make various versions selectable on command line
 - [ ] Prevent compile on non-RPi
 
 Additionally: should it be compilable at all? I.e. following during compilation:
@@ -62,13 +69,16 @@ E.g.
   - number of QPU's used
   - compare between RPi version
   
+  
 ### The QPULib compiler doesn't do much in the way of optimisation.
 
 So another question is how far QPULib programs are off hand-written QPU assembly, and what we can do to get closer.
 
+
 ### Set up Guidelines for the Project
 
 This blog contains great tips for setting up open source projects: 
-(https://medium.com/@ken_wheeler/a-bitter-guide-to-open-source-a8e3b6a3c1c4)[The Bitter Guide to Open Source]] - Ken Wheeler.
+
+[https://medium.com/@ken_wheeler/a-bitter-guide-to-open-source-a8e3b6a3c1c4](The Bitter Guide to Open Source) - Ken Wheeler.
 
 One day, I would like to convert the points mentioned here to a checklist and implement these for `QPULib`.
