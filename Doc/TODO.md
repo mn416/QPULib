@@ -21,7 +21,7 @@ Feel free to add points here, or check them off if done.
 - [ ] Document openGL issue on RPi 3
 - [ ] Explanation code
   - [ ] 16-item vectors
-  - [ ] Code Generation, not direct run
+  - [ ] Code Generation, not direct execution
 - [ ] Drill-down of the bare essentials for understanding `VideoCore`
 - [ ] 'Getting Started' to front page
 - [ ] Examples to separate page under Docs
@@ -32,16 +32,18 @@ Feel free to add points here, or check them off if done.
 - [ ] Convert `AutoStart` to unit test
 - [ ] Test same output for the various versions of `Rot3D`
 
+
 ### Unit testing for Debug
 - [ ] All combinations of options for `Debug::enable()`
-- [ ] Open to file, open to other file
-- [ ] Stdout, to file, stdout
+- [ ] Sequence: Open to file, open to other file
+- [ ] Sequence: to file, off, to same file, off, to different file
+- [ ] Sequence: stdout, to file, stdout
 
 
 ## Debug class
 
-- [ ] consider renaming to Log and treat as such
-- [ ] append (with header) instead of writing over logs
+- [ ] Consider renaming to `Log` and treat as such
+- [ ] Append (with header) instead of writing over existing logs
 
 
 ## Other
@@ -51,10 +53,11 @@ Feel free to add points here, or check them off if done.
 - [ ] `Rot3D` make various versions selectable on command line
 - [ ] Prevent compile on non-RPi
 
-Additionally: should it be compilable at all? I.e. following during compilation:
+Additionally: should it be compilable at all?
+I.e. Following happens on compilation with `make QPU=1` on 64-bit Intel Linux:
 
 ```
-Lib/VideoCore/SharedArray.h:121:14: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+SharedArray.h:121:14: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
       gpu_base = (void*) mem_lock(mb, handle);
 ```
 
@@ -72,13 +75,13 @@ E.g.
   
 ### The QPULib compiler doesn't do much in the way of optimisation.
 
-So another question is how far QPULib programs are off hand-written QPU assembly, and what we can do to get closer.
+So the question is how far QPULib programs are off hand-written QPU assembly, and what we can do to get closer.
 
 
 ### Set up Guidelines for the Project
 
 This blog contains great tips for setting up open source projects: 
 
-[https://medium.com/@ken_wheeler/a-bitter-guide-to-open-source-a8e3b6a3c1c4](The Bitter Guide to Open Source) - Ken Wheeler.
+[The Bitter Guide to Open Source](https://medium.com/@ken_wheeler/a-bitter-guide-to-open-source-a8e3b6a3c1c4) by Ken Wheeler.
 
 One day, I would like to convert the points mentioned here to a checklist and implement these for `QPULib`.
