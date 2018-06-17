@@ -17,7 +17,8 @@ void tri(Ptr<Int> p)
 
 int main()
 {
-  Debug::enable(true, true, "myout.log");
+  // Debug::enable(true);                     // Enable this to send debug output to stdout
+  // Debug::enable(true, true, "myout.log");  // Enable this to send debug output to file 'myout.log'
 
   // Construct kernel
   auto k = compile(tri);
