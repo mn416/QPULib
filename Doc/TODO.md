@@ -25,6 +25,7 @@ Feel free to add points here, or check them off if done.
 - [ ] Drill-down of the bare essentials for understanding `VideoCore`
 - [ ] 'Getting Started' to front page
 - [ ] Examples to separate page under Docs
+- [ ] Mailbox functions link to reference and explanation two size fields
 
 
 ## Unit Tests
@@ -34,13 +35,14 @@ Feel free to add points here, or check them off if done.
 
 
 ### Unit testing for Debug
+
 - [ ] All combinations of options for `Debug::enable()`
 - [ ] Sequence: Open to file, open to other file
 - [ ] Sequence: to file, off, to same file, off, to different file
 - [ ] Sequence: stdout, to file, stdout
 
 
-## Debug class
+## Class `Debug`
 
 - [ ] Consider renaming to `Log` and treat as such
 - [ ] Append (with header) instead of writing over existing logs
@@ -51,7 +53,9 @@ Feel free to add points here, or check them off if done.
 - [x] Add TODO to project
 - [ ] Add check in emulator for too many `gather()` calls
 - [ ] `Rot3D` make various versions selectable on command line
-- [ ] Prevent compile on non-RPi
+- [ ] Add namespace `qpulib` to Lib-files
+- [ ] Add method to determine RPi version via mailbox
+- [ ] Prevent compile on non-RPi for `QPU=1`
 
 Additionally: should it be compilable at all?
 I.e. Following happens on compilation with `make QPU=1` on 64-bit Intel Linux:
@@ -66,11 +70,12 @@ SharedArray.h:121:14: warning: cast to pointer from integer of different size [-
 ## Stuff to Consider
 
 ### Measure performance in various ways
-E.g.
+
+E.g. compare between:
 
   - different iterations of a program
   - number of QPU's used
-  - compare between RPi version
+  - RPi versions
   
   
 ### The QPULib compiler doesn't do much in the way of optimisation.
