@@ -1,3 +1,15 @@
+#
+# There are four builds possible, with output directories:
+#
+#   obj              - using emulator
+#   obj-debug        - output debug info, using emulator
+#   obj-qpu          - using hardware
+#   obj-debug-qpu    - output debug info, using hardware
+#
+# To compile for debugging, add flag '-g' to CXX_FLAGS.
+#
+###########################################################
+
 # Root directory of QPULib repository
 ROOT = Lib
 
@@ -70,7 +82,7 @@ TEST_TARGETS = $(patsubst %,$(OBJ_DIR)/bin/%,$(TESTS))
 
 # Top-level targets
 
-.PHONY: help clean all
+.PHONY: help clean all lib $(TESTS)
 
 # Following prevents deletion of object files after linking
 # Otherwise, deletion happens for targets of the form '%.o'
@@ -109,14 +121,29 @@ LIB = $(patsubst %,$(OBJ_DIR)/%,$(OBJ))
 
 
 #
+# Targets for static library
+#
+
+QPU_LIB=$(OBJ_DIR)/libQPULib.a
+#$(info LIB: $(LIB))
+
+$(QPU_LIB): $(LIB)
+	ar rcs $@ $^
+
+$(OBJ_DIR)/%.o: $(ROOT)/%.cpp | $(OBJ_DIR)
+	@echo Compiling $<
+	@$(CXX) -c -o $@ $< $(CXX_FLAGS)
+
+
+#
 # Targets for Tests
 #
 
-$(OBJ_DIR)/bin/%: $(OBJ_DIR)/Tests/%.o $(LIB)
+$(OBJ_DIR)/bin/%: $(OBJ_DIR)/Tests/%.o $(QPU_LIB)
 	@echo Linking $@...
 	@$(CXX) $^ -o $@ $(CXX_FLAGS)
 
-$(OBJ_DIR)/Tests/%.o: Tests/%.cpp $(OBJ_DIR)
+$(OBJ_DIR)/Tests/%.o: Tests/%.cpp | $(OBJ_DIR)
 	@echo Compiling $<
 	@$(CXX) -c -o $@ $< $(CXX_FLAGS)
 
@@ -124,16 +151,10 @@ $(TESTS) :% :$(OBJ_DIR)/bin/%
 
 
 #
-# Intermediate targets
+# Other targets
 #
 
-$(OBJ_DIR)/%.o: $(ROOT)/%.cpp $(OBJ_DIR)
-	@echo Compiling $<
-	@$(CXX) -c -o $@ $< $(CXX_FLAGS)
-
-
 $(OBJ_DIR):
-	@mkdir -p $(OBJ_DIR)
 	@mkdir -p $(OBJ_DIR)/Source
 	@mkdir -p $(OBJ_DIR)/Target
 	@mkdir -p $(OBJ_DIR)/VideoCore
