@@ -7,5 +7,6 @@
 #include "Source/Cond.h"
 #include "Source/Stmt.h"
 #include "Kernel.h"
+#include "Debug.h"
 
 #endif
