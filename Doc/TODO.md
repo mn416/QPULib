@@ -1,7 +1,7 @@
 
 # TODO
 
-Feel free to add points here, or check them off if done.
+Feel free to add points here. If you complete a point, don't check it off, but remove it from the list.
 
 
 ## Makefile
