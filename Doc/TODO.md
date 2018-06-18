@@ -9,7 +9,7 @@ Feel free to add points here, or check them off if done.
 - [x] Raise the makefile one directory level and expand it
 - [x] Explanatory comment at top
 - [x] Static library for Lib-files
-- [ ] Add include-file dependencies
+- [x] Add include-file dependencies
 - [ ] Get rid of DEBUG option -> make debug output dynamic
 - [ ] Enable debug-build, for debugging
 - [ ] Add unit testing, notably `CATCH`
@@ -46,6 +46,11 @@ Feel free to add points here, or check them off if done.
 
 - [ ] Consider renaming to `Log` and treat as such
 - [ ] Append (with header) instead of writing over existing logs
+
+
+## Investigate
+
+- [] Is the gather limit 8 or 4? This depends on threading being enabled, check code for this.
 
 
 ## Other
