@@ -50,7 +50,7 @@ Feel free to add points here, or check them off if done.
 
 ## Investigate
 
-- [] Is the gather limit 8 or 4? This depends on threading being enabled, check code for this.
+- [ ] Is the gather limit 8 or 4? This depends on threading being enabled, check code for this.
 
 
 ## Other
