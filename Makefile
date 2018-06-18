@@ -15,7 +15,7 @@ ROOT = Lib
 
 # Compiler and default flags
 CXX = g++
-CXX_FLAGS = -Wconversion -std=c++0x -I $(ROOT)
+CXX_FLAGS= -std=c++0x -I $(ROOT) -Wconversion
 
 # Object directory
 OBJ_DIR = obj
@@ -82,7 +82,7 @@ TEST_TARGETS = $(patsubst %,$(OBJ_DIR)/bin/%,$(TESTS))
 
 # Top-level targets
 
-.PHONY: help clean all lib $(TESTS)
+.PHONY: help clean all lib test $(TESTS)
 
 # Following prevents deletion of object files after linking
 # Otherwise, deletion happens for targets of the form '%.o'
@@ -90,6 +90,7 @@ TEST_TARGETS = $(patsubst %,$(OBJ_DIR)/bin/%,$(TESTS))
 	$(OBJ_DIR)/Source/%.o    \
 	$(OBJ_DIR)/Target/%.o    \
 	$(OBJ_DIR)/VideoCore/%.o \
+	$(OBJ_DIR)/UnitTests/%.o \
 	$(OBJ_DIR)/Tests/%.o
 
 
@@ -149,6 +150,17 @@ $(OBJ_DIR)/Tests/%.o: Tests/%.cpp | $(OBJ_DIR)
 
 $(TESTS) :% :$(OBJ_DIR)/bin/%
 
+
+#
+# Targets for Unit Tests
+#
+
+# For some reason, doing an interim step to .o results in linkage errors (undefined references)
+$(OBJ_DIR)/bin/UnitTests: UnitTests/UnitTests.cpp | $(OBJ_DIR)
+	$(CXX) $(CXX_FLAGS) $^ -o $@
+
+test : $(OBJ_DIR)/bin/UnitTests
+	$(OBJ_DIR)/bin/UnitTests
 
 #
 # Other targets
