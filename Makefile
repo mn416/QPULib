@@ -15,7 +15,7 @@ ROOT = Lib
 
 # Compiler and default flags
 CXX = g++
-CXX_FLAGS= -std=c++0x -I $(ROOT) -Wconversion
+CXX_FLAGS = -Wconversion -std=c++0x -I $(ROOT) -MMD -MP -MF"$(@:%.o=%.d)"   # Add debug info: -g
 
 # Object directory
 OBJ_DIR = obj
@@ -34,7 +34,7 @@ else
   CXX_FLAGS += -DEMULATION_MODE
 endif
 
-# Object files
+# Library Object files
 OBJ =                         \
   Kernel.o                    \
   Source/Syntax.o             \
@@ -79,6 +79,15 @@ TESTS =     \
 	HeatMap
 
 TEST_TARGETS = $(patsubst %,$(OBJ_DIR)/bin/%,$(TESTS))
+LIB = $(patsubst %,$(OBJ_DIR)/%,$(OBJ))
+
+# List of dependencies defined from list of object files
+# Note that the example programs in Tests are not included here
+DEPS := $(LIB:.o=.d)
+#$(info $(DEPS))
+
+-include $(DEPS)
+
 
 # Top-level targets
 
@@ -118,8 +127,6 @@ all: $(TEST_TARGETS) $(OBJ_DIR)
 clean:
 	rm -rf obj obj-debug obj-qpu obj-debug-qpu
 
-LIB = $(patsubst %,$(OBJ_DIR)/%,$(OBJ))
-
 
 #
 # Targets for static library
@@ -129,7 +136,8 @@ QPU_LIB=$(OBJ_DIR)/libQPULib.a
 #$(info LIB: $(LIB))
 
 $(QPU_LIB): $(LIB)
-	ar rcs $@ $^
+	@echo Creating $@
+	@ar rcs $@ $^
 
 $(OBJ_DIR)/%.o: $(ROOT)/%.cpp | $(OBJ_DIR)
 	@echo Compiling $<
@@ -142,11 +150,11 @@ $(OBJ_DIR)/%.o: $(ROOT)/%.cpp | $(OBJ_DIR)
 
 $(OBJ_DIR)/bin/%: $(OBJ_DIR)/Tests/%.o $(QPU_LIB)
 	@echo Linking $@...
-	@$(CXX) $^ -o $@ $(CXX_FLAGS)
+	@$(CXX) $(CXX_FLAGS) $^ -o $@
 
 $(OBJ_DIR)/Tests/%.o: Tests/%.cpp | $(OBJ_DIR)
 	@echo Compiling $<
-	@$(CXX) -c -o $@ $< $(CXX_FLAGS)
+	@$(CXX) -c $(CXX_FLAGS) -o $@ $<
 
 $(TESTS) :% :$(OBJ_DIR)/bin/%
 
