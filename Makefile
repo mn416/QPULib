@@ -113,8 +113,9 @@ help:
 	@echo '    help          - Show this text'
 	@echo '    all           - Build all test programs'
 	@echo '    clean         - Delete all interim and target files'
+	@echo '    test          - Run the unit tests'
 	@echo
-	@echo '    one of the test programs - $(TESTS)'
+	@echo '    To run an example program - $(TESTS)'
 	@echo
 	@echo 'Flags:'
 	@echo
@@ -163,12 +164,17 @@ $(TESTS) :% :$(OBJ_DIR)/bin/%
 # Targets for Unit Tests
 #
 
-# For some reason, doing an interim step to .o results in linkage errors (undefined references)
-$(OBJ_DIR)/bin/UnitTests: UnitTests/UnitTests.cpp | $(OBJ_DIR)
-	$(CXX) $(CXX_FLAGS) $^ -o $@
+# Source files with unit tests to include in compilation
+UNIT_TESTS =             \
+	UnitTests/testMain.cpp \
 
-test : $(OBJ_DIR)/bin/UnitTests
-	$(OBJ_DIR)/bin/UnitTests
+# For some reason, doing an interim step to .o results in linkage errors (undefined references).
+# So this target compiles the source files directly to the executable
+$(OBJ_DIR)/bin/runTests: $(UNIT_TESTS) | $(OBJ_DIR)
+	@$(CXX) $(CXX_FLAGS) $^ -o $@
+
+test : $(OBJ_DIR)/bin/runTests
+	@$(OBJ_DIR)/bin/runTests
 
 #
 # Other targets
