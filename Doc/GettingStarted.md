@@ -22,7 +22,7 @@ this means that QPU code will be emulated in software.  This is useful
 for debugging, and also allows you to run QPULib programs on other platforms
 than a Pi.
 
-Running `make all` will build all the examples under `Tests`.  The output directory
+Running `make all` will build all the examples under `Examples`.  The output directory
 depends on the make flags passed.  For example, `make all` will output to directory
 `obj`, `make QPU=1 all` will output to directory `obj-qpu`.  Running `make clean` will
 clear out all these output directories.
@@ -49,7 +49,7 @@ built in the same way as GCD:
 
 ##### AutoTest: specification-based testing of the compiler
 
-Another program in the `Tests` directory worth mentioning is
+Another program in the `Examples` directory worth mentioning is
 `AutoTest`: it generates random QPULib programs, runs them on the both
 source language interpreter and the target language emulator, and
 checks for equivalance.  Currently, it only works in emulation mode.
