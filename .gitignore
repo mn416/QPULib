@@ -2,3 +2,4 @@ QPULib.*
 tmp
 obj*
 .directory
+*.log
