@@ -1,17 +1,21 @@
 #include "Target/Syntax.h"
 #include "Target/SmallLiteral.h"
 
-void pretty(FILE *f, SubWord sw)
+#ifdef NOT_USED
+const char *pretty(FILE *f, SubWord sw)
 {
   switch (sw) {
-    case A8:  fprintf(f, "[7:0]"); return;
-    case B8:  fprintf(f, "[15:8]"); return;
-    case C8:  fprintf(f, "[23:16]"); return;
-    case D8:  fprintf(f, "[31:24]"); return;
-    case A16: fprintf(f, "[15:0]"); return;
-    case B16: fprintf(f, "[31:16]"); return;
+    case A8:  return "[7:0]";
+    case B8:  return "[15:8]";
+    case C8:  return "[23:16]";
+    case D8:  return "[31:24]";
+    case A16: return "[15:0]";
+    case B16: return "[31:16]";
+    default:  assert(false); return "";
   }
 }
+#endif  // NOT_USED
+
 
 const char* specialStr(RegId rid)
 {

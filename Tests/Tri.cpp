@@ -17,11 +17,9 @@ void tri(Ptr<Int> p)
 
 int main()
 {
-  // Debug::enable(true);                     // Enable this to send debug output to stdout
-  // Debug::enable(true, true, "myout.log");  // Enable this to send debug output to file 'myout.log'
-
   // Construct kernel
   auto k = compile(tri);
+  //k.pretty("Tri.log");  // Output source and target code to file
 
   // Allocate and initialise array shared between ARM and GPU
   SharedArray<int> array(16);

@@ -9,7 +9,7 @@
 #include "Target/Satisfy.h"
 #include "Target/LoadStore.h"
 #include "Target/Encode.h"
-#include "Debug.h"
+
 
 // ============================================================================
 // Compile kernel
@@ -17,8 +17,6 @@
 
 void compileKernel(Seq<Instr>* targetCode, Stmt* body)
 {
-  Debug::emitSourceCode(body);
-
   // Translate to target code
   translateStmt(targetCode, body);
 
@@ -37,8 +35,6 @@ void compileKernel(Seq<Instr>* targetCode, Stmt* body)
 
   // Satisfy target code constraints
   satisfy(targetCode);
-
-  Debug::emitTargetCode(targetCode);
 
   // Translate branch-to-labels to relative branches
   removeLabels(targetCode);

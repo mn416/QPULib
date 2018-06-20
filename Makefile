@@ -15,7 +15,7 @@ ROOT = Lib
 
 # Compiler and default flags
 CXX = g++
-CXX_FLAGS = -Wconversion -std=c++0x -I $(ROOT) -MMD -MP -MF"$(@:%.o=%.d)"   # Add debug info: -g
+CXX_FLAGS = -Wconversion -std=c++0x -I $(ROOT) -MMD -MP -MF"$(@:%.o=%.d)" -g  # Add debug info: -g
 
 # Object directory
 OBJ_DIR = obj
@@ -37,7 +37,6 @@ endif
 # Library Object files
 OBJ =                         \
   Kernel.o                    \
-  Debug.o                     \
   Source/Syntax.o             \
   Source/Int.o                \
   Source/Float.o              \
