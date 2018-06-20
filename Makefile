@@ -99,7 +99,6 @@ DEPS := $(LIB:.o=.d)
 	$(OBJ_DIR)/Source/%.o    \
 	$(OBJ_DIR)/Target/%.o    \
 	$(OBJ_DIR)/VideoCore/%.o \
-	$(OBJ_DIR)/UnitTests/%.o \
 	$(OBJ_DIR)/Examples/%.o
 
 
@@ -166,7 +165,7 @@ $(EXAMPLES) :% :$(OBJ_DIR)/bin/%
 
 # Source files with unit tests to include in compilation
 UNIT_TESTS =             \
-	UnitTests/testMain.cpp \
+	Tests/testMain.cpp \
 
 # For some reason, doing an interim step to .o results in linkage errors (undefined references).
 # So this target compiles the source files directly to the executable
