@@ -13,8 +13,8 @@
 
 
 unsigned int Factorial( unsigned int number ) {
-	return number <= 1 ? number : Factorial(number-1)*number;  // Fails unit test for number == 0
-  //  return number > 1 ? Factorial(number-1)*number : 1;          // Passes unit test
+	//return number <= 1 ? number : Factorial(number-1)*number;  // Fails unit test for number == 0
+    return number > 1 ? Factorial(number-1)*number : 1;          // Passes unit test
 }
 
 

@@ -64,8 +64,8 @@ OBJ =                         \
   VideoCore/VideoCore.o
 
 
-# All programs in the Tests directory
-TESTS =     \
+# All programs in the Examples directory
+EXAMPLES =  \
 	Tri       \
 	GCD       \
 	Print     \
@@ -78,11 +78,11 @@ TESTS =     \
 	ID        \
 	HeatMap
 
-TEST_TARGETS = $(patsubst %,$(OBJ_DIR)/bin/%,$(TESTS))
+EXAMPLE_TARGETS = $(patsubst %,$(OBJ_DIR)/bin/%,$(EXAMPLES))
 LIB = $(patsubst %,$(OBJ_DIR)/%,$(OBJ))
 
 # List of dependencies defined from list of object files
-# Note that the example programs in Tests are not included here
+# Note that the example programs in Examples are not included here
 DEPS := $(LIB:.o=.d)
 #$(info $(DEPS))
 
@@ -91,7 +91,7 @@ DEPS := $(LIB:.o=.d)
 
 # Top-level targets
 
-.PHONY: help clean all lib test $(TESTS)
+.PHONY: help clean all lib test $(EXAMPLES)
 
 # Following prevents deletion of object files after linking
 # Otherwise, deletion happens for targets of the form '%.o'
@@ -100,7 +100,7 @@ DEPS := $(LIB:.o=.d)
 	$(OBJ_DIR)/Target/%.o    \
 	$(OBJ_DIR)/VideoCore/%.o \
 	$(OBJ_DIR)/UnitTests/%.o \
-	$(OBJ_DIR)/Tests/%.o
+	$(OBJ_DIR)/Examples/%.o
 
 
 help:
@@ -115,7 +115,7 @@ help:
 	@echo '    clean         - Delete all interim and target files'
 	@echo '    test          - Run the unit tests'
 	@echo
-	@echo '    To run an example program - $(TESTS)'
+	@echo '    one of the test programs - $(EXAMPLES)'
 	@echo
 	@echo 'Flags:'
 	@echo
@@ -123,7 +123,7 @@ help:
 	@echo '    DEBUG=1       - If specified, the source code and target code is shown on stdout when running a test'
 	@echo
 
-all: $(TEST_TARGETS) $(OBJ_DIR)
+all: $(EXAMPLE_TARGETS) $(OBJ_DIR)
 
 clean:
 	rm -rf obj obj-debug obj-qpu obj-debug-qpu
@@ -146,18 +146,18 @@ $(OBJ_DIR)/%.o: $(ROOT)/%.cpp | $(OBJ_DIR)
 
 
 #
-# Targets for Tests
+# Targets for Examples
 #
 
-$(OBJ_DIR)/bin/%: $(OBJ_DIR)/Tests/%.o $(QPU_LIB)
+$(OBJ_DIR)/bin/%: $(OBJ_DIR)/Examples/%.o $(QPU_LIB)
 	@echo Linking $@...
 	@$(CXX) $(CXX_FLAGS) $^ -o $@
 
-$(OBJ_DIR)/Tests/%.o: Tests/%.cpp | $(OBJ_DIR)
+$(OBJ_DIR)/Examples/%.o: Examples/%.cpp | $(OBJ_DIR)
 	@echo Compiling $<
 	@$(CXX) -c $(CXX_FLAGS) -o $@ $<
 
-$(TESTS) :% :$(OBJ_DIR)/bin/%
+$(EXAMPLES) :% :$(OBJ_DIR)/bin/%
 
 
 #
@@ -184,5 +184,5 @@ $(OBJ_DIR):
 	@mkdir -p $(OBJ_DIR)/Source
 	@mkdir -p $(OBJ_DIR)/Target
 	@mkdir -p $(OBJ_DIR)/VideoCore
-	@mkdir -p $(OBJ_DIR)/Tests
+	@mkdir -p $(OBJ_DIR)/Examples
 	@mkdir -p $(OBJ_DIR)/bin
