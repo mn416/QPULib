@@ -164,13 +164,15 @@ $(EXAMPLES) :% :$(OBJ_DIR)/bin/%
 #
 
 # Source files with unit tests to include in compilation
-UNIT_TESTS =             \
-	Tests/testMain.cpp \
+UNIT_TESTS =          \
+	Tests/testMain.cpp  \
+	Tests/testRot3D.cpp \
+	Tests/AutoTest.cpp 
 
 # For some reason, doing an interim step to .o results in linkage errors (undefined references).
-# So this target compiles the source files directly to the executable
-$(OBJ_DIR)/bin/runTests: $(UNIT_TESTS) | $(OBJ_DIR)
-	@$(CXX) $(CXX_FLAGS) $^ -o $@
+# So this target compiles the source files directly to the executable.
+$(OBJ_DIR)/bin/runTests: $(UNIT_TESTS) | $(QPU_LIB)
+	@$(CXX) $(CXX_FLAGS) $^ -L$(OBJ_DIR) -lQPULib -o $@
 
 test : $(OBJ_DIR)/bin/runTests
 	@$(OBJ_DIR)/bin/runTests
