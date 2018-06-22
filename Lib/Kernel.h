@@ -181,10 +181,11 @@ template <typename... ts> struct Kernel {
   Kernel(void (*f)(ts... params)) {
     numQPUs = 1;
 
-    // Initialise AST constructors
-    #ifndef EMULATION_MODE
-    astHeap.clear();
-    #endif
+    // We can clear the AST heap if we're sure the source program is not being
+    // used any more. However, to implement Kernel::pretty(), we keep the
+    // source program so we better not clear the heap.
+    // astHeap.clear();
+
     controlStack.clear();
     stmtStack.clear();
     stmtStack.push(mkSkip());
