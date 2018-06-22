@@ -163,6 +163,9 @@ $(EXAMPLES) :% :$(OBJ_DIR)/bin/%
 # Targets for Unit Tests
 #
 
+RUN_TESTS := @$(OBJ_DIR)/bin/runTests
+#RUN_TESTS := @sudo $(OBJ_DIR)/bin/runTests   # Running unit tests on the Pi hardware requires sudo, use this instead
+
 # Source files with unit tests to include in compilation
 UNIT_TESTS =          \
 	Tests/testMain.cpp  \
@@ -175,7 +178,8 @@ $(OBJ_DIR)/bin/runTests: $(UNIT_TESTS) | $(QPU_LIB)
 	@$(CXX) $(CXX_FLAGS) $^ -L$(OBJ_DIR) -lQPULib -o $@
 
 test : $(OBJ_DIR)/bin/runTests
-	@$(OBJ_DIR)/bin/runTests
+	@echo Running unit tests
+	@$(RUN_TESTS)
 
 #
 # Other targets
