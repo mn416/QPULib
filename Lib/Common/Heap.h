@@ -1,9 +1,11 @@
-#ifndef _HEAP_H_
-#define _HEAP_H_
+#ifndef _QPULIB_HEAP_H_
+#define _QPULIB_HEAP_H_
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+
+namespace qpulib {
 
 class Heap
 {
@@ -86,4 +88,6 @@ class Heap
     }
 };
 
-#endif
+}  // namespace qpulib
+
+#endif  // _QPULIB_HEAP_H_

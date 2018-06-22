@@ -1,5 +1,7 @@
 #include "QPULib.h"
 
+using namespace qpulib;
+
 // Define function that runs on the GPU.
 
 void tri(Ptr<Float> p)

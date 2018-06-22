@@ -12,6 +12,8 @@
 #include "Target/LoadStore.h"
 #include "Target/Encode.h"
 
+namespace qpulib {
+
 // ============================================================================
 // Compile kernel
 // ============================================================================
@@ -57,3 +59,5 @@ void compileKernel(Seq<Instr>* targetCode, Stmt* body)
   // Translate branch-to-labels to relative branches
   removeLabels(targetCode);
 }
+
+}  // namespace qpulib

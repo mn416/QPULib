@@ -1,5 +1,7 @@
-#ifndef _SOURCE_STMTEXTRA_H_
-#define _SOURCE_STMTEXTRA_H_
+#ifndef _QPULIB_SOURCE_STMTEXTRA_H_
+#define _QPULIB_SOURCE_STMTEXTRA_H_
+
+namespace qpulib {
 
 //=============================================================================
 // Host IRQ
@@ -94,4 +96,6 @@ inline void flush()
   stmtStack.replace(mkSeq(stmtStack.top(), s));
 }
 
-#endif
+}  // namespace qpulib
+
+#endif  // _QPULIB_SOURCE_STMTEXTRA_H_

@@ -1,11 +1,13 @@
 #ifdef QPU_MODE
 
-#ifndef _INVOKE_H_
-#define _INVOKE_H_
+#ifndef _QPULIB_INVOKE_H_
+#define _QPULIB_INVOKE_H_
 
 #include "Common/Seq.h"
 #include "VideoCore/SharedArray.h"
 #include <stdint.h>
+
+namespace qpulib {
 
 void invoke(
   int numQPUs,
@@ -13,5 +15,7 @@ void invoke(
   int qpuCodeMemOffset,
   Seq<int32_t>* params);
 
-#endif
-#endif
+}  // namespace qpulib
+
+#endif  // _QPULIB_INVOKE_H_
+#endif  // QPU_MODE

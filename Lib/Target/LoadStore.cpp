@@ -3,6 +3,8 @@
 #include "Target/Syntax.h"
 #include "Target/LoadStore.h"
 
+namespace qpulib {
+
 // =============================================================================
 // Stride setup
 // =============================================================================
@@ -208,3 +210,5 @@ void loadStorePass(Seq<Instr>* instrs)
   for (int i = 0; i < newInstrs.numElems; i++)
     instrs->append(newInstrs.elems[i]);
 }
+
+}  // namespace qpulib

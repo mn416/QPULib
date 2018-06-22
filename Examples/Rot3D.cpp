@@ -2,6 +2,8 @@
 #include <sys/time.h>
 #include <math.h>
 
+using namespace qpulib;
+
 // #define USE_SCALAR_VERSION
 
 // ============================================================================

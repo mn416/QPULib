@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include "Source/Gen.h"
 
+namespace qpulib {
+
 // ============================================================================
 // Types of expressions
 // ============================================================================
@@ -519,3 +521,5 @@ Stmt* progGen(GenOptions* opts, int* numVars)
 
   return mkSeq(pre, mkSeq(s, post));
 }
+
+}  // namespace qpulib

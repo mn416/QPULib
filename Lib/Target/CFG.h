@@ -1,10 +1,12 @@
 // Control-flow graphs (CFGs)
 
-#ifndef _CFG_H_
-#define _CFG_H_
+#ifndef _QPULIB_CFG_H_
+#define _QPULIB_CFG_H_
 
 #include "Common/Seq.h"
 #include "Target/Syntax.h"
+
+namespace qpulib {
 
 // A set of successors.
 
@@ -23,4 +25,6 @@ void buildCFG(Seq<Instr>* instrs, CFG* cfg);
 
 void reverseCFG(CFG* succs, CFG* preds);
 
-#endif
+}  // namespace qpulib
+
+#endif  // _QPULIB_CFG_H_

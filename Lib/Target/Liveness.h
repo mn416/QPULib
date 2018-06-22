@@ -1,11 +1,13 @@
 // Liveness analysis
 
-#ifndef _LIVENESS_H_
-#define _LIVENESS_H_
+#ifndef _QPULIB_LIVENESS_H_
+#define _QPULIB_LIVENESS_H_
 
 #include "Common/Seq.h"
 #include "Target/Syntax.h"
 #include "Target/CFG.h"
+
+namespace qpulib {
 
 // 'use' and 'def' sets:
 //   * 'use' set: the variables read by an instruction
@@ -42,4 +44,6 @@ typedef Seq<LiveSet> Liveness;
 void liveness(Seq<Instr>* instrs, CFG* cfg, Liveness* liveness);
 void computeLiveOut(CFG* cfg, Liveness* live, InstrId i, LiveSet* liveOut);
 
-#endif
+}  // namespace qpulib
+
+#endif  // _QPULIB_LIVENESS_H_

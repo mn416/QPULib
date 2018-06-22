@@ -1,5 +1,7 @@
 #include "QPULib.h"
 
+using namespace qpulib;
+
 void tri(Ptr<Int> p)
 {
   p = p + (me() << 4);

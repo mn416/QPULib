@@ -3,6 +3,9 @@
 #include "Source/Stmt.h"
 #include "Source/Int.h"
 
+
+namespace qpulib {
+
 // Interface to the embedded language.
 
 //=============================================================================
@@ -223,3 +226,5 @@ void kernelFinish()
     semaInc(15);
   End
 }
+
+}  // namespace qpulib

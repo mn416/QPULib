@@ -1,8 +1,10 @@
-#ifndef _STACK_H_
-#define _STACK_H_
+#ifndef _QPULIB_STACK_H_
+#define _QPULIB_STACK_H_
 
 #include <stdlib.h>
 #include <assert.h>
+
+namespace qpulib {
 
 template <class T> class StackItem
 {
@@ -86,4 +88,6 @@ template <class T> class Stack
     }
 };
 
-#endif
+}  // namespace qpulib
+
+#endif  // _QPULIB_STACK_H_

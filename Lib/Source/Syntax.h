@@ -1,10 +1,12 @@
 // This module defines the abstract syntax of the QPU language.
 
-#ifndef _SOURCE_SYNTAX_H_
-#define _SOURCE_SYNTAX_H_
+#ifndef _QPULIB_SOURCE_SYNTAX_H_
+#define _QPULIB_SOURCE_SYNTAX_H_
 
 #include "Common/Heap.h"
 #include "Common/Stack.h"
+
+namespace qpulib {
 
 // ============================================================================
 // Operators
@@ -277,4 +279,6 @@ extern Heap        astHeap;
 extern Stack<Stmt> stmtStack;
 extern Stack<Stmt> controlStack;
 
-#endif
+}  // namespace qpulib
+
+#endif  // _QPULIB_SOURCE_SYNTAX_H_

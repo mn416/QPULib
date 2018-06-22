@@ -1,6 +1,8 @@
 #include "Target/SmallLiteral.h"
 #include <stdio.h>
 
+namespace qpulib {
+
 // Small literals are literals that fit in the small immediate field
 // of the VideoCore-IV instruction set.
 
@@ -94,3 +96,5 @@ void printSmallLit(int x)
   else if (x >= 0)
     printf("%i", x);
 }
+
+}  // namespace qpulib

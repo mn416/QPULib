@@ -1,5 +1,5 @@
-#ifndef _KERNEL_H_
-#define _KERNEL_H_
+#ifndef _QPULIB_KERNEL_H_
+#define _QPULIB_KERNEL_H_
 
 #include "Source/Interpreter.h"
 #include "Target/Emulator.h"
@@ -7,6 +7,8 @@
 #include "VideoCore/SharedArray.h"
 #include "VideoCore/Invoke.h"
 #include "VideoCore/VideoCore.h"
+
+namespace qpulib {
 
 // ============================================================================
 // Modes of operation
@@ -322,4 +324,6 @@ template <typename... ts> Kernel<ts...> compile(void (*f)(ts... params))
   return k;
 }
 
-#endif
+}  // namespace qpulib
+
+#endif  // _QPULIB_KERNEL_H_

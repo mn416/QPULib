@@ -3,6 +3,8 @@
 #include "Source/Gen.h"
 #include "Source/Pretty.h"
 
+using namespace qpulib;
+
 // ============================================================================
 // Program-generator options
 // ============================================================================

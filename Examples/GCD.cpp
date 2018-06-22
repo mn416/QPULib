@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include "QPULib.h"
 
+using namespace qpulib;
+
 void gcd(Ptr<Int> p, Ptr<Int> q, Ptr<Int> r)
 {
   Int a = *p;

@@ -1,5 +1,7 @@
 #include "Target/RemoveLabels.h"
 
+namespace qpulib {
+
 // ============================================================================
 // Remove labels
 // ============================================================================
@@ -57,3 +59,5 @@ void removeLabels(Seq<Instr>* instrs)
 
   delete [] labels;
 }
+
+}  // namespace qpulib

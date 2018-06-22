@@ -1,11 +1,13 @@
 // This module defines type 'Int' for a vector of 16 x 32-bit integers.
 
-#ifndef _SOURCE_INT_H_
-#define _SOURCE_INT_H_
+#ifndef _QPULIB_SOURCE_INT_H_
+#define _QPULIB_SOURCE_INT_H_
 
 #include <assert.h>
 #include "Source/Syntax.h"
 #include "Source/Float.h"
+
+namespace qpulib {
 
 // ============================================================================
 // Types                   
@@ -77,4 +79,6 @@ IntExpr ror(IntExpr a, IntExpr b);
 IntExpr toInt(FloatExpr a);
 FloatExpr toFloat(IntExpr a);
 
-#endif
+}  // namespace qpulib
+
+#endif  // _QPULIB_SOURCE_INT_H_

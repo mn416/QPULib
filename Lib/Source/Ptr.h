@@ -1,11 +1,13 @@
 // This module defines type 'Ptr<T>' type denoting a pointer to a
 // value of type 'T'.
 
-#ifndef _SOURCE_PTR_H_
-#define _SOURCE_PTR_H_
+#ifndef _QPULIB_SOURCE_PTR_H_
+#define _QPULIB_SOURCE_PTR_H_
 
 #include <assert.h>
 #include "Source/Syntax.h"
+
+namespace qpulib {
 
 // ============================================================================
 // Types                   
@@ -128,5 +130,6 @@ template <typename T> inline PtrExpr<T> operator+(Ptr<T> &a, IntExpr b) {
   PtrExpr<T> x; x.expr = e; return x;
 }
 
+}  // namespace qpulib
 
-#endif
+#endif  // _QPULIB_SOURCE_PTR_H_

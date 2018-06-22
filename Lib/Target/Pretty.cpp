@@ -1,6 +1,8 @@
 #include "Target/Syntax.h"
 #include "Target/SmallLiteral.h"
 
+namespace qpulib {
+
 void pretty(SubWord sw)
 {
   switch (sw) {
@@ -293,3 +295,5 @@ void pretty(Instr instr)
       return;
   }
 }
+
+}  // namespace qpulib

@@ -1,5 +1,5 @@
-#ifndef _SHAREDARRAY_H_
-#define _SHAREDARRAY_H_
+#ifndef _QPULIB_SHAREDARRAY_H_
+#define _QPULIB_SHAREDARRAY_H_
 
 #if !defined(QPU_MODE) && !defined(EMULATION_MODE)
 //
@@ -16,6 +16,8 @@
 #include <assert.h>
 #include "VideoCore/Mailbox.h"
 #include "VideoCore/VideoCore.h"
+
+namespace qpulib {
 
 #ifdef EMULATION_MODE
 
@@ -172,4 +174,6 @@ template <typename T> class SharedArray {
 
 #endif
 
-#endif
+}  // namespace qpulib
+
+#endif  // _QPULIB_SHAREDARRAY_H_

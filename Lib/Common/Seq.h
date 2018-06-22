@@ -1,12 +1,14 @@
 // Sequence data type
 
-#ifndef _SEQ_H_
-#define _SEQ_H_
+#ifndef _QPULIB_SEQ_H_
+#define _QPULIB_SEQ_H_
 
 #define INITIAL_MAX_ELEMS 1024
 
 #include <stdlib.h>
 #include <assert.h>
+
+namespace qpulib {
 
 template <class T> class Seq
 {
@@ -119,4 +121,6 @@ template <class T> class SmallSeq : public Seq<T> {
     SmallSeq() : Seq<T>(8) {};
 };
 
-#endif
+}  // namespace qpulib
+
+#endif  // _QPULIB_SEQ_H_

@@ -5,6 +5,8 @@
 #include "Target/Subst.h"
 #include "Target/Liveness.h"
 
+namespace qpulib {
+
 // ============================================================================
 // Accumulator allocation
 // ============================================================================
@@ -206,5 +208,4 @@ void regAlloc(CFG* cfg, Seq<Instr>* instrs)
   delete [] liveWith;
 }
 
-
-
+}  // namespace qpulib

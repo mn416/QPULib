@@ -6,6 +6,8 @@
 
 #define QPU_TIMEOUT 10000
 
+namespace qpulib {
+
 void invoke(
   int numQPUs,
   SharedArray<uint32_t> &codeMem,
@@ -49,4 +51,6 @@ void invoke(
   }
 }
 
-#endif
+}  // namespace qpulib
+
+#endif  // QPU_MODE

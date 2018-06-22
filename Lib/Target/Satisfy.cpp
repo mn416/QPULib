@@ -4,6 +4,8 @@
 #include <assert.h>
 #include <stdio.h>
 
+namespace qpulib {
+
 // =============================
 // Remap register to accumulator
 // =============================
@@ -215,3 +217,5 @@ void satisfy(Seq<Instr>* instrs)
   instrs->clear();
   insertNops(&newInstrs, instrs);
 }
+
+}  // namespace qpulib

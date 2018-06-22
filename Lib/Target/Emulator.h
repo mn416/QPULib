@@ -1,5 +1,5 @@
-#ifndef _EMULATOR_H_
-#define _EMULATOR_H_
+#ifndef _QPULIB_EMULATOR_H_
+#define _QPULIB_EMULATOR_H_
 
 #include <stdint.h>
 #include "Common/Seq.h"
@@ -9,6 +9,8 @@
 #define NUM_LANES 16
 #define MAX_QPUS 12
 #define EMULATOR_HEAP_SIZE 65536
+
+namespace qpulib {
 
 // This is a type for representing the values in a vector
 union Word {
@@ -87,4 +89,6 @@ void emitStr(Seq<char>* out, const char* s);
 void printIntVec(Seq<char>* out, Vec x);
 void printFloatVec(Seq<char>* out, Vec x);
 
-#endif
+}  // namespace qpulib
+
+#endif  // _QPULIB_EMULATOR_H_
