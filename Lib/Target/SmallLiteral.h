@@ -6,7 +6,7 @@
 
 int encodeSmallLit(Expr* e);
 bool isSmallLit(Expr* e);
-void printSmallLit(int x);
+void printSmallLit(FILE *f, int x);
 Word decodeSmallLit(int x);
 
 #endif
