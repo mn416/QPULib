@@ -66,6 +66,7 @@ OBJ =                         \
 
 # All programs in the Examples directory
 EXAMPLES =  \
+	detectPlatform \
 	Tri       \
 	GCD       \
 	Print     \
