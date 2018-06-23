@@ -66,6 +66,7 @@ OBJ =                         \
 
 # All programs in the Tests directory
 TESTS =     \
+	detectPlatform \
 	Tri       \
 	GCD       \
 	Print     \
