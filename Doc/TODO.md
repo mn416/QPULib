@@ -29,24 +29,16 @@ Feel free to add points here. If you complete a point, don't check it off, but r
 - [ ] Add test on expected source and target output for pretty print in `compileKernel`. E.g. for `Rot3D`, `Tri` and `HeatMap`.
 
 
-### Unit testing for Debug
-
-- [ ] All combinations of options for `Debug::enable()`
-- [ ] Sequence: Open to file, open to other file
-- [ ] Sequence: to file, off, to same file, off, to different file
-- [ ] Sequence: stdout, to file, stdout
-
-
-## Class `Debug`
-
-- [ ] Consider renaming to `Log` and treat as such
-- [ ] Append (with header) instead of writing over existing logs
-
-
 ## Investigate
 
-- [ ] Is the gather limit 8 or 4? This depends on threading being enabled, check code for this
-- [ ] Find conclusive method to determine non-RPi platform. This to block compilation for QPU, see below
+- [ ] Is the gather limit 8 or 4? This depends on threading being enabled, check code for this.
+- [ ] Find conclusive method to determine non-RPi platform. This to block compilation for QPU, see 'Prevent compile' below.
+- [ ] Improve heap implementation and usage. the issue is that heap memory can not be reclaimed. Suggestions:
+  - Allocate `astHeap` for each kernel. Perhaps also do this for other heaps
+  - Increase heap size dynamically when needed
+  - Use `new/delete` instead. This would defeat the purpose of the heaps, which is to contain memory usage
+  - Add freeing of memory to heap definitions. This will increase the complexity of the heap code hugely
+- [ ] Can the actual number of available QPU's be determined runtime?
 
 
 ## Library Code
@@ -56,9 +48,9 @@ Feel free to add points here. If you complete a point, don't check it off, but r
 - [ ] Add namespace `qpulib` to Lib-files
 - [ ] Add method to determine RPi version via mailbox
 
+
 ## Other
 
-- [ ] Rename directory `Tests` to `Examples`, issue #22
 - [ ] `Rot3D` make various versions selectable on command line
 - [ ] Prevent compile on non-RPi for `QPU=1`
 - [ ] enable `-Wall` on compilation and deal with all the fallout

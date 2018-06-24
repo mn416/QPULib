@@ -4,6 +4,6 @@
 #include "Target/Syntax.h"
 
 // Pretty printer for the QPULib target language
-void pretty(Instr instr);
+void pretty(FILE *f, Instr instr);
 
 #endif
