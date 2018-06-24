@@ -1,4 +1,7 @@
 #include "Source/Pretty.h"
+#include <cassert>
+#include <cstdio>
+
 
 // ============================================================================
 // Operators
@@ -48,56 +51,57 @@ const char* cmpOpToString(CmpOp op)
 // Expressions
 // ============================================================================
 
-void pretty(Expr* e)
+void pretty(FILE *f, Expr* e)
 {
+  assert(f != nullptr);
   if (e == NULL) return;
 
   switch (e->tag) {
     // Integer literals
     case INT_LIT:
-      printf("%i", e->intLit);
+      fprintf(f, "%i", e->intLit);
       break;
 
     // Float literals
     case FLOAT_LIT:
-      printf("%f", e->floatLit);
+      fprintf(f, "%f", e->floatLit);
       break;
 
     // Variables
     case VAR:
       if (e->var.tag == STANDARD)
-        printf("v%i", e->var.id);
+        fprintf(f, "v%i", e->var.id);
       else if (e->var.tag == UNIFORM)
-        printf("UNIFORM");
+        fprintf(f, "UNIFORM");
       else if (e->var.tag == QPU_NUM)
-        printf("QPU_NUM");
+        fprintf(f, "QPU_NUM");
       else if (e->var.tag == ELEM_NUM)
-        printf("ELEM_NUM");
+        fprintf(f, "ELEM_NUM");
       else if (e->var.tag == TMU0_ADDR)
-        printf("TMU0_ADDR");
+        fprintf(f, "TMU0_ADDR");
       break;
 
     // Applications
     case APPLY:
       if (isUnary(e->apply.op)) {
-        printf("(");
-        printf("%s", opToString(e->apply.op));
-        pretty(e->apply.lhs);
-        printf(")");
+        fprintf(f, "(");
+        fprintf(f, "%s", opToString(e->apply.op));
+        pretty(f, e->apply.lhs);
+        fprintf(f, ")");
       }
       else {
-        printf("(");
-        pretty(e->apply.lhs);
-        printf("%s", opToString(e->apply.op));
-        pretty(e->apply.rhs);
-        printf(")");
+        fprintf(f, "(");
+        pretty(f, e->apply.lhs);
+        fprintf(f, "%s", opToString(e->apply.op));
+        pretty(f, e->apply.rhs);
+        fprintf(f, ")");
       }
       break;
 
     // Dereference
     case DEREF:
-      printf("*");
-      pretty(e->deref.ptr);
+      fprintf(f, "*");
+      pretty(f, e->deref.ptr);
       break;
 
   }
@@ -107,40 +111,41 @@ void pretty(Expr* e)
 // Boolean expressions
 // ============================================================================
 
-void pretty(BExpr* b)
+void pretty(FILE *f, BExpr* b)
 {
+  assert(f != nullptr);
   if (b == NULL) return;
 
   switch (b->tag) {
     // Negation
     case NOT:
-      printf("!");
-      pretty(b->neg);
+      fprintf(f, "!");
+      pretty(f, b->neg);
       break;
 
     // Conjunction
     case AND:
-      printf("(");
-      pretty(b->conj.lhs);
-      printf(" && ");
-      pretty(b->conj.rhs);
-      printf(")");
+      fprintf(f, "(");
+      pretty(f, b->conj.lhs);
+      fprintf(f, " && ");
+      pretty(f, b->conj.rhs);
+      fprintf(f, ")");
       break;
 
     // Disjunction
     case OR:
-      printf("(");
-      pretty(b->disj.lhs);
-      printf(" || ");
-      pretty(b->disj.rhs);
-      printf(")");
+      fprintf(f, "(");
+      pretty(f, b->disj.lhs);
+      fprintf(f, " || ");
+      pretty(f, b->disj.rhs);
+      fprintf(f, ")");
       break;
 
     // Comparison
     case CMP:
-      pretty(b->cmp.lhs);
-      printf("%s", cmpOpToString(b->cmp.op));
-      pretty(b->cmp.rhs);
+      pretty(f, b->cmp.lhs);
+      fprintf(f, "%s", cmpOpToString(b->cmp.op));
+      pretty(f, b->cmp.rhs);
       break;
   }
 }
@@ -149,32 +154,34 @@ void pretty(BExpr* b)
 // Conditional expressions
 // ============================================================================
 
-void pretty(CExpr* c)
+void pretty(FILE *f, CExpr* c)
 {
+  assert(f != nullptr);
   if (c == NULL) return;
 
   switch (c->tag) {
     // Reduce using 'any'
-    case ANY: printf("any("); break;
+    case ANY: fprintf(f, "any("); break;
 
     // Reduce using 'all'
-    case ALL: printf("all("); break;
+    case ALL: fprintf(f, "all("); break;
   }
 
-  pretty(c->bexpr);
-  printf(")");
+  pretty(f, c->bexpr);
+  fprintf(f, ")");
 }
 
 // ============================================================================
 // Statements
 // ============================================================================
 
-void indentBy(int indent) {
-  for (int i = 0; i < indent; i++) printf(" ");
+void indentBy(FILE *f, int indent) {
+  for (int i = 0; i < indent; i++) fprintf(f, " ");
 }
 
-void pretty(int indent, Stmt* s)
+void pretty(FILE *f, int indent, Stmt* s)
 {
+  assert(f != nullptr);
   if (s == NULL) return;
 
   switch (s->tag) {
@@ -183,131 +190,131 @@ void pretty(int indent, Stmt* s)
 
     // Assignment
     case ASSIGN:
-      indentBy(indent);
-      pretty(s->assign.lhs);
-      printf(" = ");
-      pretty(s->assign.rhs);
-      printf(";\n");
+      indentBy(f, indent);
+      pretty(f, s->assign.lhs);
+      fprintf(f, " = ");
+      pretty(f, s->assign.rhs);
+      fprintf(f, ";\n");
       break;
 
     // Sequential composition
     case SEQ:
-      pretty(indent, s->seq.s0);
-      pretty(indent, s->seq.s1);
+      pretty(f, indent, s->seq.s0);
+      pretty(f, indent, s->seq.s1);
       break;
 
     // Where statement
     case WHERE:
-      indentBy(indent);
-      printf("Where (");
-      pretty(s->where.cond);
-      printf(")\n");
-      pretty(indent+2, s->where.thenStmt);
+      indentBy(f, indent);
+      fprintf(f, "Where (");
+      pretty(f, s->where.cond);
+      fprintf(f, ")\n");
+      pretty(f, indent+2, s->where.thenStmt);
       if (s->where.elseStmt != NULL) {
-        indentBy(indent);
-        printf("Else\n");
-        pretty(indent+2, s->where.elseStmt);
+        indentBy(f, indent);
+        fprintf(f, "Else\n");
+        pretty(f, indent+2, s->where.elseStmt);
       }
-      indentBy(indent);
-      printf("End\n");
+      indentBy(f, indent);
+      fprintf(f, "End\n");
       break;
 
     // If statement
     case IF:
-      indentBy(indent);
-      printf("If (");
-      pretty(s->ifElse.cond);
-      printf(")\n");
-      pretty(indent+2, s->ifElse.thenStmt);
+      indentBy(f, indent);
+      fprintf(f, "If (");
+      pretty(f, s->ifElse.cond);
+      fprintf(f, ")\n");
+      pretty(f, indent+2, s->ifElse.thenStmt);
       if (s->where.elseStmt != NULL) {
-        indentBy(indent);
-        printf("Else\n");
-        pretty(indent+2, s->ifElse.elseStmt);
+        indentBy(f, indent);
+        fprintf(f, "Else\n");
+        pretty(f, indent+2, s->ifElse.elseStmt);
       }
-      indentBy(indent);
-      printf("End\n");
+      indentBy(f, indent);
+      fprintf(f, "End\n");
       break;
 
     // While statement
     case WHILE:
-      indentBy(indent);
-      printf("While (");
-      pretty(s->loop.cond);
-      printf(")\n");
-      pretty(indent+2, s->loop.body);
-      indentBy(indent);
-      printf("End\n");
+      indentBy(f, indent);
+      fprintf(f, "While (");
+      pretty(f, s->loop.cond);
+      fprintf(f, ")\n");
+      pretty(f, indent+2, s->loop.body);
+      indentBy(f, indent);
+      fprintf(f, "End\n");
       break;
 
     // Print statement
     case PRINT:
-      indentBy(indent);
-      printf("Print (");
+      indentBy(f, indent);
+      fprintf(f, "Print (");
       if (s->print.tag == PRINT_STR) {
         // Ideally would print escaped string here
-        printf("\"%s\"", s->print.str);
+        fprintf(f, "\"%s\"", s->print.str);
       }
       else
-        pretty(s->print.expr);
-      printf(")\n");
+        pretty(f, s->print.expr);
+      fprintf(f, ")\n");
       break;
 
     // Set read stride
     case SET_READ_STRIDE:
-      indentBy(indent);
-      printf("setReadStride(");
-      pretty(s->stride);
-      printf(")\n");
+      indentBy(f, indent);
+      fprintf(f, "setReadStride(");
+      pretty(f, s->stride);
+      fprintf(f, ")\n");
       break;
 
     // Set write stride
     case SET_WRITE_STRIDE:
-      indentBy(indent);
-      printf("setWriteStride(");
-      pretty(s->stride);
-      printf(")\n");
+      indentBy(f, indent);
+      fprintf(f, "setWriteStride(");
+      pretty(f, s->stride);
+      fprintf(f, ")\n");
       break;
 
     // Load receive
     case LOAD_RECEIVE:
-      indentBy(indent);
-      printf("receive(");
-      pretty(s->loadDest);
-      printf(")\n");
+      indentBy(f, indent);
+      fprintf(f, "receive(");
+      pretty(f, s->loadDest);
+      fprintf(f, ")\n");
       break;
 
     // Store request
     case STORE_REQUEST:
-      indentBy(indent);
-      printf("store(");
-      pretty(s->storeReq.data);
-      printf(", ");
-      pretty(s->storeReq.addr);
-      printf(")\n");
+      indentBy(f, indent);
+      fprintf(f, "store(");
+      pretty(f, s->storeReq.data);
+      fprintf(f, ", ");
+      pretty(f, s->storeReq.addr);
+      fprintf(f, ")\n");
       break;
 
     // Flush outstanding stores
     case FLUSH:
-      indentBy(indent);
-      printf("flush()\n");
+      indentBy(f, indent);
+      fprintf(f, "flush()\n");
       break;
 
     // Increment semaphore
     case SEMA_INC:
-      indentBy(indent);
-      printf("semaInc(%i)\n", s->semaId);
+      indentBy(f, indent);
+      fprintf(f, "semaInc(%i)\n", s->semaId);
       break;
 
     // Decrement semaphore
     case SEMA_DEC:
-      indentBy(indent);
-      printf("semaDec(%i)\n", s->semaId);
+      indentBy(f, indent);
+      fprintf(f, "semaDec(%i)\n", s->semaId);
       break;
 
     // Host IRQ
     case SEND_IRQ_TO_HOST:
-      indentBy(indent);
-      printf("hostIRQ()\n");
+      indentBy(f, indent);
+      fprintf(f, "hostIRQ()\n");
       break;
 
     // Not reachable
@@ -316,7 +323,17 @@ void pretty(int indent, Stmt* s)
   }
 }
 
+void pretty(FILE *f, Stmt* s)
+{
+  assert(f != nullptr);
+  pretty(f, 0, s);
+}
+
+
+/**
+ * @brief Override using stdout as output
+ */
 void pretty(Stmt* s)
 {
-  pretty(0, s);
+  pretty(stdout, s);
 }

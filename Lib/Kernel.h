@@ -7,6 +7,9 @@
 #include "VideoCore/SharedArray.h"
 #include "VideoCore/Invoke.h"
 #include "VideoCore/VideoCore.h"
+#include "Source/Pretty.h"
+#include "Target/Pretty.h"
+
 
 // ============================================================================
 // Modes of operation
@@ -178,10 +181,11 @@ template <typename... ts> struct Kernel {
   Kernel(void (*f)(ts... params)) {
     numQPUs = 1;
 
-    // Initialise AST constructors
-    #ifndef EMULATION_MODE
-    astHeap.clear();
-    #endif
+    // We can clear the AST heap if we're sure the source program is not being
+    // used any more. However, to implement Kernel::pretty(), we keep the
+    // source program so we better not clear the heap.
+    // astHeap.clear();
+
     controlStack.clear();
     stmtStack.clear();
     stmtStack.push(mkSkip());
@@ -203,12 +207,9 @@ template <typename... ts> struct Kernel {
     Stmt* body = stmtStack.top();
     stmtStack.pop();
 
-    // Save pointer to source program for interpreter
-    #ifdef EMULATION_MODE
+    // For EMULATION_MODE, the following is needed in the interpreter
+    // For QPU_MODE, it is here in case a pretty-print is requested
     sourceCode = body;
-    #else
-    sourceCode = NULL;
-    #endif
 
     // Compile
     compileKernel(&targetCode, body);
@@ -311,6 +312,58 @@ template <typename... ts> struct Kernel {
       delete qpuCodeMem;
       disableQPUs();
     #endif
+  }
+
+
+  /**
+   * @brief Output a human-readable representation of the source and target code.
+   *
+   * @param filename  if specified, print the output to this file. Otherwise, print to stdout
+   */
+  void pretty(const char *filename = nullptr)
+  {
+    FILE *f = nullptr;
+
+    if (filename == nullptr)
+      f = stdout;
+    else
+    {
+      f = fopen(filename, "w");
+      if (f == nullptr)
+      {
+        fprintf(stderr, "ERROR: could not open file '%s' for pretty output\n", filename);
+        return;
+      }
+    }
+
+
+    // Emit source code
+    fprintf(f, "Source code\n");
+    fprintf(f, "===========\n\n");
+    if (sourceCode == nullptr)
+      fprintf(stderr, "<No source code to print>");
+    else
+      ::pretty(f, sourceCode);
+
+    fprintf(f, "\n");
+    fflush(f);
+
+    // Emit target code
+    fprintf(f, "Target code\n");
+    fprintf(f, "===========\n\n");
+    for (int i = 0; i < targetCode.numElems; i++)
+    {
+      fprintf(f, "%i: ", i);
+      ::pretty(f, targetCode.elems[i]);
+    }
+    fprintf(f, "\n");
+    fflush(f);
+
+    if (filename != nullptr) {
+      assert(f != nullptr);
+      assert(f != stdout);
+      fclose(f);
+    }
   }
 };
 

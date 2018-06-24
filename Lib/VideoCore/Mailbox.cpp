@@ -24,7 +24,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-
+#include "Mailbox.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -35,7 +35,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <sys/mman.h>
 #include <sys/ioctl.h>
 
-#include "Mailbox.h"
 
 #define PAGE_SIZE (4*1024)
 
@@ -56,9 +55,11 @@ void *mapmem(unsigned base, unsigned size)
       MAP_SHARED/*|MAP_FIXED*/,
       mem_fd,
       base);
+
 #ifdef DEBUG
    printf("base=0x%x, mem=%p\n", base, mem);
-#endif
+#endif  // DEBUG
+
    if (mem == MAP_FAILED) {
       printf("mmap error %p\n", mem);
       exit (-1);
@@ -90,9 +91,10 @@ static int mbox_property(int file_desc, void *buf)
 
 #ifdef DEBUG
    unsigned *p = (unsigned*) buf; int i; unsigned size = *(unsigned *)buf;
-   for (i=0; i<size/4; i++)
-      printf("%04x: 0x%08x\n", i * (unsigned) sizeof(*p), p[i]);
-#endif
+    for (i=0; i<size/4; i++)
+       printf("%04x: 0x%08x\n", i * (unsigned) sizeof(*p), p[i]);
+#endif  // DEBUG
+
    return ret_val;
 }
 
