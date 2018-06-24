@@ -21,6 +21,7 @@ int main()
 {
   // Construct kernel
   auto k = compile(tri);
+  //k.pretty("Tri.log");  // Output source and target code to file
 
   // Allocate and initialise array shared between ARM and GPU
   SharedArray<int> array(16);

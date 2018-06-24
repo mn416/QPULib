@@ -87,14 +87,14 @@ Word decodeSmallLit(int x)
 
 // Display a small literal.
 
-void printSmallLit(int x)
+void printSmallLit(FILE *f, int x)
 {
   if (x >= 32)
-    printf("%f", smallFloats[x-32]);
+    fprintf(f, "%f", smallFloats[x-32]);
   else if (x >= 16)
-    printf("%i", x-32);
+    fprintf(f, "%i", x-32);
   else if (x >= 0)
-    printf("%i", x);
+    fprintf(f, "%i", x);
 }
 
 }  // namespace qpulib

@@ -3,17 +3,21 @@
 
 namespace qpulib {
 
+#ifdef NOT_USED
 void pretty(SubWord sw)
 {
   switch (sw) {
-    case A8:  printf("[7:0]"); return;
-    case B8:  printf("[15:8]"); return;
-    case C8:  printf("[23:16]"); return;
-    case D8:  printf("[31:24]"); return;
-    case A16: printf("[15:0]"); return;
-    case B16: printf("[31:16]"); return;
+    case A8:  return "[7:0]";
+    case B8:  return "[15:8]";
+    case C8:  return "[23:16]";
+    case D8:  return "[31:24]";
+    case A16: return "[15:0]";
+    case B16: return "[31:16]";
+    default:  assert(false); return "";
   }
 }
+#endif  // NOT_USED
+
 
 const char* specialStr(RegId rid)
 {
@@ -36,262 +40,264 @@ const char* specialStr(RegId rid)
   assert(false);
 }
 
-void pretty(Reg r)
+void pretty(FILE *f, Reg r)
 {
   switch (r.tag) {
     case REG_A:
-      printf("A%i", r.regId);
+      fprintf(f, "A%i", r.regId);
       return;
-    case REG_B: printf("B%i", r.regId); return;
-    case ACC: printf("ACC%i", r.regId); return;
-    case SPECIAL: printf("S[%s]", specialStr(r.regId)); return;
-    case NONE: printf("_"); return;
+    case REG_B: fprintf(f, "B%i", r.regId); return;
+    case ACC: fprintf(f, "ACC%i", r.regId); return;
+    case SPECIAL: fprintf(f, "S[%s]", specialStr(r.regId)); return;
+    case NONE: fprintf(f, "_"); return;
   }
 }
 
-void pretty(Flag flag)
+void pretty(FILE *f, Flag flag)
 {
   switch (flag) {
-    case ZS: printf("ZS"); return;
-    case ZC: printf("ZC"); return;
-    case NS: printf("NS"); return;
-    case NC: printf("NC"); return;
+    case ZS: fprintf(f, "ZS"); return;
+    case ZC: fprintf(f, "ZC"); return;
+    case NS: fprintf(f, "NS"); return;
+    case NC: fprintf(f, "NC"); return;
   }
 }
 
-void pretty(BranchCond cond)
+void pretty(FILE *f, BranchCond cond)
 {
   switch (cond.tag) {
     case COND_ALL:
-      printf("all(");
-      pretty(cond.flag);
-      printf(")");
+      fprintf(f, "all(");
+      pretty(f, cond.flag);
+      fprintf(f, ")");
       return;
     case COND_ANY:
-      printf("any(");
-      pretty(cond.flag);
-      printf(")");
+      fprintf(f, "any(");
+      pretty(f, cond.flag);
+      fprintf(f, ")");
       return;
     case COND_ALWAYS:
-      printf("always");
+      fprintf(f, "always");
       return;
     case COND_NEVER:
-      printf("never");
+      fprintf(f, "never");
       return;
   }
 }
 
-void pretty(AssignCond cond)
+void pretty(FILE *f, AssignCond cond)
 {
   switch (cond.tag) {
-    case ALWAYS: printf("always"); return;
-    case NEVER: printf("never"); return;
-    case FLAG: pretty(cond.flag); return;
+    case ALWAYS: fprintf(f, "always"); return;
+    case NEVER: fprintf(f, "never"); return;
+    case FLAG: pretty(f, cond.flag); return;
   }
 }
 
-void pretty(Imm imm) {
+void pretty(FILE *f, Imm imm) {
   switch (imm.tag) {
     case IMM_INT32:
-      printf("%d", imm.intVal);
+      fprintf(f, "%d", imm.intVal);
       return;
     case IMM_FLOAT32:
-      printf("%f", imm.floatVal);
+      fprintf(f, "%f", imm.floatVal);
       return;
     case IMM_MASK:
       int b = imm.intVal;
       for (int i = 0; i < 16; i++) {
-        printf("%i", b&1 ? 1 : 0);
+        fprintf(f, "%i", b&1 ? 1 : 0);
         b >>= 1;
       }
       return;
   }
 }
 
-void pretty(SmallImm imm)
+void pretty(FILE *f, SmallImm imm)
 {
   switch (imm.tag) {
-    case SMALL_IMM: printSmallLit(imm.val); return;
-    case ROT_ACC: printf("ROT(ACC5)"); return;
-    case ROT_IMM: printf("ROT(%i)", imm.val); return;
+    case SMALL_IMM: printSmallLit(f, imm.val); return;
+    case ROT_ACC: fprintf(f, "ROT(ACC5)"); return;
+    case ROT_IMM: fprintf(f, "ROT(%i)", imm.val); return;
   }
 }
 
-void pretty(RegOrImm r)
+void pretty(FILE *f, RegOrImm r)
 {
   switch (r.tag) {
-    case REG: pretty(r.reg); return;
-    case IMM: pretty(r.smallImm); return;
+    case REG: pretty(f, r.reg); return;
+    case IMM: pretty(f, r.smallImm); return;
   }
 }
 
-void pretty(ALUOp op)
+void pretty(FILE *f, ALUOp op)
 {
   switch (op) {
-    case NOP:       printf("nop"); return;
-    case A_FADD:    printf("addf"); return;
-    case A_FSUB:    printf("subf"); return;
-    case A_FMIN:    printf("minf"); return;
-    case A_FMAX:    printf("maxf"); return;
-    case A_FMINABS: printf("minabsf"); return;
-    case A_FMAXABS: printf("maxabsf"); return;
-    case A_FtoI:    printf("ftoi"); return;
-    case A_ItoF:    printf("itof"); return;
-    case A_ADD:     printf("add"); return;
-    case A_SUB:     printf("sub"); return;
-    case A_SHR:     printf("shr"); return;
-    case A_ASR:     printf("asr"); return;
-    case A_ROR:     printf("ror"); return;
-    case A_SHL:     printf("shl"); return;
-    case A_MIN:     printf("min"); return;
-    case A_MAX:     printf("max"); return;
-    case A_BAND:    printf("and"); return;
-    case A_BOR:     printf("or"); return;
-    case A_BXOR:    printf("xor"); return;
-    case A_BNOT:    printf("not"); return;
-    case A_CLZ:     printf("clz"); return;
-    case A_V8ADDS:  printf("addsatb"); return;
-    case A_V8SUBS:  printf("subsatb"); return;
-    case M_FMUL:    printf("mulf"); return;
-    case M_MUL24:   printf("mul24"); return;
-    case M_V8MUL:   printf("mulb"); return;
-    case M_V8MIN:   printf("minb"); return;
-    case M_V8MAX:   printf("maxb"); return;
-    case M_V8ADDS:  printf("m_addsatb"); return;
-    case M_V8SUBS:  printf("m_subsatb"); return;
-    case M_ROTATE:  printf("rotate"); return;
+    case NOP:       fprintf(f, "nop"); return;
+    case A_FADD:    fprintf(f, "addf"); return;
+    case A_FSUB:    fprintf(f, "subf"); return;
+    case A_FMIN:    fprintf(f, "minf"); return;
+    case A_FMAX:    fprintf(f, "maxf"); return;
+    case A_FMINABS: fprintf(f, "minabsf"); return;
+    case A_FMAXABS: fprintf(f, "maxabsf"); return;
+    case A_FtoI:    fprintf(f, "ftoi"); return;
+    case A_ItoF:    fprintf(f, "itof"); return;
+    case A_ADD:     fprintf(f, "add"); return;
+    case A_SUB:     fprintf(f, "sub"); return;
+    case A_SHR:     fprintf(f, "shr"); return;
+    case A_ASR:     fprintf(f, "asr"); return;
+    case A_ROR:     fprintf(f, "ror"); return;
+    case A_SHL:     fprintf(f, "shl"); return;
+    case A_MIN:     fprintf(f, "min"); return;
+    case A_MAX:     fprintf(f, "max"); return;
+    case A_BAND:    fprintf(f, "and"); return;
+    case A_BOR:     fprintf(f, "or"); return;
+    case A_BXOR:    fprintf(f, "xor"); return;
+    case A_BNOT:    fprintf(f, "not"); return;
+    case A_CLZ:     fprintf(f, "clz"); return;
+    case A_V8ADDS:  fprintf(f, "addsatb"); return;
+    case A_V8SUBS:  fprintf(f, "subsatb"); return;
+    case M_FMUL:    fprintf(f, "mulf"); return;
+    case M_MUL24:   fprintf(f, "mul24"); return;
+    case M_V8MUL:   fprintf(f, "mulb"); return;
+    case M_V8MIN:   fprintf(f, "minb"); return;
+    case M_V8MAX:   fprintf(f, "maxb"); return;
+    case M_V8ADDS:  fprintf(f, "m_addsatb"); return;
+    case M_V8SUBS:  fprintf(f, "m_subsatb"); return;
+    case M_ROTATE:  fprintf(f, "rotate"); return;
   }
 }
 
-void pretty(BranchTarget target)
+void pretty(FILE *f, BranchTarget target)
 {
   if (target.relative)
-    printf("PC+1+");
+    fprintf(f, "PC+1+");
   if (target.useRegOffset)
-    printf("A%i+", target.regOffset);
-  printf("%i", target.immOffset);
+    fprintf(f, "A%i+", target.regOffset);
+  fprintf(f, "%i", target.immOffset);
 }
 
-void pretty(BufferAorB buffer)
+void pretty(FILE *f, BufferAorB buffer)
 {
-  if (buffer == A) printf("A");
-  if (buffer == B) printf("B");
+  if (buffer == A) fprintf(f, "A");
+  if (buffer == B) fprintf(f, "B");
 }
 
-void pretty(Instr instr)
+void pretty(FILE *f, Instr instr)
 {
+  assert(f != nullptr);
+
   switch (instr.tag) {
     case LI:
       if (instr.LI.cond.tag != ALWAYS) {
-        printf("where ");
-        pretty(instr.LI.cond);
-        printf(": ");
+        fprintf(f, "where ");
+        pretty(f, instr.LI.cond);
+        fprintf(f, ": ");
       }
-      pretty(instr.LI.dest);
-      printf(" <-%s ", instr.LI.setFlags ? "{sf}" : "");
-      pretty(instr.LI.imm);
-      printf("\n");
+      pretty(f, instr.LI.dest);
+      fprintf(f, " <-%s ", instr.LI.setFlags ? "{sf}" : "");
+      pretty(f, instr.LI.imm);
+      fprintf(f, "\n");
       return;
     case ALU:
       if (instr.ALU.cond.tag != ALWAYS) {
-        printf("where ");
-        pretty(instr.ALU.cond);
-        printf(": ");
+        fprintf(f, "where ");
+        pretty(f, instr.ALU.cond);
+        fprintf(f, ": ");
       }
-      pretty(instr.ALU.dest);
-      printf(" <-%s ", instr.ALU.setFlags ? "{sf}" : "");
-      pretty(instr.ALU.op);
-      printf("(");
-      pretty(instr.ALU.srcA);
-      printf(", ");
-      pretty(instr.ALU.srcB);
-      printf(")\n");
+      pretty(f, instr.ALU.dest);
+      fprintf(f, " <-%s ", instr.ALU.setFlags ? "{sf}" : "");
+      pretty(f, instr.ALU.op);
+      fprintf(f, "(");
+      pretty(f, instr.ALU.srcA);
+      fprintf(f, ", ");
+      pretty(f, instr.ALU.srcB);
+      fprintf(f, ")\n");
       return;
     case END:
-      printf("END\n");
+      fprintf(f, "END\n");
       return;
     case BR:
-      printf("if ");
-      pretty(instr.BR.cond);
-      printf(" goto ");
-      pretty(instr.BR.target);
-      printf("\n");
+      fprintf(f, "if ");
+      pretty(f, instr.BR.cond);
+      fprintf(f, " goto ");
+      pretty(f, instr.BR.target);
+      fprintf(f, "\n");
       return;
     case BRL:
-      printf("if ");
-      pretty(instr.BRL.cond);
-      printf(" goto L%i\n", instr.BRL.label);
+      fprintf(f, "if ");
+      pretty(f, instr.BRL.cond);
+      fprintf(f, " goto L%i\n", instr.BRL.label);
       return;
     case LAB:
-      printf("L%i:\n", instr.label);
+      fprintf(f, "L%i:\n", instr.label);
       return;
     case NO_OP:
-      printf("NOP\n");
+      fprintf(f, "NOP\n");
       return;
     case LD1:
-      pretty(instr.LD1.buffer);
-      printf(" <- LD1(");
-      pretty(instr.LD1.addr);
-      printf(")\n");
+      pretty(f, instr.LD1.buffer);
+      fprintf(f, " <- LD1(");
+      pretty(f, instr.LD1.addr);
+      fprintf(f, ")\n");
       return;
     case LD2:
-      printf("LD2\n");
+      fprintf(f, "LD2\n");
       return;
     case LD3:
-      printf("LD3(");
-      pretty(instr.LD3.buffer);
-      printf(")\n");
+      fprintf(f, "LD3(");
+      pretty(f, instr.LD3.buffer);
+      fprintf(f, ")\n");
       return;
     case LD4:
-      pretty(instr.LD4.dest);
-      printf(" <- LD4\n");
+      pretty(f, instr.LD4.dest);
+      fprintf(f, " <- LD4\n");
       return;
     case ST1:
-      printf("ST1(");
-      pretty(instr.ST1.buffer);
-      printf(") <- ");
-      pretty(instr.ST1.data);
-      printf("\n");
+      fprintf(f, "ST1(");
+      pretty(f, instr.ST1.buffer);
+      fprintf(f, ") <- ");
+      pretty(f, instr.ST1.data);
+      fprintf(f, "\n");
       return;
     case ST2:
-      printf("ST2(");
-      pretty(instr.ST2.buffer);
-      printf(", ");
-      pretty(instr.ST2.addr);
-      printf(")\n");
+      fprintf(f, "ST2(");
+      pretty(f, instr.ST2.buffer);
+      fprintf(f, ", ");
+      pretty(f, instr.ST2.addr);
+      fprintf(f, ")\n");
       return;
     case ST3:
-      printf("ST3\n");
+      fprintf(f, "ST3\n");
       return;
     case PRS:
-      printf("PRS(\"%s\")", instr.PRS);
+      fprintf(f, "PRS(\"%s\")", instr.PRS);
       return;
     case PRI:
-      printf("PRI(");
-      pretty(instr.PRI);
-      printf(")\n");
+      fprintf(f, "PRI(");
+      pretty(f, instr.PRI);
+      fprintf(f, ")\n");
       return;
     case PRF:
-      printf("PRF(");
-      pretty(instr.PRF);
-      printf(")\n");
+      fprintf(f, "PRF(");
+      pretty(f, instr.PRF);
+      fprintf(f, ")\n");
       return;
     case RECV:
-      printf("RECV(");
-      pretty(instr.RECV.dest);
-      printf(")\n");
+      fprintf(f, "RECV(");
+      pretty(f, instr.RECV.dest);
+      fprintf(f, ")\n");
       return;
     case TMU0_TO_ACC4:
-      printf("TMU0_TO_ACC4\n");
+      fprintf(f, "TMU0_TO_ACC4\n");
       return;
     case SINC:
-      printf("SINC %i\n", instr.semaId);
+      fprintf(f, "SINC %i\n", instr.semaId);
       return;
     case SDEC:
-      printf("SDEC %i\n", instr.semaId);
+      fprintf(f, "SDEC %i\n", instr.semaId);
       return;
     case IRQ:
-      printf("IRQ\n");
+      fprintf(f, "IRQ\n");
       return;
   }
 }
