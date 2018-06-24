@@ -13,4 +13,4 @@ Word decodeSmallLit(int x);
 
 }  // namespace qpulib
 
-#endif _QPULIB_SMALL_LITERAL_H_
+#endif  // _QPULIB_SMALL_LITERAL_H_
