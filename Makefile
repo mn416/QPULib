@@ -28,6 +28,14 @@ endif
 
 # QPU or emulation mode
 ifeq ($(QPU), 1)
+
+RET := $(shell ./detectPlatform.sh 1>/dev/null && echo "yes" || echo "no")
+$(info  info: '$(RET)')
+ifneq ($(RET), yes)
+$(error "QPU-mode specified on a non-Pi platform; aborting")
+endif
+$(info  here)
+
   CXX_FLAGS += -DQPU_MODE
   OBJ_DIR := $(OBJ_DIR)-qpu
 else
@@ -91,7 +99,7 @@ DEPS := $(LIB:.o=.d)
 
 # Top-level targets
 
-.PHONY: help clean all lib $(TESTS)
+.PHONY: help clean all lib $(TESTS) detect-pi
 
 # Following prevents deletion of object files after linking
 # Otherwise, deletion happens for targets of the form '%.o'
