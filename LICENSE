@@ -5,6 +5,7 @@ in the QPULib repository, except for:
   * Doc/teapot180.png
   * Lib/VideoCore/Mailbox.cpp
   * Lib/VideoCore/Mailbox.h
+  * Tests/catch.hpp
 
 MIT License
 
