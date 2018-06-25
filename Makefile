@@ -100,7 +100,7 @@ DEPS := $(LIB:.o=.d)
 
 # Top-level targets
 
-.PHONY: help clean all lib $(EXAMPLES) detect-pi
+.PHONY: help clean all lib $(EXAMPLES)
 
 # Following prevents deletion of object files after linking
 # Otherwise, deletion happens for targets of the form '%.o'
