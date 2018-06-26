@@ -1,6 +1,7 @@
 #include <string>
 #include <fstream>
 #include <streambuf>
+#include "QPULib.h"
 
 
 /**
@@ -40,10 +41,16 @@ int main(int argc, char *argv[]) {
 	std::string content;
 	bool success = loadFileInString(filename, content);
 	if (success && !content.empty()) {
-		printf("Detected platform:  %s\n", content.c_str());
-		return 0;
+		printf("Detected platform: %s\n", content.c_str());
 	} else {
 		printf("This is not a RPi platform\n");
 		return 1;
 	}
+
+	// Show hardware revision code
+	int mb = getMailbox();	
+	unsigned revision = get_version(mb);
+	printf("Hardware revision: %04x\n", revision);
+
+	return 0;
 }

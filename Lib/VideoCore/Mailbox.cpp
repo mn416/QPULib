@@ -98,6 +98,30 @@ static int mbox_property(int file_desc, void *buf)
    return ret_val;
 }
 
+
+/**
+ * @brief Get the hardware revision code.
+ *
+ * For mapping the code to a Pi modei, see: https://www.raspberrypi-spy.co.uk/2012/09/checking-your-raspberry-pi-board-version/
+ */
+unsigned get_version(int file_desc)
+{
+   unsigned i=0;
+   unsigned p[32];
+   p[i++] = 0; // size
+   p[i++] = 0x00000000; // process request
+
+   p[i++] = 0x10002; // (the tag id)
+   p[i++] = 4; // (size of the buffer)
+   p[i++] = 0; // (size of the data)
+   p[i++] = 0; // place for return data
+   p[i++] = 0x00000000; // end tag
+   p[0] = i * (unsigned) sizeof(*p); // actual size
+
+   mbox_property(file_desc, p);
+   return p[5];
+}
+
 unsigned mem_alloc(int file_desc, unsigned size, unsigned align, unsigned flags)
 {
    unsigned i=0;
