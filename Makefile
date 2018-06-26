@@ -71,6 +71,8 @@ OBJ =                         \
   VideoCore/Invoke.o          \
   VideoCore/VideoCore.o
 
+LIB = $(patsubst %,$(OBJ_DIR)/%,$(OBJ))
+
 
 # All programs in the Examples directory
 EXAMPLES =  \
@@ -88,19 +90,31 @@ EXAMPLES =  \
 	HeatMap
 
 EXAMPLE_TARGETS = $(patsubst %,$(OBJ_DIR)/bin/%,$(EXAMPLES))
-LIB = $(patsubst %,$(OBJ_DIR)/%,$(OBJ))
 
-# List of dependencies defined from list of object files
-# Note that the example programs in Examples are not included here
+
+# Example object files
+EXAMPLES_EXTRA = \
+	Rot3DKernels.o
+
+EXAMPLES_OBJ = $(patsubst %,$(OBJ_DIR)/Examples/%,$(EXAMPLES_EXTRA))
+#$(info $(EXAMPLES_OBJ))
+
+
+# Dependencies from list of object files
 DEPS := $(LIB:.o=.d)
 #$(info $(DEPS))
-
 -include $(DEPS)
+
+# Dependencies for the include files in the Examples directory.
+# Basically, every .h file under examples has a .d in the build directory
+EXAMPLES_DEPS = $(EXAMPLES_OBJ:.o=.d)
+#$(info $(EXAMPLES_DEPS))
+-include $(EXAMPLES_DEPS)
 
 
 # Top-level targets
 
-.PHONY: help clean all lib $(EXAMPLES)
+.PHONY: help clean all lib test $(EXAMPLES)
 
 # Following prevents deletion of object files after linking
 # Otherwise, deletion happens for targets of the form '%.o'
@@ -121,6 +135,7 @@ help:
 	@echo '    help          - Show this text'
 	@echo '    all           - Build all test programs'
 	@echo '    clean         - Delete all interim and target files'
+	@echo '    test          - Run the unit tests'
 	@echo
 	@echo '    one of the test programs - $(EXAMPLES)'
 	@echo
@@ -155,6 +170,7 @@ $(OBJ_DIR)/%.o: $(ROOT)/%.cpp | $(OBJ_DIR)
 #
 # Targets for Examples
 #
+$(OBJ_DIR)/bin/Rot3D: $(OBJ_DIR)/Examples/Rot3DKernels.o
 
 $(OBJ_DIR)/bin/%: $(OBJ_DIR)/Examples/%.o $(QPU_LIB)
 	@echo Linking $@...
@@ -164,8 +180,36 @@ $(OBJ_DIR)/Examples/%.o: Examples/%.cpp | $(OBJ_DIR)
 	@echo Compiling $<
 	@$(CXX) -c $(CXX_FLAGS) -o $@ $<
 
+
+
 $(EXAMPLES) :% :$(OBJ_DIR)/bin/%
 
+
+#
+# Targets for Unit Tests
+#
+
+RUN_TESTS := $(OBJ_DIR)/bin/runTests
+
+# sudo required for QPU-mode on Pi
+ifeq ($(QPU), 1)
+	RUN_TESTS := sudo $(RUN_TESTS)
+endif
+
+
+# Source files with unit tests to include in compilation
+UNIT_TESTS =          \
+	Tests/testMain.cpp  \
+	Tests/testRot3D.cpp
+
+# For some reason, doing an interim step to .o results in linkage errors (undefined references).
+# So this target compiles the source files directly to the executable.
+$(OBJ_DIR)/bin/runTests: $(UNIT_TESTS) $(EXAMPLES_OBJ) | $(QPU_LIB)
+	@$(CXX) $(CXX_FLAGS) $^ -L$(OBJ_DIR) -lQPULib -o $@
+
+test : all $(OBJ_DIR)/bin/runTests
+	@echo Running unit tests
+	@$(RUN_TESTS)
 
 #
 # Other targets
