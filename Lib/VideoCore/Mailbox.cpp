@@ -114,7 +114,7 @@ unsigned get_version(int file_desc)
    p[i++] = 0x10002; // (the tag id)
    p[i++] = 4; // (size of the buffer)
    p[i++] = 0; // (size of the data)
-   p[i++] = 0; // place for return data
+   p[i++] = 0; // place for response data
    p[i++] = 0x00000000; // end tag
    p[0] = i * (unsigned) sizeof(*p); // actual size
 
