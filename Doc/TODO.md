@@ -6,7 +6,7 @@ Feel free to add points here. If you complete a point, don't check it off, but r
 
 ## Makefile
 
-- [ ] Enable debug-build, for debugging. Currently, an indication if given in the Makefile how to do this.
+- [ ] Enable debug-build, for debugging. Currently, an indication is given in the Makefile how to do this.
 
 
 ## Documentation
@@ -18,6 +18,7 @@ Feel free to add points here. If you complete a point, don't check it off, but r
 - [ ] Drill-down of the bare essentials for understanding `VideoCore`
 - [ ] Examples to separate page under Docs
 - [ ] Mailbox functions link to reference and explanation two size fields
+- [ ] QPU's always round *downward*
 
 
 ## Unit Tests
@@ -41,7 +42,8 @@ Feel free to add points here. If you complete a point, don't check it off, but r
 
 - [ ] Add check in emulator for too many `gather()` calls
 - [ ] Add namespace `qpulib` to Lib-files
-- [ ] Add method to determine RPi hardware revision number  via mailbox
+- [ ] Add method to determine RPi hardware revision number via mailbox
+- [ ] Add code for using the `Special Functions Unit (SFU)`, operations: `SQRT`, `RECIPSQRT`, `LOG`, `EXP`
 
 
 ## Other
@@ -49,6 +51,7 @@ Feel free to add points here. If you complete a point, don't check it off, but r
 - [ ] `Rot3D` make various versions selectable on command line
 - [ ] Prevent compile on non-RPi for `QPU=1`
 - [ ] enable `-Wall` on compilation and deal with all the fallout
+- [ ] Scan current docs for typo's, good language
 
 
 ## Long Term
