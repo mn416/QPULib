@@ -47,10 +47,12 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
+#ifdef QPU_MODE
 	// Show hardware revision code
 	int mb = getMailbox();	
 	unsigned revision = get_version(mb);
 	printf("Hardware revision: %04x\n", revision);
+#endif  // QPU_MODE
 
 	return 0;
 }
