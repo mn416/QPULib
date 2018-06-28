@@ -6,7 +6,7 @@
 #include "Common/Seq.h"
 #include "Target/Syntax.h"
 
-namespace qpulib {
+namespace QPULib {
 
 // A set of successors.
 
@@ -25,6 +25,6 @@ void buildCFG(Seq<Instr>* instrs, CFG* cfg);
 
 void reverseCFG(CFG* succs, CFG* preds);
 
-}  // namespace qpulib
+}  // namespace QPULib
 
 #endif  // _QPULIB_CFG_H_

@@ -5,11 +5,11 @@
 #include "Source/Syntax.h"
 #include "Target/Syntax.h"
 
-namespace qpulib {
+namespace QPULib {
 
 void insertEndCode(Seq<Instr>* seq);
 void translateStmt(Seq<Instr>* seq, Stmt* s);
 
-}  // namespace qpulib
+}  // namespace QPULib
 
 #endif  // _QPULIB_TRANSLATE_H_

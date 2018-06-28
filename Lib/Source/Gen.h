@@ -6,7 +6,7 @@
 #include "Common/Seq.h"
 #include "Source/Syntax.h"
 
-namespace qpulib {
+namespace QPULib {
 
 // Options for the program generator
 struct GenOptions {
@@ -55,6 +55,6 @@ float genFloatLit();
 // Generate a random source program
 Stmt* progGen(GenOptions* opts, int* numVars);
 
-}  // namespace qpulib
+}  // namespace QPULib
 
 #endif  // _QPULIB_GEN_H_

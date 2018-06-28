@@ -4,7 +4,7 @@
 #include "Target/CFG.h"
 #include "Target/Syntax.h"
 
-namespace qpulib {
+namespace QPULib {
 
 // ============================================================================
 // Build control-flow graph
@@ -98,4 +98,4 @@ void reverseCFG(CFG* succs, CFG* preds)
   }
 }
 
-}  // namespace qpulib
+}  // namespace QPULib

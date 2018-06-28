@@ -4,7 +4,7 @@
 #include "Target/LoadStore.h"
 #include "Common/Seq.h"
 
-namespace qpulib {
+namespace QPULib {
 
 // ============================================================================
 // Opcodes and operands
@@ -1182,4 +1182,4 @@ void translateStmt(Seq<Instr>* seq, Stmt* s)
   insertEndCode(seq);
 }
 
-}  // namespace qpulib
+}  // namespace QPULib

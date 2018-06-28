@@ -6,7 +6,7 @@
 #include "Source/Ptr.h"
 #include "Source/StmtExtra.h"
 
-namespace qpulib {
+namespace QPULib {
 
 //=============================================================================
 // Statement macros
@@ -45,6 +45,6 @@ void setReadStride(IntExpr n);
 void setWriteStride(IntExpr n);
 void kernelFinish();
 
-}  // namespace qpulib
+}  // namespace QPULib
 
 #endif  // _QPULIB_SOURCE_STMT_H_

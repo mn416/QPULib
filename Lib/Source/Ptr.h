@@ -7,7 +7,7 @@
 #include <assert.h>
 #include "Source/Syntax.h"
 
-namespace qpulib {
+namespace QPULib {
 
 // ============================================================================
 // Types                   
@@ -130,6 +130,6 @@ template <typename T> inline PtrExpr<T> operator+(Ptr<T> &a, IntExpr b) {
   PtrExpr<T> x; x.expr = e; return x;
 }
 
-}  // namespace qpulib
+}  // namespace QPULib
 
 #endif  // _QPULIB_SOURCE_PTR_H_

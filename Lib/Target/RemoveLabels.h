@@ -6,12 +6,12 @@
 #include "Target/Liveness.h"
 #include "Common/Seq.h"
 
-namespace qpulib {
+namespace QPULib {
 
 // Remove all labels, replacing absolute branch-label instructions
 // with relative branch-target instructions.
 void removeLabels(Seq<Instr>* instrs);
 
-}  // namespace qpulib
+}  // namespace QPULib
 
 #endif  // _QPULIB_REMOVELABELS_H_

@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-namespace qpulib {
+namespace QPULib {
 
 class Heap
 {
@@ -88,6 +88,6 @@ class Heap
     }
 };
 
-}  // namespace qpulib
+}  // namespace QPULib
 
 #endif  // _QPULIB_HEAP_H_

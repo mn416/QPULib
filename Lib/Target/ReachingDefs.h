@@ -7,7 +7,7 @@
 #include "Target/Syntax.h"
 #include "Target/CFG.h"
 
-namespace qpulib {
+namespace QPULib {
 
 // A reach set contains the instruction id's
 // that reach an instruction.
@@ -32,6 +32,6 @@ void computeReachedBy(Seq<Instr>* instrs, CFG* cfg, ReachingDefs* reachedBy);
 typedef Seq<ReachSet> DefsOf;
 void computeDefsOf(Seq<Instr>* instrs, DefsOf* defsOf);
 
-}  // namespace qpulib
+}  // namespace QPULib
 
 #endif  // _QPULIB_REACHINGDEFS_H_

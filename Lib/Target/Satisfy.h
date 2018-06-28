@@ -4,11 +4,11 @@
 #include "Target/Syntax.h"
 #include "Target/CFG.h"
 
-namespace qpulib {
+namespace QPULib {
 
 RegTag regFileOf(Reg r);
 void satisfy(Seq<Instr>* instrs);
 
-}  // namespace qpulib
+}  // namespace QPULib
 
 #endif  // _QPULIB_SATISFY_H_

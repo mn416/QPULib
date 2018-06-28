@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
-namespace qpulib {
+namespace QPULib {
 
 template <class T> class Seq
 {
@@ -121,6 +121,6 @@ template <class T> class SmallSeq : public Seq<T> {
     SmallSeq() : Seq<T>(8) {};
 };
 
-}  // namespace qpulib
+}  // namespace QPULib
 
 #endif  // _QPULIB_SEQ_H_

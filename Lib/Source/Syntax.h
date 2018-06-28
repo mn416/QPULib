@@ -6,7 +6,7 @@
 #include "Common/Heap.h"
 #include "Common/Stack.h"
 
-namespace qpulib {
+namespace QPULib {
 
 // ============================================================================
 // Operators
@@ -279,6 +279,6 @@ extern Heap        astHeap;
 extern Stack<Stmt> stmtStack;
 extern Stack<Stmt> controlStack;
 
-}  // namespace qpulib
+}  // namespace QPULib
 
 #endif  // _QPULIB_SOURCE_SYNTAX_H_

@@ -4,7 +4,7 @@
 #include "Source/Syntax.h"
 #include "Source/Int.h"
 
-namespace qpulib {
+namespace QPULib {
 
 // ============================================================================
 // Types                   
@@ -105,6 +105,6 @@ inline Cond any(BoolExpr a)
 inline Cond all(BoolExpr a)
   { return Cond(mkAll(a.bexpr)); }
 
-}  // namespace qpulib
+}  // namespace QPULib
 
 #endif  // _QPULIB_SOURCE_COND_H_

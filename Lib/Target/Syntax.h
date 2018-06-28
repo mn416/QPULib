@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-namespace qpulib {
+namespace QPULib {
 
 // Syntax of the QPU target language.
 
@@ -468,6 +468,6 @@ int getFreshLabelCount();
 void resetFreshLabelGen();
 void resetFreshLabelGen(int val);
 
-}  // namespace qpulib
+}  // namespace QPULib
 
 #endif  // _QPULIB_TARGET_SYNTAX_H_

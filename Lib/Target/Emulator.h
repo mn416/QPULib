@@ -10,7 +10,7 @@
 #define MAX_QPUS 12
 #define EMULATOR_HEAP_SIZE 3*65536
 
-namespace qpulib {
+namespace QPULib {
 
 // This is a type for representing the values in a vector
 union Word {
@@ -89,6 +89,6 @@ void emitStr(Seq<char>* out, const char* s);
 void printIntVec(Seq<char>* out, Vec x);
 void printFloatVec(Seq<char>* out, Vec x);
 
-}  // namespace qpulib
+}  // namespace QPULib
 
 #endif  // _QPULIB_EMULATOR_H_

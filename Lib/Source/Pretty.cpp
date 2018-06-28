@@ -3,7 +3,7 @@
 #include <cstdio>
 
 
-namespace qpulib {
+namespace QPULib {
 
 // ============================================================================
 // Operators
@@ -340,4 +340,4 @@ void pretty(Stmt* s)
   pretty(stdout, s);
 }
 
-}  // namespace qpulib
+}  // namespace QPULib

@@ -1,7 +1,7 @@
 #include "Source/Interpreter.h"
 #include "Target/Emulator.h"
 
-namespace qpulib {
+namespace QPULib {
 
 // ============================================================================
 // Evaluate a variable
@@ -631,4 +631,4 @@ void interpreter
   }
 }
 
-}  // namespace qpulib
+}  // namespace QPULib

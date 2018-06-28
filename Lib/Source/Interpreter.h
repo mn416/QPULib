@@ -12,7 +12,7 @@
 
 #include "Target/Emulator.h"
 
-namespace qpulib {
+namespace QPULib {
 
 // State of a single core.
 struct CoreState {
@@ -46,6 +46,6 @@ void interpreter
                            // (if NULL, stdout is used)
   );
 
-}  // namespace qpulib
+}  // namespace QPULib
 
 #endif  // _QPULIB_INTERPRETER_H_

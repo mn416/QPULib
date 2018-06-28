@@ -4,7 +4,7 @@
 #include "Source/Int.h"
 
 
-namespace qpulib {
+namespace QPULib {
 
 // Interface to the embedded language.
 
@@ -227,4 +227,4 @@ void kernelFinish()
   End
 }
 
-}  // namespace qpulib
+}  // namespace QPULib

@@ -17,7 +17,7 @@
 #include "VideoCore/Mailbox.h"
 #include "VideoCore/VideoCore.h"
 
-namespace qpulib {
+namespace QPULib {
 
 #ifdef EMULATION_MODE
 
@@ -174,6 +174,6 @@ template <typename T> class SharedArray {
 
 #endif
 
-}  // namespace qpulib
+}  // namespace QPULib
 
 #endif  // _QPULIB_SHAREDARRAY_H_

@@ -5,10 +5,10 @@
 #include "Target/CFG.h"
 #include "Target/Syntax.h"
 
-namespace qpulib {
+namespace QPULib {
 
 void liveRangeSplit(Seq<Instr>* instrs, CFG* cfg);
 
-}  // namespace qpulib
+}  // namespace QPULib
 
 #endif  // _QPULIB_LIVERANGESPLIT_H_

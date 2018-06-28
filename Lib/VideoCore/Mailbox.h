@@ -35,7 +35,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define IOCTL_MBOX_PROPERTY _IOWR(MAJOR_NUM, 0, char *)
 #define DEVICE_FILE_NAME "/dev/vcio"
 
-namespace qpulib {
+namespace QPULib {
 
 int mbox_open();
 void mbox_close(int file_desc);
@@ -52,7 +52,7 @@ unsigned execute_code(int file_desc, unsigned code, unsigned r0, unsigned r1, un
 unsigned execute_qpu(int file_desc, unsigned num_qpus, unsigned control, unsigned noflush, unsigned timeout);
 unsigned qpu_enable(int file_desc, unsigned enable);
 
-}  // namespace qpulib
+}  // namespace QPULib
 
 #define BUS_TO_PHYS(addr) (((addr)) & ~0xC0000000)
 

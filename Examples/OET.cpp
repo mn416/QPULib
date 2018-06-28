@@ -1,6 +1,6 @@
 #include "QPULib.h"
 
-using namespace qpulib;
+using namespace QPULib;
 
 // Odd/even transposition sorter for a 32-element array
 

@@ -10,7 +10,7 @@
 #include "Target/LoadStore.h"
 #include "Target/Encode.h"
 
-namespace qpulib {
+namespace QPULib {
 
 // ============================================================================
 // Compile kernel
@@ -41,4 +41,4 @@ void compileKernel(Seq<Instr>* targetCode, Stmt* body)
   removeLabels(targetCode);
 }
 
-}  // namespace qpulib
+}  // namespace QPULib

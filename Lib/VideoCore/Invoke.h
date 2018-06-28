@@ -7,7 +7,7 @@
 #include "VideoCore/SharedArray.h"
 #include <stdint.h>
 
-namespace qpulib {
+namespace QPULib {
 
 void invoke(
   int numQPUs,
@@ -15,7 +15,7 @@ void invoke(
   int qpuCodeMemOffset,
   Seq<int32_t>* params);
 
-}  // namespace qpulib
+}  // namespace QPULib
 
 #endif  // _QPULIB_INVOKE_H_
 #endif  // QPU_MODE

@@ -6,10 +6,10 @@
 #include "Target/Syntax.h"
 #include "Common/Seq.h"
 
-namespace qpulib {
+namespace QPULib {
 
 void regAlloc(CFG* cfg, Seq<Instr>* instrs);
 
-}  // namespace qpulib
+}  // namespace QPULib
 
 #endif  // _QPULIB_REGALLOC_H_

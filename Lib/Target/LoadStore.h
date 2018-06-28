@@ -4,7 +4,7 @@
 #include "Common/Seq.h"
 #include "Target/Syntax.h"
 
-namespace qpulib {
+namespace QPULib {
 
 void genSetReadStride(Seq<Instr>* instrs, int stride);
 void genSetReadStride(Seq<Instr>* instrs, Reg stride);
@@ -12,6 +12,6 @@ void genSetWriteStride(Seq<Instr>* instrs, int stride);
 void genSetWriteStride(Seq<Instr>* instrs, Reg stride);
 void loadStorePass(Seq<Instr>* instrs);
 
-}  // namespace qpulib
+}  // namespace QPULib
 
 #endif  // _QPULIB_LOADSTORE_H_

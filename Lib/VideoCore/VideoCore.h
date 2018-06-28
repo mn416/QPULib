@@ -3,7 +3,7 @@
 #ifndef _QPULIB_VIDEOCORE_H_
 #define _QPULIB_VIDEOCORE_H_
 
-namespace qpulib {
+namespace QPULib {
 
 // Globals
 extern int mailbox;
@@ -14,7 +14,7 @@ int getMailbox();
 void enableQPUs();
 void disableQPUs();
 
-}  // namespace qpulib
+}  // namespace QPULib
 
 #endif  // _QPULIB_VIDEOCORE_H_
 #endif  // QPU_MODE

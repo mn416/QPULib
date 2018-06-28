@@ -3,7 +3,7 @@
 #include "Common/Stack.h"
 #include "Params.h"
 
-namespace qpulib {
+namespace QPULib {
 
 // ============================================================================
 // Globals
@@ -308,4 +308,4 @@ Stmt* mkPrint(PrintTag t, Expr* e)
   return s;
 }
 
-}  // namespace qpulib
+}  // namespace QPULib

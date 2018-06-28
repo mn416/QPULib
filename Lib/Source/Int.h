@@ -7,7 +7,7 @@
 #include "Source/Syntax.h"
 #include "Source/Float.h"
 
-namespace qpulib {
+namespace QPULib {
 
 // ============================================================================
 // Types                   
@@ -79,6 +79,6 @@ IntExpr ror(IntExpr a, IntExpr b);
 IntExpr toInt(FloatExpr a);
 FloatExpr toFloat(IntExpr a);
 
-}  // namespace qpulib
+}  // namespace QPULib
 
 #endif  // _QPULIB_SOURCE_INT_H_

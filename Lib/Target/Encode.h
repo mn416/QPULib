@@ -5,10 +5,10 @@
 #include "Target/Syntax.h"
 #include "Common/Seq.h"
 
-namespace qpulib {
+namespace QPULib {
 
 void encode(Seq<Instr>* instrs, Seq<uint32_t>* code);
 
-}  // namespace qpulib
+}  // namespace QPULib
 
 #endif  // _QPULIB_ENCODE_H_

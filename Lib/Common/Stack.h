@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
-namespace qpulib {
+namespace QPULib {
 
 template <class T> class StackItem
 {
@@ -88,6 +88,6 @@ template <class T> class Stack
     }
 };
 
-}  // namespace qpulib
+}  // namespace QPULib
 
 #endif  // _QPULIB_STACK_H_

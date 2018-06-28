@@ -3,11 +3,11 @@
 
 #include "Target/Syntax.h"
 
-namespace qpulib {
+namespace QPULib {
 
 // Pretty printer for the QPULib target language
 void pretty(FILE *f, Instr instr);
 
-}  // namespace qpulib
+}  // namespace QPULib
 
 #endif  // _QPULIB_TARGET_PRETTY_H_

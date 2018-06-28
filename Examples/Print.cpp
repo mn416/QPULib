@@ -1,6 +1,6 @@
 #include "QPULib.h"
 
-using namespace qpulib;
+using namespace QPULib;
 
 void loop(Int n)
 {

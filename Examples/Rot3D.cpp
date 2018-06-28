@@ -2,7 +2,7 @@
 #include <math.h>
 #include "Rot3DKernels.h"
 
-using namespace qpulib;
+using namespace QPULib;
 
 // #define USE_SCALAR_VERSION
 

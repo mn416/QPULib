@@ -6,7 +6,7 @@
 
 #define QPU_TIMEOUT 10000
 
-namespace qpulib {
+namespace QPULib {
 
 void invoke(
   int numQPUs,
@@ -51,6 +51,6 @@ void invoke(
   }
 }
 
-}  // namespace qpulib
+}  // namespace QPULib
 
 #endif  // QPU_MODE

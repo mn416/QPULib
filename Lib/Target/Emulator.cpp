@@ -6,7 +6,7 @@
 #include <math.h>
 #include <string.h>
 
-namespace qpulib {
+namespace QPULib {
 
 // ============================================================================
 // Globals
@@ -802,5 +802,5 @@ void emulate
   }
 }
 
-}  // namespace qpulib
+}  // namespace QPULib
 

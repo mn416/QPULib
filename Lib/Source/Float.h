@@ -6,7 +6,7 @@
 #include <assert.h>
 #include "Source/Syntax.h"
 
-namespace qpulib {
+namespace QPULib {
 
 // ============================================================================
 // Types                   
@@ -59,6 +59,6 @@ FloatExpr operator*(FloatExpr a, FloatExpr b);
 FloatExpr min(FloatExpr a, FloatExpr b);
 FloatExpr max(FloatExpr a, FloatExpr b);
 
-}  // namespace qpulib
+}  // namespace QPULib
 
 #endif  // _QPULIB_SOURCE_FLOAT_H_

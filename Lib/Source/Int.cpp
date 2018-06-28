@@ -2,7 +2,7 @@
 #include "Source/Stmt.h"
 #include "Source/Float.h"
 
-namespace qpulib {
+namespace QPULib {
 
 // ============================================================================
 // Type 'IntExpr'
@@ -202,4 +202,4 @@ FloatExpr toFloat(IntExpr a)
   return mkFloatExpr(e);
 }
 
-}  // namespace qpulib
+}  // namespace QPULib

@@ -7,7 +7,7 @@
 #include "Target/Syntax.h"
 #include "Target/CFG.h"
 
-namespace qpulib {
+namespace QPULib {
 
 // 'use' and 'def' sets:
 //   * 'use' set: the variables read by an instruction
@@ -44,6 +44,6 @@ typedef Seq<LiveSet> Liveness;
 void liveness(Seq<Instr>* instrs, CFG* cfg, Liveness* liveness);
 void computeLiveOut(CFG* cfg, Liveness* live, InstrId i, LiveSet* liveOut);
 
-}  // namespace qpulib
+}  // namespace QPULib
 
 #endif  // _QPULIB_LIVENESS_H_

@@ -3,7 +3,7 @@
 #include "Target/Syntax.h"
 #include "Target/LoadStore.h"
 
-namespace qpulib {
+namespace QPULib {
 
 // =============================================================================
 // Stride setup
@@ -211,4 +211,4 @@ void loadStorePass(Seq<Instr>* instrs)
     instrs->append(newInstrs.elems[i]);
 }
 
-}  // namespace qpulib
+}  // namespace QPULib

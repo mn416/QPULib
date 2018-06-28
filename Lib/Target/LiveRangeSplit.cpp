@@ -4,7 +4,7 @@
 #include "Target/Subst.h"
 #include "Target/Liveness.h"
 
-namespace qpulib {
+namespace QPULib {
 
 // ============================================================================
 // Live-range splitter
@@ -99,4 +99,4 @@ void liveRangeSplit(Seq<Instr>* instrs, CFG* cfg)
   delete [] visited;
 }
 
-}  // namespace qpulib
+}  // namespace QPULib

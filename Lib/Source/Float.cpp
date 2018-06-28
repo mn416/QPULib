@@ -1,7 +1,7 @@
 #include "Source/Float.h"
 #include "Source/Stmt.h"
 
-namespace qpulib {
+namespace QPULib {
 
 // ============================================================================
 // Type 'FloatExpr'
@@ -109,4 +109,4 @@ FloatExpr min(FloatExpr a, FloatExpr b)
 FloatExpr max(FloatExpr a, FloatExpr b)
   { return mkFloatApply(a, mkOp(MAX, FLOAT), b); }
 
-}  // namespace qpulib
+}  // namespace QPULib

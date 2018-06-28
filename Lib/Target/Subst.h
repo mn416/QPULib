@@ -3,7 +3,7 @@
 
 #include "Target/Syntax.h"
 
-namespace qpulib {
+namespace QPULib {
 
 // Rename a destination register in an instruction
 void renameDest(Instr* instr, RegTag vt, RegId v,
@@ -16,6 +16,6 @@ void renameUses(Instr* instr, RegTag vt, RegId v,
 // Globally change register tag vt to wt in given instruction
 void substRegTag(Instr* instr, RegTag vt, RegTag wt);
 
-}  // namespace qpulib
+}  // namespace QPULib
 
 #endif  // _QPULIB_SUBST_H_

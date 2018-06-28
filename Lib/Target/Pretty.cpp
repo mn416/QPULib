@@ -1,7 +1,7 @@
 #include "Target/Syntax.h"
 #include "Target/SmallLiteral.h"
 
-namespace qpulib {
+namespace QPULib {
 
 #ifdef NOT_USED
 void pretty(SubWord sw)
@@ -302,4 +302,4 @@ void pretty(FILE *f, Instr instr)
   }
 }
 
-}  // namespace qpulib
+}  // namespace QPULib

@@ -2,7 +2,7 @@
 
 #include "Target/Liveness.h"
 
-namespace qpulib {
+namespace QPULib {
 
 // ============================================================================
 // Compute 'use' and 'def' sets
@@ -208,4 +208,4 @@ void liveness(Seq<Instr>* instrs, CFG* cfg, Liveness* live)
 }
 
 
-}  // namespace qpulib
+}  // namespace QPULib
