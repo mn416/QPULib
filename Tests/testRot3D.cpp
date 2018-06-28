@@ -2,6 +2,9 @@
 #include <math.h>
 #include "../Examples/Rot3DKernels.h"
 
+using namespace QPULib;
+using namespace Rot3D;
+
 // ============================================================================
 // Support routines
 // ============================================================================

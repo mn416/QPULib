@@ -3,6 +3,7 @@
 #include "Rot3DKernels.h"
 
 using namespace QPULib;
+using namespace Rot3D;
 
 // #define USE_SCALAR_VERSION
 
