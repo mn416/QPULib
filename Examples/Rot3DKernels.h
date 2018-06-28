@@ -3,12 +3,14 @@
 #include <QPULib.h>
 
 namespace Rot3D {
-using PtrFloat = QPULib::Ptr<QPULib::Float>;
+using QPULib::Ptr;
+using QPULib::Float;
+using QPULib::Int;
 
 void rot3D(int n, float cosTheta, float sinTheta, float* x, float* y);
-void rot3D_1(QPULib::Int n, QPULib::Float cosTheta, QPULib::Float sinTheta, PtrFloat x, PtrFloat y);
-void rot3D_2(QPULib::Int n, QPULib::Float cosTheta, QPULib::Float sinTheta, PtrFloat x, PtrFloat y);
-void rot3D_3(QPULib::Int n, QPULib::Float cosTheta, QPULib::Float sinTheta, PtrFloat x, PtrFloat y);
+void rot3D_1(Int n, Float cosTheta, Float sinTheta, Ptr<Float> x, Ptr<Float> y);
+void rot3D_2(Int n, Float cosTheta, Float sinTheta, Ptr<Float> x, Ptr<Float> y);
+void rot3D_3(Int n, Float cosTheta, Float sinTheta, Ptr<Float> x, Ptr<Float> y);
 
 }  // namespace Rot3D
 
