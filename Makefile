@@ -168,7 +168,7 @@ $(OBJ_DIR)/%.o: $(ROOT)/%.cpp | $(OBJ_DIR)
 
 
 #
-# Targets for Examples
+# Targets for Examples and Tools
 #
 $(OBJ_DIR)/bin/Rot3D: $(OBJ_DIR)/Examples/Rot3DKernels.o
 
@@ -176,11 +176,15 @@ $(OBJ_DIR)/bin/%: $(OBJ_DIR)/Examples/%.o $(QPU_LIB)
 	@echo Linking $@...
 	@$(CXX) $(CXX_FLAGS) $^ -o $@
 
-$(OBJ_DIR)/Examples/%.o: Examples/%.cpp | $(OBJ_DIR)
+$(OBJ_DIR)/bin/%: $(OBJ_DIR)/Tools/%.o $(QPU_LIB)
+	@echo Linking $@...
+	@$(CXX) $(CXX_FLAGS) $^ -o $@
+
+# General compilation of cpp files
+# Keep in mind that the % will take into account subdirectories under OBJ_DIR.
+$(OBJ_DIR)/%.o: %.cpp | $(OBJ_DIR)
 	@echo Compiling $<
 	@$(CXX) -c $(CXX_FLAGS) -o $@ $<
-
-
 
 $(EXAMPLES) :% :$(OBJ_DIR)/bin/%
 
@@ -220,4 +224,5 @@ $(OBJ_DIR):
 	@mkdir -p $(OBJ_DIR)/Target
 	@mkdir -p $(OBJ_DIR)/VideoCore
 	@mkdir -p $(OBJ_DIR)/Examples
+	@mkdir -p $(OBJ_DIR)/Tools
 	@mkdir -p $(OBJ_DIR)/bin
