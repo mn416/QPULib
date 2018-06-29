@@ -102,7 +102,7 @@ static int mbox_property(int file_desc, void *buf)
 /**
  * @brief Get the hardware revision code.
  *
- * For mapping the code to a Pi modei, see: https://www.raspberrypi-spy.co.uk/2012/09/checking-your-raspberry-pi-board-version/
+ * For mapping the code to a Pi mode, see: https://www.raspberrypi-spy.co.uk/2012/09/checking-your-raspberry-pi-board-version/
  */
 unsigned get_version(int file_desc)
 {
