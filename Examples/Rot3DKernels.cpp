@@ -7,8 +7,6 @@
 // ============================================================================
 #include "Rot3DKernels.h"
 
-namespace Rot3D {
-
 using namespace QPULib;
 
 
@@ -85,5 +83,3 @@ void rot3D_3(Int n, Float cosTheta, Float sinTheta, Ptr<Float> x, Ptr<Float> y)
 
   receive(xOld); receive(yOld);
 }
-
-}  // namespace Rot3D
