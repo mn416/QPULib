@@ -22,8 +22,8 @@ public:
 
 	~RegisterMap();
 
-	static int num_slices();
-	static int num_qpu_per_slice();
+	static int numSlices();
+	static int numQPUPerSlice();
 
 private:
 	RegisterMap();
@@ -33,7 +33,8 @@ private:
 
 	static std::unique_ptr<RegisterMap> m_instance;
 
-	uint32_t readRegister(int offset) const;
+	uint32_t read(int offset) const;
+	static uint32_t readRegister(int offset);
 
 	static RegisterMap *instance();
 	static void check_page_align(unsigned addr);

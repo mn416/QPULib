@@ -39,22 +39,34 @@ RegisterMap::~RegisterMap() {
 }
 
 
-uint32_t RegisterMap::readRegister(int offset) const {
+/**
+ * @brief Get the 32-bit value at the given offset in the map
+ */
+uint32_t RegisterMap::read(int offset) const {
 	return m_addr[V3D_BASE + offset];
 }
 
 
-int RegisterMap::num_slices() {
-	uint32_t reg = instance()->readRegister(V3D_IDENT1);
+/**
+ * @brief Convenience function for getting a register value.
+ *
+ * This avoids having to use `instance()->` for every read access.
+ */
+uint32_t RegisterMap::readRegister(int offset) {
+	return instance()->read(V3D_IDENT1);
+}
+
+
+int RegisterMap::numSlices() {
+	uint32_t reg = readRegister(V3D_IDENT1);
 	// printf("reg V3D_IDENT1: %08X\n", reg);
 
 	return (reg >> 4) & 0xf;
 }
 
 
-int RegisterMap::num_qpu_per_slice() {
-	uint32_t reg = instance()->readRegister(V3D_IDENT1);
-	return (reg >> 8) & 0xf;
+int RegisterMap::numQPUPerSlice() {
+	return (readRegister(V3D_IDENT1) >> 8) & 0xf;
 }
 
 
