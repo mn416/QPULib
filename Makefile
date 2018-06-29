@@ -79,6 +79,7 @@ LIB = $(patsubst %,$(OBJ_DIR)/%,$(OBJ))
 
 
 # All programs in the Examples directory
+# NOTE: detectPlatform is in the 'Tools' directory, not in 'Examples'
 EXAMPLES =  \
 	detectPlatform \
 	Tri       \
@@ -102,7 +103,6 @@ EXAMPLES_EXTRA = \
 
 EXAMPLES_OBJ = $(patsubst %,$(OBJ_DIR)/Examples/%,$(EXAMPLES_EXTRA))
 #$(info $(EXAMPLES_OBJ))
-
 
 # Dependencies from list of object files
 DEPS := $(LIB:.o=.d)
@@ -172,19 +172,24 @@ $(OBJ_DIR)/%.o: $(ROOT)/%.cpp | $(OBJ_DIR)
 
 
 #
-# Targets for Examples
+# Targets for Examples and Tools
 #
-$(OBJ_DIR)/bin/Rot3D: $(OBJ_DIR)/Examples/Rot3DKernels.o
+
+$(OBJ_DIR)/bin/Rot3D: $(OBJ_DIR)/Examples/Rot3DKernels.o  # Extra relation between files
 
 $(OBJ_DIR)/bin/%: $(OBJ_DIR)/Examples/%.o $(QPU_LIB)
 	@echo Linking $@...
 	@$(CXX) $(CXX_FLAGS) $^ $(LIBS) -o $@
 
-$(OBJ_DIR)/Examples/%.o: Examples/%.cpp | $(OBJ_DIR)
+$(OBJ_DIR)/bin/%: $(OBJ_DIR)/Tools/%.o $(QPU_LIB)
+	@echo Linking $@...
+	@$(CXX) $(CXX_FLAGS) $^ $(LIBS) -o $@
+
+# General compilation of cpp files
+# Keep in mind that the % will take into account subdirectories under OBJ_DIR.
+$(OBJ_DIR)/%.o: %.cpp | $(OBJ_DIR)
 	@echo Compiling $<
 	@$(CXX) -c $(CXX_FLAGS) -o $@ $<
-
-
 
 $(EXAMPLES) :% :$(OBJ_DIR)/bin/%
 
@@ -224,4 +229,5 @@ $(OBJ_DIR):
 	@mkdir -p $(OBJ_DIR)/Target
 	@mkdir -p $(OBJ_DIR)/VideoCore
 	@mkdir -p $(OBJ_DIR)/Examples
+	@mkdir -p $(OBJ_DIR)/Tools
 	@mkdir -p $(OBJ_DIR)/bin

@@ -1,3 +1,5 @@
+#ifdef QPU_MODE
+
 #ifndef _QPULIB_REGISTERMAP_H
 #define _QPULIB_REGISTERMAP_H
 #include <memory>
@@ -38,3 +40,5 @@ private:
 };
 
 #endif  // _QPULIB_REGISTERMAP_H
+
+#endif  // QPU_MODE

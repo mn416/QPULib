@@ -1,3 +1,5 @@
+#ifdef QPU_MODE
+
 #include "RegisterMap.h"
 #include <cassert>
 #include <cstring>
@@ -78,3 +80,5 @@ void RegisterMap::check_page_align(unsigned addr) {
 		exit(-1);
 	}
 }
+
+#endif  // QPU_MODE
