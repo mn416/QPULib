@@ -1,7 +1,9 @@
+#include <unistd.h>  // geteuid()
 #include <string>
 #include <fstream>
 #include <streambuf>
 #include "QPULib.h"
+#include "VideoCore/RegisterMap.h"
 
 
 /**
@@ -52,6 +54,13 @@ int main(int argc, char *argv[]) {
 	int mb = getMailbox();	
 	unsigned revision = get_version(mb);
 	printf("Hardware revision: %04x\n", revision);
+
+	if (geteuid() == 0) {  // Only do this as root (sudo)
+		printf("Number of slices: %d\n", RegisterMap::num_slices());
+		printf("Number of QPU's per slice: %d\n", RegisterMap::num_qpu_per_slice());
+	} else {
+		printf("You can see more if you use sudo\n");
+  }
 #endif  // QPU_MODE
 
 	return 0;

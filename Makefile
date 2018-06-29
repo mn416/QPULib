@@ -15,6 +15,8 @@ ROOT = Lib
 
 # Compiler and default flags
 CXX = g++
+
+# -I is for access to bcm functionality
 CXX_FLAGS = -Wconversion -std=c++0x -I $(ROOT) -MMD -MP -MF"$(@:%.o=%.d)" -g  # Add debug info: -g
 
 # Object directory
@@ -36,8 +38,9 @@ ifneq ($(RET), yes)
 $(error "QPU-mode specified on a non-Pi platform; aborting")
 endif
 
-  CXX_FLAGS += -DQPU_MODE
+  CXX_FLAGS += -DQPU_MODE -I /opt/vc/include
   OBJ_DIR := $(OBJ_DIR)-qpu
+	LIBS := -L /opt/vc/lib -l bcm_host
 else
   CXX_FLAGS += -DEMULATION_MODE
 endif
@@ -67,6 +70,7 @@ OBJ =                         \
   Target/LoadStore.o          \
   Target/Emulator.o           \
   Target/Encode.o             \
+  VideoCore/RegisterMap.o     \
   VideoCore/Mailbox.o         \
   VideoCore/Invoke.o          \
   VideoCore/VideoCore.o
@@ -174,7 +178,7 @@ $(OBJ_DIR)/bin/Rot3D: $(OBJ_DIR)/Examples/Rot3DKernels.o
 
 $(OBJ_DIR)/bin/%: $(OBJ_DIR)/Examples/%.o $(QPU_LIB)
 	@echo Linking $@...
-	@$(CXX) $(CXX_FLAGS) $^ -o $@
+	@$(CXX) $(CXX_FLAGS) $^ $(LIBS) -o $@
 
 $(OBJ_DIR)/Examples/%.o: Examples/%.cpp | $(OBJ_DIR)
 	@echo Compiling $<
