@@ -1,6 +1,8 @@
 #include "Source/Interpreter.h"
 #include "Target/Emulator.h"
 
+namespace QPULib {
+
 // ============================================================================
 // Evaluate a variable
 // ============================================================================
@@ -628,3 +630,5 @@ void interpreter
     delete [] state.core[i].env;
   }
 }
+
+}  // namespace QPULib

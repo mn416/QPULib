@@ -77,6 +77,7 @@ EXAMPLES =  \
 	Hello     \
 	ReqRecv   \
 	Rot3D     \
+	Rot3DLib  \
 	ID        \
 	HeatMap
 
@@ -85,7 +86,7 @@ EXAMPLE_TARGETS = $(patsubst %,$(OBJ_DIR)/bin/%,$(EXAMPLES))
 
 # Example object files
 EXAMPLES_EXTRA = \
-	Rot3DKernels.o
+	Rot3DLib/Rot3DKernels.o
 
 EXAMPLES_OBJ = $(patsubst %,$(OBJ_DIR)/Examples/%,$(EXAMPLES_EXTRA))
 #$(info $(EXAMPLES_OBJ))
@@ -161,9 +162,13 @@ $(OBJ_DIR)/%.o: $(ROOT)/%.cpp | $(OBJ_DIR)
 #
 # Targets for Examples
 #
-$(OBJ_DIR)/bin/Rot3D: $(OBJ_DIR)/Examples/Rot3DKernels.o
+$(OBJ_DIR)/bin/Rot3DLib: $(OBJ_DIR)/Examples/Rot3DLib/Rot3DKernels.o
 
 $(OBJ_DIR)/bin/%: $(OBJ_DIR)/Examples/%.o $(QPU_LIB)
+	@echo Linking $@...
+	@$(CXX) $(CXX_FLAGS) $^ -o $@
+
+$(OBJ_DIR)/bin/%: $(OBJ_DIR)/Examples/Rot3DLib/%.o $(QPU_LIB)
 	@echo Linking $@...
 	@$(CXX) $(CXX_FLAGS) $^ -o $@
 
@@ -210,5 +215,5 @@ $(OBJ_DIR):
 	@mkdir -p $(OBJ_DIR)/Source
 	@mkdir -p $(OBJ_DIR)/Target
 	@mkdir -p $(OBJ_DIR)/VideoCore
-	@mkdir -p $(OBJ_DIR)/Examples
+	@mkdir -p $(OBJ_DIR)/Examples/Rot3DLib   # Creates Examples as well
 	@mkdir -p $(OBJ_DIR)/bin

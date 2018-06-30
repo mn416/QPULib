@@ -1,6 +1,9 @@
 #include "catch.hpp"
 #include <math.h>
-#include "../Examples/Rot3DKernels.h"
+#include "../Examples/Rot3DLib/Rot3DKernels.h"
+
+//using namespace QPULib;
+using namespace Rot3DLib;
 
 // ============================================================================
 // Support routines

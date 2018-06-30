@@ -1,8 +1,10 @@
 #include "Target/Syntax.h"
 #include "Target/SmallLiteral.h"
 
+namespace QPULib {
+
 #ifdef NOT_USED
-const char *pretty(FILE *f, SubWord sw)
+void pretty(SubWord sw)
 {
   switch (sw) {
     case A8:  return "[7:0]";
@@ -299,3 +301,5 @@ void pretty(FILE *f, Instr instr)
       return;
   }
 }
+
+}  // namespace QPULib

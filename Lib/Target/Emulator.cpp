@@ -6,6 +6,8 @@
 #include <math.h>
 #include <string.h>
 
+namespace QPULib {
+
 // ============================================================================
 // Globals
 // ============================================================================
@@ -799,3 +801,6 @@ void emulate
     delete [] state.qpu[i].regFileB;
   }
 }
+
+}  // namespace QPULib
+

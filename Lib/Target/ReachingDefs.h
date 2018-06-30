@@ -1,13 +1,15 @@
 // Reaching definitions analysis
 
-#ifndef _REACHINGDEFS_H_
-#define _REACHINGDEFS_H_
+#ifndef _QPULIB_REACHINGDEFS_H_
+#define _QPULIB_REACHINGDEFS_H_
 
 #include "Common/Seq.h"
 #include "Target/Syntax.h"
 #include "Target/CFG.h"
 
-// A reach set containts the instruction ids
+namespace QPULib {
+
+// A reach set contains the instruction id's
 // that reach an instruction.
 
 typedef SmallSeq<InstrId> ReachSet;
@@ -30,4 +32,6 @@ void computeReachedBy(Seq<Instr>* instrs, CFG* cfg, ReachingDefs* reachedBy);
 typedef Seq<ReachSet> DefsOf;
 void computeDefsOf(Seq<Instr>* instrs, DefsOf* defsOf);
 
-#endif
+}  // namespace QPULib
+
+#endif  // _QPULIB_REACHINGDEFS_H_

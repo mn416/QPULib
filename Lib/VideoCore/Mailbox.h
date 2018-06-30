@@ -26,14 +26,16 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef _MAILBOX_H_
-#define _MAILBOX_H_
+#ifndef _QPULIB_MAILBOX_H_
+#define _QPULIB_MAILBOX_H_
 
 #include <linux/ioctl.h>
 
 #define MAJOR_NUM 100
 #define IOCTL_MBOX_PROPERTY _IOWR(MAJOR_NUM, 0, char *)
 #define DEVICE_FILE_NAME "/dev/vcio"
+
+namespace QPULib {
 
 int mbox_open();
 void mbox_close(int file_desc);
@@ -50,6 +52,8 @@ unsigned execute_code(int file_desc, unsigned code, unsigned r0, unsigned r1, un
 unsigned execute_qpu(int file_desc, unsigned num_qpus, unsigned control, unsigned noflush, unsigned timeout);
 unsigned qpu_enable(int file_desc, unsigned enable);
 
+}  // namespace QPULib
+
 #define BUS_TO_PHYS(addr) (((addr)) & ~0xC0000000)
 
-#endif
+#endif  // _QPULIB_MAILBOX_H_

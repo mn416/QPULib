@@ -1,5 +1,7 @@
 #include "QPULib.h"
 
+using namespace QPULib;
+
 void oet(Ptr<Int> p)
 {
   setReadStride(1);

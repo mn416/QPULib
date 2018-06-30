@@ -4,6 +4,8 @@
 #include "Target/Subst.h"
 #include "Target/Liveness.h"
 
+namespace QPULib {
+
 // ============================================================================
 // Live-range splitter
 // ============================================================================
@@ -96,3 +98,5 @@ void liveRangeSplit(Seq<Instr>* instrs, CFG* cfg)
   // Free memory
   delete [] visited;
 }
+
+}  // namespace QPULib

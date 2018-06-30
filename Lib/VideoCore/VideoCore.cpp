@@ -6,6 +6,8 @@
 #include "VideoCore/VideoCore.h"
 #include "VideoCore/Mailbox.h"
 
+namespace QPULib {
+
 // Globals
 int mailbox = -1;
 int numQPUUsers = 0;
@@ -42,5 +44,6 @@ void disableQPUs()
   }
 }
 
+}  // namespace QPULib
 
-#endif
+#endif  // QPU_MODE

@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <sys/time.h>
 
+using namespace QPULib;
+
 // Heat dissapation constant
 #define K 0.25
 

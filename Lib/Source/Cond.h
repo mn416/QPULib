@@ -1,8 +1,10 @@
-#ifndef _SOURCE_COND_H_
-#define _SOURCE_COND_H_
+#ifndef _QPULIB_SOURCE_COND_H_
+#define _QPULIB_SOURCE_COND_H_
 
 #include "Source/Syntax.h"
 #include "Source/Int.h"
+
+namespace QPULib {
 
 // ============================================================================
 // Types                   
@@ -103,4 +105,6 @@ inline Cond any(BoolExpr a)
 inline Cond all(BoolExpr a)
   { return Cond(mkAll(a.bexpr)); }
 
-#endif
+}  // namespace QPULib
+
+#endif  // _QPULIB_SOURCE_COND_H_

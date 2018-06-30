@@ -1,5 +1,7 @@
 #include "QPULib.h"
 
+using namespace QPULib;
+
 // Define function that runs on the GPU.
 
 void test(Ptr<Int> p)

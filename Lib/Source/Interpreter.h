@@ -1,5 +1,5 @@
-#ifndef _INTERPRETER_H_
-#define _INTERPRETER_H_
+#ifndef _QPULIB_INTERPRETER_H_
+#define _QPULIB_INTERPRETER_H_
 
 #include <stdint.h>
 #include "Common/Seq.h"
@@ -11,6 +11,8 @@
 // emulator in the interpreter.
 
 #include "Target/Emulator.h"
+
+namespace QPULib {
 
 // State of a single core.
 struct CoreState {
@@ -44,4 +46,6 @@ void interpreter
                            // (if NULL, stdout is used)
   );
 
-#endif
+}  // namespace QPULib
+
+#endif  // _QPULIB_INTERPRETER_H_

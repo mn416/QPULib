@@ -1,5 +1,5 @@
-#ifndef _KERNEL_H_
-#define _KERNEL_H_
+#ifndef _QPULIB_KERNEL_H_
+#define _QPULIB_KERNEL_H_
 
 #include "Source/Interpreter.h"
 #include "Target/Emulator.h"
@@ -10,6 +10,8 @@
 #include "Source/Pretty.h"
 #include "Target/Pretty.h"
 
+
+namespace QPULib {
 
 // ============================================================================
 // Modes of operation
@@ -343,7 +345,7 @@ template <typename... ts> struct Kernel {
     if (sourceCode == nullptr)
       fprintf(stderr, "<No source code to print>");
     else
-      ::pretty(f, sourceCode);
+      QPULib::pretty(f, sourceCode);
 
     fprintf(f, "\n");
     fflush(f);
@@ -354,7 +356,7 @@ template <typename... ts> struct Kernel {
     for (int i = 0; i < targetCode.numElems; i++)
     {
       fprintf(f, "%i: ", i);
-      ::pretty(f, targetCode.elems[i]);
+      QPULib::pretty(f, targetCode.elems[i]);
     }
     fprintf(f, "\n");
     fflush(f);
@@ -375,4 +377,6 @@ template <typename... ts> Kernel<ts...> compile(void (*f)(ts... params))
   return k;
 }
 
-#endif
+}  // namespace QPULib
+
+#endif  // _QPULIB_KERNEL_H_

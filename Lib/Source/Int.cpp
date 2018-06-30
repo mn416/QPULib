@@ -2,6 +2,8 @@
 #include "Source/Stmt.h"
 #include "Source/Float.h"
 
+namespace QPULib {
+
 // ============================================================================
 // Type 'IntExpr'
 // ============================================================================
@@ -199,3 +201,5 @@ FloatExpr toFloat(IntExpr a)
   Expr* e = mkApply(a.expr, mkOp(ItoF, FLOAT), mkIntLit(0));
   return mkFloatExpr(e);
 }
+
+}  // namespace QPULib

@@ -3,6 +3,9 @@
 #include "Source/Stmt.h"
 #include "Source/Int.h"
 
+
+namespace QPULib {
+
 // Interface to the embedded language.
 
 //=============================================================================
@@ -223,3 +226,5 @@ void kernelFinish()
     semaInc(15);
   End
 }
+
+}  // namespace QPULib
