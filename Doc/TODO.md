@@ -6,9 +6,7 @@ Feel free to add points here. If you complete a point, don't check it off, but r
 
 ## Makefile
 
-- [ ] Enable debug-build, for debugging
-- [ ] Add unit testing, notably `CATCH`
-- [ ] Add optional doc generation with `doxygen`
+- [ ] Enable debug-build, for debugging. Currently, an indication is given in the Makefile how to do this.
 
 
 ## Documentation
@@ -20,12 +18,11 @@ Feel free to add points here. If you complete a point, don't check it off, but r
 - [ ] Drill-down of the bare essentials for understanding `VideoCore`
 - [ ] Examples to separate page under Docs
 - [ ] Mailbox functions link to reference and explanation two size fields
+- [ ] QPU's always round *downward*
 
 
 ## Unit Tests
 
-- [ ] Convert `AutoTest` to unit test
-- [ ] Test same output for the various versions of `Rot3D`
 - [ ] Add test on expected source and target output for pretty print in `compileKernel`. E.g. for `Rot3D`, `Tri` and `HeatMap`.
 
 
@@ -38,15 +35,15 @@ Feel free to add points here. If you complete a point, don't check it off, but r
   - Increase heap size dynamically when needed
   - Use `new/delete` instead. This would defeat the purpose of the heaps, which is to contain memory usage
   - Add freeing of memory to heap definitions. This will increase the complexity of the heap code hugely
-- [ ] Can the actual number of available QPU's be determined runtime?
+- [ ] Can the actual number of available QPU's be determined runtime? **Answer:** Yes! See issue #33, `qpuinfo` project on github
 
 
 ## Library Code
 
-- [ ] output source and target code without having to recompile with `DEBUG=1`
 - [ ] Add check in emulator for too many `gather()` calls
 - [ ] Add namespace `qpulib` to Lib-files
-- [ ] Add method to determine RPi version via mailbox
+- [ ] Add method to determine RPi hardware revision number via mailbox
+- [ ] Add code for using the `Special Functions Unit (SFU)`, operations: `SQRT`, `RECIPSQRT`, `LOG`, `EXP`
 
 
 ## Other
@@ -54,16 +51,19 @@ Feel free to add points here. If you complete a point, don't check it off, but r
 - [ ] `Rot3D` make various versions selectable on command line
 - [ ] Prevent compile on non-RPi for `QPU=1`
 - [ ] enable `-Wall` on compilation and deal with all the fallout
+- [ ] Scan current docs for typo's, good language
 
-Additionally: should it be compilable at all?
-I.e. Following happens on compilation with `make QPU=1` on 64-bit Intel Linux:
 
-```
-SharedArray.h:121:14: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-      gpu_base = (void*) mem_lock(mb, handle);
-```
+## Long Term
+
+- [ ] Add optional doc generation with `doxygen`. This is only useful if there are a sufficient number of header comments.
 
 -----
+
+## Principles
+
+- QPU-mode should not compile on non-RPi platforms
+
 
 ## Stuff to Consider
 
