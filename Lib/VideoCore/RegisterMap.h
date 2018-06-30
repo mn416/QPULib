@@ -5,6 +5,8 @@
 #include <memory>
 #include <stdint.h>
 
+namespace QPULib {
+
 /**
  * @brief interface for the VideoCore registers.
  *
@@ -39,6 +41,8 @@ private:
 	static RegisterMap *instance();
 	static void check_page_align(unsigned addr);
 };
+
+}  // namespace QPULib
 
 #endif  // _QPULIB_REGISTERMAP_H
 
