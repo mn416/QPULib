@@ -3,6 +3,8 @@
 #include <streambuf>
 #include "QPULib.h"
 
+using namespace QPULib;
+
 
 /**
  * @brief read the entire contents of a file into a string
