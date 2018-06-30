@@ -5,7 +5,7 @@
 using namespace Rot3DLib;
 
 
-using Generator = decltype(rot3D_1);  // All kernel functions have same prototype
+using Generator = decltype(rot3D_1);  // All kernel functions except scalar have same prototype
 
 
 // Number of vertices and angle of rotation
@@ -35,6 +35,9 @@ timeval runScalar() {
   // Display results
   //for (int i = 0; i < N; i++)
   //  printf("%f %f\n", x[i], y[i]);
+
+	delete x;
+	delete y;
 
 	return tvDiff;
 }
@@ -83,8 +86,6 @@ timeval runKernel(int index) {
 	return tvDiff;
 }
 
-
-// #define USE_SCALAR_VERSION
 
 // ============================================================================
 // Main
