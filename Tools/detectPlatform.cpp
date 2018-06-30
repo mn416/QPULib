@@ -5,6 +5,8 @@
 #include "QPULib.h"
 #include "VideoCore/RegisterMap.h"
 
+using namespace QPULib;
+
 
 /**
  * @brief read the entire contents of a file into a string

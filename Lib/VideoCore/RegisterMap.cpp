@@ -26,7 +26,7 @@ RegisterMap::RegisterMap() {
 	check_page_align(addr);
 
 	// Following succeeds if it returns.
-	m_addr = (uint32_t *) mapmem(addr, m_size);
+	m_addr = (uint32_t *) QPULib::mapmem(addr, m_size);
 	assert(m_addr != nullptr);
 	// printf("init address: %08X, size: %u\n", m_addr, m_size);
 }
@@ -34,7 +34,7 @@ RegisterMap::RegisterMap() {
 
 RegisterMap::~RegisterMap() {
 	// printf("Closing down register map\n");
-	unmapmem((void *) m_addr, m_size);
+	QPULib::unmapmem((void *) m_addr, m_size);
 	bcm_host_deinit();
 }
 

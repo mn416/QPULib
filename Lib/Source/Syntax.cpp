@@ -3,6 +3,8 @@
 #include "Common/Stack.h"
 #include "Params.h"
 
+namespace QPULib {
+
 // ============================================================================
 // Globals
 // ============================================================================
@@ -305,3 +307,5 @@ Stmt* mkPrint(PrintTag t, Expr* e)
   s->print.expr = e;
   return s;
 }
+
+}  // namespace QPULib

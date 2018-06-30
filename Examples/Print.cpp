@@ -1,5 +1,7 @@
 #include "QPULib.h"
 
+using namespace QPULib;
+
 void loop(Int n)
 {
   For (Int i = 0, i < n, i++)

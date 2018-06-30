@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <assert.h>
 
+namespace QPULib {
+
 // ===========
 // ALU opcodes
 // ===========
@@ -427,3 +429,5 @@ void encode(Seq<Instr>* instrs, Seq<uint32_t>* code)
     code->append(high);
   }
 }
+
+}  // namespace QPULib

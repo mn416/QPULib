@@ -1,10 +1,12 @@
-#ifndef _SOURCE_STMT_H_
-#define _SOURCE_STMT_H_
+#ifndef _QPULIB_SOURCE_STMT_H_
+#define _QPULIB_SOURCE_STMT_H_
 
 #include "Source/Cond.h"
 #include "Source/Syntax.h"
 #include "Source/Ptr.h"
 #include "Source/StmtExtra.h"
+
+namespace QPULib {
 
 //=============================================================================
 // Statement macros
@@ -43,4 +45,6 @@ void setReadStride(IntExpr n);
 void setWriteStride(IntExpr n);
 void kernelFinish();
 
-#endif
+}  // namespace QPULib
+
+#endif  // _QPULIB_SOURCE_STMT_H_
