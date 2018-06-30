@@ -1,10 +1,12 @@
 // This module defines type 'Float' for a vector of 16 x 32-bit floats.
 
-#ifndef _SOURCE_FLOAT_H_
-#define _SOURCE_FLOAT_H_
+#ifndef _QPULIB_SOURCE_FLOAT_H_
+#define _QPULIB_SOURCE_FLOAT_H_
 
 #include <assert.h>
 #include "Source/Syntax.h"
+
+namespace QPULib {
 
 // ============================================================================
 // Types                   
@@ -57,4 +59,6 @@ FloatExpr operator*(FloatExpr a, FloatExpr b);
 FloatExpr min(FloatExpr a, FloatExpr b);
 FloatExpr max(FloatExpr a, FloatExpr b);
 
-#endif
+}  // namespace QPULib
+
+#endif  // _QPULIB_SOURCE_FLOAT_H_

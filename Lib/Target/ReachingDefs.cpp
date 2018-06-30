@@ -4,6 +4,8 @@
 #include "Target/ReachingDefs.h"
 #include "Target/Liveness.h"
 
+namespace QPULib {
+
 // ============================================================================
 // Compute 'defsOf' mapping
 // ============================================================================
@@ -264,3 +266,6 @@ void computeReachedBy(Seq<Instr>* instrs, CFG* cfg, ReachingDefs* reachedBy)
     }
   }
 }
+
+}  // namespace QPULib
+

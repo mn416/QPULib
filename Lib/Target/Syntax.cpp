@@ -2,6 +2,8 @@
 #include "Source/Syntax.h"
 #include "Target/Syntax.h"
 
+namespace QPULib {
+
 // =======
 // Globals
 // =======
@@ -174,3 +176,5 @@ void resetFreshLabelGen(int val)
 {
   globalLabelId = val;
 }
+
+}  // namespace QPULib

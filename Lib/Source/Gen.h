@@ -1,10 +1,12 @@
 // A random source-program generator
 
-#ifndef _GEN_H_
-#define _GEN_H_
+#ifndef _QPULIB_GEN_H_
+#define _QPULIB_GEN_H_
 
 #include "Common/Seq.h"
 #include "Source/Syntax.h"
+
+namespace QPULib {
 
 // Options for the program generator
 struct GenOptions {
@@ -53,4 +55,6 @@ float genFloatLit();
 // Generate a random source program
 Stmt* progGen(GenOptions* opts, int* numVars);
 
-#endif
+}  // namespace QPULib
+
+#endif  // _QPULIB_GEN_H_

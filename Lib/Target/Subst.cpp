@@ -1,5 +1,7 @@
 #include "Target/Subst.h"
 
+namespace QPULib {
+
 // Rename a destination register in an instruction
 void renameDest(Instr* instr, RegTag vt, RegId v,
                               RegTag wt, RegId w)
@@ -165,3 +167,5 @@ void substRegTag(Instr* instr, RegTag vt, RegTag wt)
 
   }
 }
+
+}  // namespace QPULib

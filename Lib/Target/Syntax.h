@@ -1,7 +1,9 @@
-#ifndef _TARGET_SYNTAX_H_
-#define _TARGET_SYNTAX_H_
+#ifndef _QPULIB_TARGET_SYNTAX_H_
+#define _QPULIB_TARGET_SYNTAX_H_
 
 #include <stdint.h>
+
+namespace QPULib {
 
 // Syntax of the QPU target language.
 
@@ -466,4 +468,6 @@ int getFreshLabelCount();
 void resetFreshLabelGen();
 void resetFreshLabelGen(int val);
 
-#endif
+}  // namespace QPULib
+
+#endif  // _QPULIB_TARGET_SYNTAX_H_
