@@ -28,6 +28,14 @@ endif
 
 # QPU or emulation mode
 ifeq ($(QPU), 1)
+
+# Check platform before building. Can't be indented, otherwise make complains.
+RET := $(shell Tools/detectPlatform.sh 1>/dev/null && echo "yes" || echo "no")
+#$(info  info: '$(RET)')
+ifneq ($(RET), yes)
+$(error "QPU-mode specified on a non-Pi platform; aborting")
+endif
+
   CXX_FLAGS += -DQPU_MODE
   OBJ_DIR := $(OBJ_DIR)-qpu
 else
@@ -68,6 +76,7 @@ LIB = $(patsubst %,$(OBJ_DIR)/%,$(OBJ))
 
 # All programs in the Examples directory
 EXAMPLES =  \
+	detectPlatform \
 	Tri       \
 	GCD       \
 	Print     \
@@ -160,23 +169,28 @@ $(OBJ_DIR)/%.o: $(ROOT)/%.cpp | $(OBJ_DIR)
 
 
 #
-# Targets for Examples
+# Targets for Examples and Tools
 #
 $(OBJ_DIR)/bin/Rot3DLib: $(OBJ_DIR)/Examples/Rot3DLib/Rot3DKernels.o
 
-$(OBJ_DIR)/bin/%: $(OBJ_DIR)/Examples/%.o $(QPU_LIB)
-	@echo Linking $@...
-	@$(CXX) $(CXX_FLAGS) $^ -o $@
 
 $(OBJ_DIR)/bin/%: $(OBJ_DIR)/Examples/Rot3DLib/%.o $(QPU_LIB)
 	@echo Linking $@...
 	@$(CXX) $(CXX_FLAGS) $^ -o $@
 
-$(OBJ_DIR)/Examples/%.o: Examples/%.cpp | $(OBJ_DIR)
+$(OBJ_DIR)/bin/%: $(OBJ_DIR)/Examples/%.o $(QPU_LIB)
+	@echo Linking $@...
+	@$(CXX) $(CXX_FLAGS) $^ -o $@
+
+$(OBJ_DIR)/bin/%: $(OBJ_DIR)/Tools/%.o $(QPU_LIB)
+	@echo Linking $@...
+	@$(CXX) $(CXX_FLAGS) $^ -o $@
+
+# General compilation of cpp files
+# Keep in mind that the % will take into account subdirectories under OBJ_DIR.
+$(OBJ_DIR)/%.o: %.cpp | $(OBJ_DIR)
 	@echo Compiling $<
 	@$(CXX) -c $(CXX_FLAGS) -o $@ $<
-
-
 
 $(EXAMPLES) :% :$(OBJ_DIR)/bin/%
 
@@ -216,4 +230,6 @@ $(OBJ_DIR):
 	@mkdir -p $(OBJ_DIR)/Target
 	@mkdir -p $(OBJ_DIR)/VideoCore
 	@mkdir -p $(OBJ_DIR)/Examples/Rot3DLib   # Creates Examples as well
+	@mkdir -p $(OBJ_DIR)/Examples
+	@mkdir -p $(OBJ_DIR)/Tools
 	@mkdir -p $(OBJ_DIR)/bin
