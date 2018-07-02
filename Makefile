@@ -30,7 +30,7 @@ endif
 ifeq ($(QPU), 1)
 
 # Check platform before building. Can't be indented, otherwise make complains.
-RET := $(shell ./detectPlatform.sh 1>/dev/null && echo "yes" || echo "no")
+RET := $(shell Tools/detectPlatform.sh 1>/dev/null && echo "yes" || echo "no")
 #$(info  info: '$(RET)')
 ifneq ($(RET), yes)
 $(error "QPU-mode specified on a non-Pi platform; aborting")
