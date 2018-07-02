@@ -262,16 +262,6 @@ struct BranchTarget {
 typedef int Label;
 
 // ============================================================================
-// Loads/store buffering
-// ============================================================================
-
-// We reserve two load buffers and two store buffers for each QPU in the VPM
-// (shared local) memory.  The reason for two of each is to allow double
-// buffering.  We refer to a double buffer as A and B buffers.
-
-enum BufferAorB { A, B };
-
-// ============================================================================
 // Instructions
 // ============================================================================
 
@@ -290,32 +280,11 @@ enum InstrTag {
   , LAB           // Label
   , NO_OP         // No-op
 
-  // Load instructions
-  // -----------------
-  //
-  // Four instructions are used to implement a memory load.
+  // DMA
+  // ---
 
-  , LD1           // First, DMA vector in DRAM into VPM (local) memory
-  , LD2           // Second, wait for DMA completion
-  , LD3           // Third, setup a read from VPM memory
-  , LD4           // Fourth, transfer from VPM into given register
-
-  // Rules for loads:
-  //   * An LD1 must be followed (eventually) by a corresponding LD2
-  //   * Ditto for LD3 and LD4
-  //   * There must be at least 3 instructions between an LD3 and an LD4
-  //   * An LD1/LD2 need not be followed by a corresponding LD3/LD4,
-  //     thus can be issued speculatively
-  //   * A new LD1 can be issued after an LD2, allowing double buffering
-
-  // Store instructions
-  // ------------------
-  //
-  // Three instructions are required to perform a memory store.
-
-  , ST1           // First, write the vector to VPM (local) memory.
-  , ST2           // Second, DMA from the VPM out to DRAM.
-  , ST3           // Third, wait for DMA to complete.
+  , DMA_LOAD_WAIT    // Wait for DMA load to complete
+  , DMA_STORE_WAIT   // Wait for DMA store to complete
 
   // Semaphores
   // ----------
@@ -368,34 +337,14 @@ struct Instr {
     // Labels, denoting branch targets
     Label label;
 
-    // Load instructions
-    // -----------------
+    // VPM
+    // ---
 
-    // DMA vector at address specifed by register from DRAM into VPM
-    // (local) memory.  To allow double buffering, i.e. the VPM to be
-    // filled by DMA while also being read by a QPU, a flag is used to
-    // indicate which one of two buffers in the VPM to use for the load
-    struct { Reg addr; BufferAorB buffer; } LD1;
-
-    // LD2 (wait for DMA read completion) has no parameters
-
-    // Setup a read from VPM memory.  A flag indicates which one of
-    // two buffers in the VPM is being used for the load
-    struct { BufferAorB buffer; } LD3;
-    
     // Transfer from VPM into given register
-    struct { Reg dest; } LD4;
+    struct { Reg dest; } VPM_GET;
 
-    // Store instructions
-    // ------------------
-
-    // Write the vector to VPM (local) memory using specified buffer
-    struct { Reg data; BufferAorB buffer; } ST1;
-
-    // DMA from the VPM out to DRAM at the address in given register.
-    struct { Reg addr; BufferAorB buffer; } ST2;
-
-    // ST3 (wait for DMA write completion) has no parameters
+    // Write register to VPM
+    struct { Reg data; } VPM_PUT;
 
     // Semaphores
     // ----------

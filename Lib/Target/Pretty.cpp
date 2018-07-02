@@ -234,41 +234,6 @@ void pretty(FILE *f, Instr instr)
     case NO_OP:
       fprintf(f, "NOP\n");
       return;
-    case LD1:
-      pretty(f, instr.LD1.buffer);
-      fprintf(f, " <- LD1(");
-      pretty(f, instr.LD1.addr);
-      fprintf(f, ")\n");
-      return;
-    case LD2:
-      fprintf(f, "LD2\n");
-      return;
-    case LD3:
-      fprintf(f, "LD3(");
-      pretty(f, instr.LD3.buffer);
-      fprintf(f, ")\n");
-      return;
-    case LD4:
-      pretty(f, instr.LD4.dest);
-      fprintf(f, " <- LD4\n");
-      return;
-    case ST1:
-      fprintf(f, "ST1(");
-      pretty(f, instr.ST1.buffer);
-      fprintf(f, ") <- ");
-      pretty(f, instr.ST1.data);
-      fprintf(f, "\n");
-      return;
-    case ST2:
-      fprintf(f, "ST2(");
-      pretty(f, instr.ST2.buffer);
-      fprintf(f, ", ");
-      pretty(f, instr.ST2.addr);
-      fprintf(f, ")\n");
-      return;
-    case ST3:
-      fprintf(f, "ST3\n");
-      return;
     case PRS:
       fprintf(f, "PRS(\"%s\")", instr.PRS);
       return;
@@ -298,6 +263,9 @@ void pretty(FILE *f, Instr instr)
       return;
     case IRQ:
       fprintf(f, "IRQ\n");
+      return;
+    default:
+      fprintf(f, "<<UNKNOWN:%d>>\n", instr.tag);
       return;
   }
 }

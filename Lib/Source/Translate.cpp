@@ -64,10 +64,18 @@ Reg srcReg(Var v)
       r.tag     = SPECIAL;
       r.regId   = SPECIAL_ELEM_NUM;
       return r;
+    case VPM_READ:
+      r.tag     = SPECIAL;
+      r.regId   = SPECIAL_VPM_READ;
+      return r;
     case STANDARD:
       r.tag   = REG_A;
       r.regId = v.id;
       return r;
+    case VPM_WRITE:
+    case TMU0_ADDR:
+      printf("QPULib: Reading from write-only special register is forbidden\n");
+      assert(false);
   }
 
   // Not reachable
@@ -82,11 +90,16 @@ Reg dstReg(Var v)
     case UNIFORM:
     case QPU_NUM:
     case ELEM_NUM:
+    case VPM_READ:
       printf("QPULib: writing to read-only special register is forbidden\n");
       assert(false);
     case STANDARD:
       r.tag   = REG_A;
       r.regId = v.id;
+      return r;
+    case VPM_WRITE:
+      r.tag = SPECIAL;
+      r.regId = SPECIAL_VPM_WRITE;
       return r;
     case TMU0_ADDR:
       r.tag = SPECIAL;
@@ -261,19 +274,8 @@ void varAssign( Seq<Instr>* seq   // Target instruction sequence to extend
       printf("QPULib: dereferencing not yet supported inside 'where'\n");
       assert(false);
     }
-    Instr instr;
-    instr.tag        = LD1;
-    instr.LD1.addr   = srcReg(e.deref.ptr->var);
-    instr.LD1.buffer = A;
-    seq->append(instr);
-    instr.tag        = LD2;
-    seq->append(instr);
-    instr.tag        = LD3;
-    instr.LD3.buffer = A;
-    seq->append(instr);
-    instr.tag        = LD4;
-    instr.LD4.dest   = dstReg(v);
-    seq->append(instr);
+    printf("QPULib: dereferencing support currently disabled\n");
+    assert(false);
     return;
   }
 
@@ -349,17 +351,8 @@ void assign( Seq<Instr>* seq   // Target instruction sequence to extend
   // Case: *v := rhs where v is a var and rhs is a var
   // -------------------------------------------------
   if (lhs.tag == DEREF) {
-    Instr instr;
-    instr.tag        = ST1;
-    instr.ST1.data   = srcReg(rhs->var);
-    instr.ST1.buffer = A;
-    seq->append(instr);
-    instr.tag        = ST2;
-    instr.ST2.addr   = srcReg(lhs.deref.ptr->var);
-    instr.ST2.buffer = A;
-    seq->append(instr);
-    instr.tag        = ST3;
-    seq->append(instr);
+    printf("QPULib: dereferencing support currently disabled\n");
+    assert(false);
     return;
   }
 
@@ -933,17 +926,8 @@ void storeRequest(Seq<Instr>* seq, Expr* data, Expr* addr)
     addr = putInVar(seq, addr);
   }
 
-  Instr instr;
-  instr.tag        = ST3;
-  seq->append(instr);
-  instr.tag        = ST1;
-  instr.ST1.data   = srcReg(data->var);
-  instr.ST1.buffer = A;
-  seq->append(instr);
-  instr.tag        = ST2;
-  instr.ST2.addr   = srcReg(addr->var);
-  instr.ST2.buffer = A;
-  seq->append(instr);
+  printf("QPULib: store support currently disabled\n");
+  assert(false);
 }
 
 // ============================================================================

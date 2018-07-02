@@ -35,6 +35,35 @@ inline void semaDec(int semaId)
 }
 
 //=============================================================================
+// VPM operations
+//=============================================================================
+
+inline void vpmPutExpr(Expr* e)
+{
+  Var v; v.tag = VPM_WRITE;
+  Stmt* s = mkAssign(mkVar(v), e);
+  stmtStack.replace(mkSeq(stmtStack.top(), s));
+}
+
+inline void vpmPut(IntExpr data)
+  { gatherExpr(data.expr); }
+
+inline void vpmPut(FloatExpr data)
+  { gatherExpr(data.expr); }
+
+template <typename T> inline void vpmPut(PtrExpr<T> data)
+  { gatherExpr(data.expr); }
+
+inline void vpmPut(Int& data)
+  { gatherExpr(data.expr); }
+
+inline void vpmPut(Float& data)
+  { gatherExpr(data.expr); }
+
+template <typename T> inline void vpmPut(Ptr<T>& data)
+  { gatherExpr(data.expr); }
+
+//=============================================================================
 // Receive, request, store operations
 //=============================================================================
 

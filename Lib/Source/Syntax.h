@@ -55,6 +55,8 @@ enum VarTag {
                  // QPU's unique id (replicated 16 times).
   , ELEM_NUM     // (Read-only.) Reading this variable will yield a vector
                  // containing the integers from 0 to 15.
+  , VPM_READ     // (Read-only.) Read a vector from the VPM.
+  , VPM_WRITE    // (Write-only.) Write a vector to the VPM.
   , TMU0_ADDR    // (Write-only.) Initiate load via TMU
 };
 

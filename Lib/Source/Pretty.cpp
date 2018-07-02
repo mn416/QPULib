@@ -79,6 +79,10 @@ void pretty(FILE *f, Expr* e)
         fprintf(f, "QPU_NUM");
       else if (e->var.tag == ELEM_NUM)
         fprintf(f, "ELEM_NUM");
+      else if (e->var.tag == VPM_READ)
+        fprintf(f, "VPM_READ");
+      else if (e->var.tag == VPM_WRITE)
+        fprintf(f, "VPM_WRITE");
       else if (e->var.tag == TMU0_ADDR)
         fprintf(f, "TMU0_ADDR");
       break;
