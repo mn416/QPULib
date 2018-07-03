@@ -10,20 +10,62 @@
 #
 ###########################################################
 
+TOOLS =  \
+	detectPlatform
+
+# All programs in the Examples directory
+EXAMPLES =  \
+	Tri       \
+	GCD       \
+	Print     \
+	MultiTri  \
+	AutoTest  \
+	OET       \
+	Hello     \
+	ReqRecv   \
+	Rot3D     \
+	Rot3DLib  \
+	ID        \
+	HeatMap
+
+
+help:
+	@echo 'Usage:'
+	@echo
+	@echo '    make [QPU=1] [DEBUG=1] [target]*'
+	@echo
+	@echo 'Where target:'
+	@echo
+	@echo '    help          - Show this text'
+	@echo '    all           - Build all test programs'
+	@echo '    clean         - Delete all interim and target files'
+	@echo '    test          - Run the unit tests'
+	@echo
+	@echo '    One of the compiled programs: $(EXAMPLES) $(TOOLS)'
+	@echo
+	@echo 'Flags:'
+	@echo
+	@echo '    QPU=1         - Output code for hardware. If not specified, the code is compiled for the emulator'
+	@echo '    DEBUG=1       - If specified, the source code and target code is shown on stdout when running a test'
+	@echo
+
+
 # Root directory of QPULib repository
 ROOT = Lib
 
 # Compiler and default flags
 CXX = g++
-CXX_FLAGS = -Wconversion -std=c++0x -I $(ROOT) -MMD -MP -MF"$(@:%.o=%.d)" -g  # Add debug info: -g
+CXX_FLAGS = -Wconversion -std=c++0x -I $(ROOT) -MMD -MP -MF"$(@:%.o=%.d)"
 
 # Object directory
 OBJ_DIR = obj
 
 # Debug mode
 ifeq ($(DEBUG), 1)
-  CXX_FLAGS += -DDEBUG
+  CXX_FLAGS += -DDEBUG -g -O0 -Wall
   OBJ_DIR := $(OBJ_DIR)-debug
+else
+  CXX_FLAGS += -DNDEBUG -O3
 endif
 
 # QPU or emulation mode
@@ -33,7 +75,9 @@ ifeq ($(QPU), 1)
 RET := $(shell Tools/detectPlatform.sh 1>/dev/null && echo "yes" || echo "no")
 #$(info  info: '$(RET)')
 ifneq ($(RET), yes)
-$(error "QPU-mode specified on a non-Pi platform; aborting")
+$(error QPU-mode specified on a non-Pi platform; aborting)
+else
+$(info Building on a Pi platform)
 endif
 
   CXX_FLAGS += -DQPU_MODE
@@ -74,23 +118,8 @@ OBJ =                         \
 LIB = $(patsubst %,$(OBJ_DIR)/%,$(OBJ))
 
 
-# All programs in the Examples directory
-EXAMPLES =  \
-	detectPlatform \
-	Tri       \
-	GCD       \
-	Print     \
-	MultiTri  \
-	AutoTest  \
-	OET       \
-	Hello     \
-	ReqRecv   \
-	Rot3D     \
-	Rot3DLib  \
-	ID        \
-	HeatMap
-
 EXAMPLE_TARGETS = $(patsubst %,$(OBJ_DIR)/bin/%,$(EXAMPLES))
+TOOL_TARGETS = $(patsubst %,$(OBJ_DIR)/bin/%,$(TOOLS))
 
 
 # Example object files
@@ -115,7 +144,7 @@ EXAMPLES_DEPS = $(EXAMPLES_OBJ:.o=.d)
 
 # Top-level targets
 
-.PHONY: help clean all lib test $(EXAMPLES)
+.PHONY: help clean all lib test $(EXAMPLES) $(TOOLS)
 
 # Following prevents deletion of object files after linking
 # Otherwise, deletion happens for targets of the form '%.o'
@@ -126,27 +155,7 @@ EXAMPLES_DEPS = $(EXAMPLES_OBJ:.o=.d)
 	$(OBJ_DIR)/Examples/%.o
 
 
-help:
-	@echo 'Usage:'
-	@echo
-	@echo '    make [QPU=1] [DEBUG=1] [target]*'
-	@echo
-	@echo 'Where target:'
-	@echo
-	@echo '    help          - Show this text'
-	@echo '    all           - Build all test programs'
-	@echo '    clean         - Delete all interim and target files'
-	@echo '    test          - Run the unit tests'
-	@echo
-	@echo '    one of the test programs - $(EXAMPLES)'
-	@echo
-	@echo 'Flags:'
-	@echo
-	@echo '    QPU=1         - Output code for hardware. If not specified, the code is compiled for the emulator'
-	@echo '    DEBUG=1       - If specified, the source code and target code is shown on stdout when running a test'
-	@echo
-
-all: $(EXAMPLE_TARGETS) $(OBJ_DIR)
+all: $(EXAMPLE_TARGETS) $(TOOL_TARGETS) $(OBJ_DIR)
 
 clean:
 	rm -rf obj obj-debug obj-qpu obj-debug-qpu
@@ -192,7 +201,7 @@ $(OBJ_DIR)/%.o: %.cpp | $(OBJ_DIR)
 	@echo Compiling $<
 	@$(CXX) -c $(CXX_FLAGS) -o $@ $<
 
-$(EXAMPLES) :% :$(OBJ_DIR)/bin/%
+$(EXAMPLES) $(TOOLS) :% :$(OBJ_DIR)/bin/%
 
 
 #
@@ -220,6 +229,15 @@ $(OBJ_DIR)/bin/runTests: $(UNIT_TESTS) $(EXAMPLES_OBJ) | $(QPU_LIB)
 test : all $(OBJ_DIR)/bin/runTests
 	@echo Running unit tests
 	@$(RUN_TESTS)
+
+
+#
+# Internal target: Run all the examples as is.
+# The goal is to detect any runtime errors due to changes in the library code.
+#
+EXAMPLES_RUN = $(patsubst %,&& %,$(EXAMPLE_TARGETS))
+run_all: $(EXAMPLES)
+	@true $(EXAMPLES_RUN)
 
 #
 # Other targets

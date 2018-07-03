@@ -93,7 +93,7 @@ static int mbox_property(int file_desc, void *buf)
 
 #ifdef DEBUG
    unsigned *p = (unsigned*) buf; int i; unsigned size = *(unsigned *)buf;
-    for (i=0; i<size/4; i++)
+   for (i=0; i< (int) size/4; i++)
        printf("%04x: 0x%08x\n", i * (unsigned) sizeof(*p), p[i]);
 #endif  // DEBUG
 

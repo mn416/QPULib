@@ -68,6 +68,10 @@ Reg srcReg(Var v)
       r.tag   = REG_A;
       r.regId = v.id;
       return r;
+    case TMU0_ADDR:
+      printf("QPULib: Not expecting TMU0_ADDR to be used\n");
+      exit(-1);
+      return r;
   }
 
   // Not reachable
@@ -83,7 +87,8 @@ Reg dstReg(Var v)
     case QPU_NUM:
     case ELEM_NUM:
       printf("QPULib: writing to read-only special register is forbidden\n");
-      assert(false);
+      exit(-1);
+      return r;
     case STANDARD:
       r.tag   = REG_A;
       r.regId = v.id;
@@ -1011,7 +1016,6 @@ void stmt(Seq<Instr>* seq, Stmt* s)
     BranchCond cond  = condExp(seq, s->ifElse.cond);
     
     // Branch to 'else' statement
-    Instr branchElse;
     instr.tag       = BRL;
     instr.BRL.cond  = negBranchCond(cond);
     instr.BRL.label = elseLabel;
@@ -1053,7 +1057,6 @@ void stmt(Seq<Instr>* seq, Stmt* s)
     BranchCond cond  = condExp(seq, s->loop.cond);
  
     // Branch over loop body
-    Instr branchEnd;
     instr.tag       = BRL;
     instr.BRL.cond  = negBranchCond(cond);
     instr.BRL.label = endLabel;

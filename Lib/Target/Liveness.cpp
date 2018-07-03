@@ -1,6 +1,7 @@
 // Liveness analysis
 
 #include "Target/Liveness.h"
+#include "stdio.h"
 
 namespace QPULib {
 
@@ -88,6 +89,10 @@ void useDefReg(Instr instr, UseDefReg* useDef)
     case RECV:
       // Add dest reg to 'def' set
       useDef->def.insert(instr.RECV.dest);
+      return;
+
+    default:
+      // All is well
       return;
   }
 }
