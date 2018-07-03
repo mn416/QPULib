@@ -35,7 +35,9 @@ ifeq ($(QPU), 1)
 RET := $(shell Tools/detectPlatform.sh 1>/dev/null && echo "yes" || echo "no")
 #$(info  info: '$(RET)')
 ifneq ($(RET), yes)
-$(error "QPU-mode specified on a non-Pi platform; aborting")
+$(error QPU-mode specified on a non-Pi platform; aborting)
+else
+$(info Building on a Pi platform)
 endif
 
   CXX_FLAGS += -DQPU_MODE -I /opt/vc/include
@@ -219,11 +221,15 @@ UNIT_TESTS =          \
 
 # For some reason, doing an interim step to .o results in linkage errors (undefined references).
 # So this target compiles the source files directly to the executable.
+#
+# Flag `-Wno-psabi` is to surpress a superfluous warning when compiling with GCC 6.3.0
+#
 $(OBJ_DIR)/bin/runTests: $(UNIT_TESTS) $(EXAMPLES_OBJ) | $(QPU_LIB)
-	@$(CXX) $(CXX_FLAGS) $^ -L$(OBJ_DIR) -lQPULib -o $@
+	@echo Compiling unit tests
+	@$(CXX) $(CXX_FLAGS) -Wno-psabi $^ -L$(OBJ_DIR) -lQPULib -o $@
 
-test : all $(OBJ_DIR)/bin/runTests
-	@echo Running unit tests
+test : $(OBJ_DIR)/bin/runTests | AutoTest
+	@echo Running unit tests with '$(RUN_TESTS)'
 	@$(RUN_TESTS)
 
 #

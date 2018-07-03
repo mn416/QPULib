@@ -22,17 +22,21 @@
 #endif
 
 #ifdef QPU_MODE
+//	#pragma message "QPU mode enabled"
 	#define POSTFIX_QPU "-qpu"
 #else
 	#define POSTFIX_QPU ""
 #endif
 
+const char *AUTOTEST_PATH = "obj" POSTFIX_DEBUG POSTFIX_QPU "/bin/AutoTest";
+
+
 //
 // This is a good place to put simple, global tests
 //
-const char *AUTOTEST_PATH = "obj" POSTFIX_DEBUG POSTFIX_DEBUG "/bin/AutoTest";
 
 
 TEST_CASE("Check random specifications for interpreter and emulator2", "[specs]") {
+	printf("Running AutoTest from '%s'\n", AUTOTEST_PATH);
 	REQUIRE(system(AUTOTEST_PATH) == 0);
 }
