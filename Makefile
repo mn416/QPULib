@@ -6,8 +6,6 @@
 #   obj-qpu          - using hardware
 #   obj-debug-qpu    - output debug info, using hardware
 #
-# To compile for debugging, add flag '-g' to CXX_FLAGS.
-#
 ###########################################################
 
 TOOLS =  \
@@ -46,7 +44,7 @@ help:
 	@echo 'Flags:'
 	@echo
 	@echo '    QPU=1         - Output code for hardware. If not specified, the code is compiled for the emulator'
-	@echo '    DEBUG=1       - If specified, the source code and target code is shown on stdout when running a test'
+	@echo '    DEBUG=1       - Compile for debugging and more compile-time  warnings'
 	@echo
 
 
