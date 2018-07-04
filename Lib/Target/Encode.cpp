@@ -116,8 +116,39 @@ uint32_t encodeBranchCond(BranchCond cond)
 // Register encoder
 // ================
 
+
+/**
+ * @brief Determine the regfile and index combination to use for writes, for the passed 
+ *        register definition 'reg'.
+ *
+ * This function deals exclusively with write values of the regfile registers.
+ *
+ * See also NOTES in header file for `encodeSrcReg()`.
+ *
+ * @param reg   register definition for which to determine output value
+ * @param file  out-parameter; the regfile to use (either REG_A or REG_B)
+ *
+ * @return index into regfile (A, B or both) of the passed register
+ *
+ * ----------------------------------------------------------------------------------------------
+ * ## NOTES
+ *
+ * * The regfile location for `ACC4` is called `TMP_NOSWAP` in the doc. This is because
+ *   special register `r4` (== ACC4) is read-only.
+ *   TODO: check code if ACC4 is actually used. Better to name it TMP_NOSWAP
+ *
+ * * ACC5 has parentheses with extra function descriptions.
+ *   This implies that the handling of ACC5 differs from the others (at least, for ACC[0123])
+ *   TODO: Check code for this; is there special handling of ACC5? 
+ */
 uint32_t encodeDestReg(Reg reg, RegTag* file)
 {
+  // Selection of regfile for the cases where using A or B doesn't matter
+  RegTag AorB = REG_A;  // Select A as default
+  if (reg.tag == REG_A || reg.tag == REG_B) {
+    AorB = reg.tag;     // If the regfile is preselected in `reg`, use that.
+  }
+
   switch (reg.tag) {
     case REG_A:
       assert(reg.regId >= 0 && reg.regId < 32);
@@ -126,29 +157,85 @@ uint32_t encodeDestReg(Reg reg, RegTag* file)
       assert(reg.regId >= 0 && reg.regId < 32);
       *file = REG_B; return reg.regId;
     case ACC:
-      assert(reg.regId >= 0 && reg.regId <= 5);
-      *file = reg.regId == 5 ? REG_B : REG_A; 
+      // See NOTES in header comment
+      assert(reg.regId >= 0 && reg.regId <= 5); // !! ACC4 is TMP_NOSWAP, *not* r4
+      *file = reg.regId == 5 ? REG_B : AorB; 
       return 32 + reg.regId;
     case SPECIAL:
       switch (reg.regId) {
-        case SPECIAL_RD_SETUP:    *file = REG_A; return 49;
-        case SPECIAL_WR_SETUP:    *file = REG_B; return 49;
-        case SPECIAL_DMA_LD_ADDR: *file = REG_A; return 50;
-        case SPECIAL_DMA_ST_ADDR: *file = REG_B; return 50;
-        case SPECIAL_VPM_WRITE:   *file = REG_A; return 48;
-        case SPECIAL_HOST_INT:    *file = REG_A; return 38;
-        case SPECIAL_TMU0_S:      *file = REG_A; return 56;
-        default:                  break;
+        case SPECIAL_RD_SETUP:      *file = REG_A; return 49;
+        case SPECIAL_WR_SETUP:      *file = REG_B; return 49;
+        case SPECIAL_DMA_LD_ADDR:   *file = REG_A; return 50;
+        case SPECIAL_DMA_ST_ADDR:   *file = REG_B; return 50;
+        case SPECIAL_VPM_WRITE:     *file = AorB;  return 48;
+        case SPECIAL_HOST_INT:      *file = AorB;  return 38;
+        case SPECIAL_TMU0_S:        *file = AorB;  return 56;
+        case SPECIAL_SFU_RECIP:     *file = AorB;  return 52;
+        case SPECIAL_SFU_RECIPSQRT: *file = AorB;  return 53;
+        case SPECIAL_SFU_EXP:       *file = AorB;  return 54;
+        case SPECIAL_SFU_LOG:       *file = AorB;  return 55;
+        default:                    break;
       }
-    case NONE: *file = REG_A; return 39;
+    case NONE:
+      // NONE maps to 'NOP' in regfile.
+      *file = AorB; return 39;
   }
   fprintf(stderr, "QPULib: missing case in encodeDestReg\n");
   exit(EXIT_FAILURE);
 }
 
+
+/**
+ * @brief Determine regfile index and the read field encoding for alu-instructions, for the passed 
+ *        register 'reg'.
+ *
+ * The read field encoding, output parameter `mux` is a bitfield in instructions `alu` and 
+ * 'alu small imm'. It specifies the register(s) to use as input.
+ *
+ * This function deals exclusively with 'read' values.
+ *
+ * @param reg   register definition for which to determine output value
+ * @param file  regfile to use. This is used mainly to validate the `regid` field in param `reg`. In specific
+ *              cases where both regfile A and B are valid (e.g. NONE), it is used to select the regfile.
+ * @param mux   out-parameter; value in ALU instruction encoding for fields `add_a`, `add_b`, `mul_a` and `mul_b`.
+ *
+ * @return index into regfile (A, B or both) of the passed register.
+ *
+ * ----------------------------------------------------------------------------------------------
+ * ## NOTES
+ *
+ * * There are four combinations of access to regfiles:
+ *   - read A
+ *   - read B
+ *   - write A
+ *   - write B
+ *
+ * This is significant, because SPECIAL registers may only be accessible through a specific combination
+ * of A/B and read/write.
+ *
+ * * References in VideoCore IV Reference document:
+ *
+ *   - Fields `add_a`, `add_b`, `mul_a` and `mul_b`: "Figure 4: ALU Instruction Encoding", page 26
+ *   - mux value: "Table 3: ALU Input Mux Encoding", page 28
+ *   - Index regfile: "Table 14: 'QPU Register Addess Map'", page 37.
+ *
+ * ----------------------------------------------------------------------------------------------
+ * ## TODO
+ *
+ * * NONE/NOP - There are four distinct versions for `NOP`, A/B and no read/no write.
+ *              Verify if those distinctionis are important aat least for A/B.
+ *              They might be the same thing.
+ */
 uint32_t encodeSrcReg(Reg reg, RegTag file, uint32_t* mux)
 {
   assert (file == REG_A || file == REG_B);
+
+  const uint32_t NO_REGFILE_INDEX = 0;  // Return value to use when there is no regfile mapping for the register
+
+  // Selection of regfile for the cases that both A and B are possible.
+  // Note that param `file` has precedence here.
+  uint32_t AorB = (file == REG_A)? 6 : 7;
+
   switch (reg.tag) {
     case REG_A:
       assert(reg.regId >= 0 && reg.regId < 32 && file == REG_A);
@@ -157,20 +244,20 @@ uint32_t encodeSrcReg(Reg reg, RegTag file, uint32_t* mux)
       assert(reg.regId >= 0 && reg.regId < 32 && file == REG_B);
       *mux = 7; return reg.regId;
     case ACC:
-      assert(reg.regId >= 0 && reg.regId <= 4);
-      *mux = reg.regId; return 0;
+      // ACC does not map onto a regfile for 'read'
+      assert(reg.regId >= 0 && reg.regId <= 4);  // TODO index 5 missing, is this correct??
+      *mux = reg.regId; return NO_REGFILE_INDEX;
     case NONE:
-      *mux = file == REG_A ? 6 : 7; return 39;
+      // NONE maps to `NOP` in the regfile
+      *mux = AorB; return 39;
     case SPECIAL:
       switch (reg.regId) {
-        case SPECIAL_UNIFORM:  *mux = file == REG_A ? 6 : 7; return 32;
-        case SPECIAL_ELEM_NUM: assert(file == REG_A); *mux = 6; return 38;
-        case SPECIAL_QPU_NUM:  assert(file == REG_B); *mux = 7; return 38;
-        case SPECIAL_VPM_READ: *mux = file == REG_A ? 6 : 7; return 48;
-        case SPECIAL_DMA_LD_WAIT:
-          assert(file == REG_A); *mux = 6; return 50;
-        case SPECIAL_DMA_ST_WAIT:
-          assert(file == REG_B); *mux = 7; return 50;
+        case SPECIAL_UNIFORM:     *mux = AorB;                     return 32;
+        case SPECIAL_ELEM_NUM:    assert(file == REG_A); *mux = 6; return 38;
+        case SPECIAL_QPU_NUM:     assert(file == REG_B); *mux = 7; return 38;
+        case SPECIAL_VPM_READ:    *mux = AorB;                     return 48;
+        case SPECIAL_DMA_LD_WAIT: assert(file == REG_A); *mux = 6; return 50;
+        case SPECIAL_DMA_ST_WAIT: assert(file == REG_B); *mux = 7; return 50;
       }
   }
   fprintf(stderr, "QPULib: missing case in encodeSrcReg\n");
