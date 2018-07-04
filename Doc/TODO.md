@@ -24,34 +24,37 @@ Feel free to add points here. If you complete a point, don't check it off, but r
 ## Unit Tests
 
 - [ ] Add test on expected source and target output for pretty print in `compileKernel`. E.g. for `Rot3D`, `Tri` and `HeatMap`.
+- [ ] Add tests to compare QPU and Emulation mode output (when build can be done with both)
 
 
 ## Investigate
 
 - [ ] Is the gather limit 8 or 4? This depends on threading being enabled, check code for this.
-- [ ] Find conclusive method to determine non-RPi platform. This to block compilation for QPU, see 'Prevent compile' below.
 - [ ] Improve heap implementation and usage. the issue is that heap memory can not be reclaimed. Suggestions:
   - Allocate `astHeap` for each kernel. Perhaps also do this for other heaps
   - Increase heap size dynamically when needed
   - Use `new/delete` instead. This would defeat the purpose of the heaps, which is to contain memory usage
   - Add freeing of memory to heap definitions. This will increase the complexity of the heap code hugely
-- [ ] Can the actual number of available QPU's be determined runtime? **Answer:** Yes! See issue #33, `qpuinfo` project on github
 
 
 ## Library Code
 
 - [ ] Add check in emulator for too many `gather()` calls
-- [ ] Add namespace `qpulib` to Lib-files
+- [ ] Determine num QPUs from hardware
 - [ ] Add method to determine RPi hardware revision number via mailbox
 - [ ] Add code for using the `Special Functions Unit (SFU)`, operations: `SQRT`, `RECIPSQRT`, `LOG`, `EXP`
+- [ ] Add performance counters to interface of `RegisterMap`
+- [ ] Add Logging class
+- [ ] Add method for build/platform info, for display on startup of an application
 
 
 ## Other
 
 - [ ] `Rot3D` make various versions selectable on command line
-- [ ] Prevent compile on non-RPi for `QPU=1`
 - [ ] enable `-Wall` on compilation and deal with all the fallout
-- [ ] Scan current docs for typo's, good language
+- [ ] Scan current docs for typos, good language
+- [ ] enable build for QPU and Emulation mode together
+- [ ] `Rot3DLib` handler for command line parameters
 
 
 ## Long Term
