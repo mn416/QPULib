@@ -40,6 +40,9 @@ bool isUnary(Op op);
 // Is operator commutative?
 bool isCommutative(Op op);
 
+// Direction for VPM/DMA loads and stores
+enum { HORIZ, VERT } Dir;
+
 // ============================================================================
 // Variables
 // ============================================================================
@@ -71,10 +74,8 @@ struct Var {
 
 // Reserved general-purpose vars
 enum ReservedVarId {
-  RSV_QPU_ID       = 0,
-  RSV_NUM_QPUS     = 1,
-  RSV_READ_STRIDE  = 2,
-  RSV_WRITE_STRIDE = 3
+  RSV_QPU_ID   = 0,
+  RSV_NUM_QPUS = 1
 };
 
 // ============================================================================
@@ -209,7 +210,8 @@ enum StmtTag {
   IF, WHILE, PRINT, FOR,
   SET_READ_STRIDE, SET_WRITE_STRIDE,
   LOAD_RECEIVE, STORE_REQUEST, FLUSH,
-  SEND_IRQ_TO_HOST, SEMA_INC, SEMA_DEC };
+  SEND_IRQ_TO_HOST, SEMA_INC, SEMA_DEC,
+  SETUP_VPM_READ, SETUP_VPM_WRITE };
 
 struct Stmt {
   // What kind of statement is it?
@@ -248,6 +250,12 @@ struct Stmt {
 
     // Semaphore id for increment / decrement
     int semaId;
+
+    // VPM read setup
+    struct { int numVecs; Expr* addr; bool hor; int stride; } setupVPMRead;
+
+    // VPM write
+    struct { Expr* addr; bool hor; int stride; } setupVPMWrite;
   };
 };
 

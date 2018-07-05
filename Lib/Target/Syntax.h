@@ -75,8 +75,10 @@ enum Special {
   , SPECIAL_WR_SETUP
   , SPECIAL_DMA_ST_ADDR
   , SPECIAL_DMA_ST_WAIT
+  , SPECIAL_DMA_ST_SETUP
   , SPECIAL_DMA_LD_ADDR
   , SPECIAL_DMA_LD_WAIT
+  , SPECIAL_DMA_LD_SETUP
   , SPECIAL_VPM_WRITE
   , SPECIAL_HOST_INT
   , SPECIAL_TMU0_S
@@ -336,15 +338,6 @@ struct Instr {
 
     // Labels, denoting branch targets
     Label label;
-
-    // VPM
-    // ---
-
-    // Transfer from VPM into given register
-    struct { Reg dest; } VPM_GET;
-
-    // Write register to VPM
-    struct { Reg data; } VPM_PUT;
 
     // Semaphores
     // ----------

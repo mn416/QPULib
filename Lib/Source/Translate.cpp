@@ -897,6 +897,40 @@ void setStrideStmt(Seq<Instr>* seq, StmtTag tag, Expr* e)
 }
 
 // ============================================================================
+// VPM setup statements
+// ============================================================================
+
+void setupVPMReadStmt(Seq<Instr>* seq, int n, Expr* e, bool hor, int stride)
+{
+  if (e->tag == INT_LIT)
+    genSetupVPMLoad(seq, n, e->intLit, hor, stride);
+  else if (e->tag == VAR)
+    genSetupVPMLoad(seq, n, srcReg(e->var), hor, stride);
+  else {
+    AssignCond always;
+    always.tag = ALWAYS;
+    Var v = freshVar();
+    varAssign(seq, always, v, e);
+    genSetupVPMLoad(seq, n, srcReg(e->var), hor, stride);
+  }
+}
+
+void setupVPMWriteStmt(Seq<Instr>* seq, Expr* e, bool hor, int stride)
+{
+  if (e->tag == INT_LIT)
+    genSetupVPMStore(seq, e->intLit, hor, stride);
+  else if (e->tag == VAR)
+    genSetupVPMStore(seq, srcReg(e->var), hor, stride);
+  else {
+    AssignCond always;
+    always.tag = ALWAYS;
+    Var v = freshVar();
+    varAssign(seq, always, v, e);
+    genSetupVPMStore(seq, srcReg(e->var), hor, stride);
+  }
+}
+
+// ============================================================================
 // Load receive statements
 // ============================================================================
 
@@ -1134,6 +1168,29 @@ void stmt(Seq<Instr>* seq, Stmt* s)
   // ---------------
   if (s->tag == SEND_IRQ_TO_HOST) {
     sendIRQToHost(seq);
+    return;
+  }
+
+  // ----------------------------------------
+  // Case: setupVPMRead(n, addr, hor, stride)
+  // ----------------------------------------
+  if (s->tag == SETUP_VPM_READ) {
+    setupVPMReadStmt(seq,
+      s->setupVPMRead.numVecs,
+      s->setupVPMRead.addr,
+      s->setupVPMRead.hor,
+      s->setupVPMRead.stride);
+    return;
+  }
+
+  // --------------------------------------
+  // Case: setupVPMWrite(addr, hor, stride)
+  // --------------------------------------
+  if (s->tag == SETUP_VPM_WRITE) {
+    setupVPMWriteStmt(seq,
+      s->setupVPMRead.addr,
+      s->setupVPMRead.hor,
+      s->setupVPMRead.stride);
     return;
   }
 

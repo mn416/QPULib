@@ -186,10 +186,10 @@ void Print(IntExpr x)
 }
 
 //=============================================================================
-// Set stride
+// DMA stride
 //=============================================================================
 
-void setReadStride(IntExpr stride)
+void dmaSetReadPitch(IntExpr stride)
 {
   Stmt* s = mkStmt();
   s->tag = SET_READ_STRIDE;
@@ -197,12 +197,47 @@ void setReadStride(IntExpr stride)
   stmtStack.replace(mkSeq(stmtStack.top(), s));
 }
 
-void setWriteStride(IntExpr stride)
+void dmaSetWriteStride(IntExpr stride)
 {
   Stmt* s = mkStmt();
   s->tag = SET_WRITE_STRIDE;
   s->stride = stride.expr;
   stmtStack.replace(mkSeq(stmtStack.top(), s));
+}
+
+//=============================================================================
+// VPM Setup
+//=============================================================================
+
+static void vpmSetupReadCore(int n, IntExpr addr, bool hor, int stride)
+{
+  Stmt* s = mkStmt();
+  s->tag = SETUP_VPM_READ;
+  s->setupVPMRead.numVecs = n;
+  s->setupVPMRead.stride = stride;
+  s->setupVPMRead.hor = hor;
+  s->setupVPMRead.addr = addr.expr;
+  stmtStack.replace(mkSeq(stmtStack.top(), s));
+}
+
+static void vpmSetupWriteCore(IntExpr addr, bool hor, int stride)
+{
+  Stmt* s = mkStmt();
+  s->tag = SETUP_VPM_WRITE;
+  s->setupVPMWrite.stride = stride;
+  s->setupVPMWrite.hor = hor;
+  s->setupVPMWrite.addr = addr.expr;
+  stmtStack.replace(mkSeq(stmtStack.top(), s));
+}
+
+void vpmSetupRead(Dir d, int n, IntExpr addr, int stride = 1)
+{
+  vpmSetupReadCore(n, addr, d == HORIZ, stride);
+}
+
+void vpmSetupWrite(Dir d, IntExpr addr, int stride = 1)
+{
+  vpmSetupWriteCore(addr, d == HORIZ, stride);
 }
 
 // ============================================================================

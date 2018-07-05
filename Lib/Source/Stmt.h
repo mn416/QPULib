@@ -41,8 +41,10 @@ void For_(BoolExpr b);
 void ForBody_();
 void Print(const char *);
 void Print(IntExpr x);
-void setReadStride(IntExpr n);
-void setWriteStride(IntExpr n);
+void dmaSetReadPitch(IntExpr n);
+void dmaSetWriteStride(IntExpr n);
+void vpmSetupRead(Dir dir, int n, IntExpr addr, int stride = 1);
+void vpmSetupWrite(Dir dir, IntExpr addr, int stride = 1);
 void kernelFinish();
 
 }  // namespace QPULib

@@ -323,6 +323,27 @@ void pretty(FILE *f, int indent, Stmt* s)
       fprintf(f, "hostIRQ()\n");
       break;
 
+    // Setup VPM Read
+    case SETUP_VPM_READ:
+      indentBy(f, indent);
+      fprintf(f, "vpmSetupRead(");
+      fprintf(f, "numVecs=%i, ", s->setupVPMRead.numVecs);
+      fprintf(f, "dir=%s,", s->setupVPMRead.hor ? "HOR" : "VIR");
+      fprintf(f, "stride=%s,", s->setupVPMRead.stride);
+      pretty(f, s->setupVPMRead.addr);
+      fprintf(f, ");\n");
+      break;
+
+    // Setup VPM Write
+    case SETUP_VPM_WRITE:
+      indentBy(f, indent);
+      fprintf(f, "vpmSetupWrite(");
+      fprintf(f, "dir=%s,", s->setupVPMWrite.hor ? "HOR" : "VIR");
+      fprintf(f, "stride=%s,", s->setupVPMWrite.stride);
+      pretty(f, s->setupVPMWrite.addr);
+      fprintf(f, ");\n");
+      break;
+
     // Not reachable
     default:
       assert(false);
