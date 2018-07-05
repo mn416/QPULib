@@ -326,10 +326,6 @@ void execAssign(CoreState* s, Vec cond, Expr* lhs, Expr* rhs)
       }
       return;
     }
-
-    default:
-      printf("QPULib: Not expecting tag %d in execAssign\n", lhs->tag);
-      return;
   }
 
   // Unreachable
@@ -402,13 +398,11 @@ void execWhere(CoreState* s, Vec cond, Stmt* stmt)
       execWhere(s, vecAnd(vecNeg(b), cond), stmt->where.elseStmt);
       return;
     }
-
-    default:
-      printf("QPULib: only assignments and nested 'where' \
-              statements can occur in a 'where' statement\n");
-      assert(false);
-      return;
   }
+
+  printf("QPULib: only assignments and nested 'where' \
+          statements can occur in a 'where' statement\n");
+  assert(false);
 }
 
 // ============================================================================
@@ -435,10 +429,6 @@ void execPrint(CoreState* s, PrintStmt p)
     // String
     case PRINT_STR:
       emitStr(s->output, p.str);
-      return;
-
-    default:
-      printf("QPULib: Not expecting tag %d in execPrint\n", p.tag);
       return;
   }
 }
@@ -577,11 +567,6 @@ void exec(InterpreterState* state, CoreState* s)
 
     // Flush outstanding stores
     case FLUSH: return;
-
-    default:
-      printf("QPULib: Not expecting tag %d in exec\n", stmt->tag);
-      assert(false);
-      return;
   }
 
   // Unreachable

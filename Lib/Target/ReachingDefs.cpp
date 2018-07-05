@@ -111,10 +111,6 @@ void computeGenKill(InstrId id, Instr instr, DefsOf* defsOf, GenKill* genKill)
         defReg = instr.LD4.dest.regId;
       }
       break;
-
-    default:
-      // isDef already false
-      break;
   }
 
   if (isDef) {

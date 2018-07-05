@@ -8,7 +8,7 @@
 #define VPM_SIZE 2048
 #define NUM_LANES 16
 #define MAX_QPUS 12
-#define EMULATOR_HEAP_SIZE (12*65536)  // This size is required to run HeatMap
+#define EMULATOR_HEAP_SIZE 3*65536
 
 namespace QPULib {
 

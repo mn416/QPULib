@@ -1,5 +1,4 @@
 #include "Target/Subst.h"
-#include "stdio.h"
 
 namespace QPULib {
 
@@ -38,10 +37,6 @@ void renameDest(Instr* instr, RegTag vt, RegId v,
         instr->RECV.dest.tag = wt;
         instr->RECV.dest.regId = w;
       }
-      return;
-
-    default:
-      printf("QPULib: Not expecting tag %d in renameDest\n", instr->tag);
       return;
   }
 }
@@ -104,10 +99,6 @@ void renameUses(Instr* instr, RegTag vt, RegId v,
         instr->PRF.tag = wt;
         instr->PRF.regId = w;
       }
-      return;
-
-    default:
-      // All is well
       return;
   }
 }
@@ -174,9 +165,6 @@ void substRegTag(Instr* instr, RegTag vt, RegTag wt)
         instr->RECV.dest.tag = wt;
       return;
 
-    default:
-      // All is well
-      return;
   }
 }
 

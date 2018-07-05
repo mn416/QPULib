@@ -34,10 +34,6 @@ const char* specialStr(RegId rid)
     case SPECIAL_VPM_WRITE:    return "VPM_WRITE";
     case SPECIAL_HOST_INT:     return "HOST_INT";
     case SPECIAL_TMU0_S:       return "TMU0_S";
-
-    default:
-      printf("QPULib: Not expecting value %d\n", s);
-      return "";
   }
 
   // Unreachable
@@ -54,10 +50,6 @@ void pretty(FILE *f, Reg r)
     case ACC: fprintf(f, "ACC%i", r.regId); return;
     case SPECIAL: fprintf(f, "S[%s]", specialStr(r.regId)); return;
     case NONE: fprintf(f, "_"); return;
-
-    default:
-      printf("QPULib: Not expecting tag %d in pretty\n", r.tag);
-      return;
   }
 }
 
