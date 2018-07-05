@@ -53,6 +53,7 @@ ROOT = Lib
 
 # Compiler and default flags
 CXX = g++
+# -I is for access to bcm functionality
 CXX_FLAGS = -Wconversion -std=c++0x -I $(ROOT) -MMD -MP -MF"$(@:%.o=%.d)"
 
 # Object directory
@@ -60,7 +61,7 @@ OBJ_DIR = obj
 
 # Debug mode
 ifeq ($(DEBUG), 1)
-  CXX_FLAGS += -DDEBUG -g -O0 -Wall
+  CXX_FLAGS += -DDEBUG -g -O0    # TODO: add `-Wall` when library code stable
   OBJ_DIR := $(OBJ_DIR)-debug
 else
   CXX_FLAGS += -DNDEBUG -O3
@@ -78,8 +79,9 @@ else
 $(info Building on a Pi platform)
 endif
 
-  CXX_FLAGS += -DQPU_MODE
+  CXX_FLAGS += -DQPU_MODE -I /opt/vc/include
   OBJ_DIR := $(OBJ_DIR)-qpu
+	LIBS := -L /opt/vc/lib -l bcm_host
 else
   CXX_FLAGS += -DEMULATION_MODE
 endif
@@ -109,12 +111,12 @@ OBJ =                         \
   Target/LoadStore.o          \
   Target/Emulator.o           \
   Target/Encode.o             \
+  VideoCore/RegisterMap.o     \
   VideoCore/Mailbox.o         \
   VideoCore/Invoke.o          \
   VideoCore/VideoCore.o
 
 LIB = $(patsubst %,$(OBJ_DIR)/%,$(OBJ))
-
 
 EXAMPLE_TARGETS = $(patsubst %,$(OBJ_DIR)/bin/%,$(EXAMPLES))
 TOOL_TARGETS = $(patsubst %,$(OBJ_DIR)/bin/%,$(TOOLS))
@@ -126,7 +128,6 @@ EXAMPLES_EXTRA = \
 
 EXAMPLES_OBJ = $(patsubst %,$(OBJ_DIR)/Examples/%,$(EXAMPLES_EXTRA))
 #$(info $(EXAMPLES_OBJ))
-
 
 # Dependencies from list of object files
 DEPS := $(LIB:.o=.d)
@@ -178,6 +179,7 @@ $(OBJ_DIR)/%.o: $(ROOT)/%.cpp | $(OBJ_DIR)
 #
 # Targets for Examples and Tools
 #
+
 $(OBJ_DIR)/bin/Rot3DLib: $(OBJ_DIR)/Examples/Rot3DLib/Rot3DKernels.o
 
 
@@ -187,11 +189,11 @@ $(OBJ_DIR)/bin/%: $(OBJ_DIR)/Examples/Rot3DLib/%.o $(QPU_LIB)
 
 $(OBJ_DIR)/bin/%: $(OBJ_DIR)/Examples/%.o $(QPU_LIB)
 	@echo Linking $@...
-	@$(CXX) $(CXX_FLAGS) $^ -o $@
+	@$(CXX) $(CXX_FLAGS) $^ $(LIBS) -o $@
 
 $(OBJ_DIR)/bin/%: $(OBJ_DIR)/Tools/%.o $(QPU_LIB)
 	@echo Linking $@...
-	@$(CXX) $(CXX_FLAGS) $^ -o $@
+	@$(CXX) $(CXX_FLAGS) $^ $(LIBS) -o $@
 
 # General compilation of cpp files
 # Keep in mind that the % will take into account subdirectories under OBJ_DIR.
@@ -221,11 +223,15 @@ UNIT_TESTS =          \
 
 # For some reason, doing an interim step to .o results in linkage errors (undefined references).
 # So this target compiles the source files directly to the executable.
+#
+# Flag `-Wno-psabi` is to surpress a superfluous warning when compiling with GCC 6.3.0
+#
 $(OBJ_DIR)/bin/runTests: $(UNIT_TESTS) $(EXAMPLES_OBJ) | $(QPU_LIB)
-	@$(CXX) $(CXX_FLAGS) $^ -L$(OBJ_DIR) -lQPULib -o $@
+	@echo Compiling unit tests
+	@$(CXX) $(CXX_FLAGS) -Wno-psabi $^ -L$(OBJ_DIR) -lQPULib $(LIBS) -o $@
 
-test : all $(OBJ_DIR)/bin/runTests
-	@echo Running unit tests
+test : $(OBJ_DIR)/bin/runTests | AutoTest
+	@echo Running unit tests with '$(RUN_TESTS)'
 	@$(RUN_TESTS)
 
 
