@@ -41,8 +41,6 @@ const char *AUTOTEST_PATH = "obj" POSTFIX_DEBUG POSTFIX_QPU "/bin/AutoTest";
 //
 // This is a good place to put simple, global tests
 //
-const char *AUTOTEST_PATH = "obj" POSTFIX_DEBUG POSTFIX_QPU "/bin/AutoTest";
-
 
 TEST_CASE("Check random specifications for interpreter and emulator2", "[specs]") {
 	printf("Running AutoTest from '%s'\n", AUTOTEST_PATH);
