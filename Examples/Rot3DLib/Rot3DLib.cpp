@@ -1,6 +1,7 @@
 #include <sys/time.h>
 #include <math.h>
 #include "Rot3DKernels.h"
+#include "Parameters.h"
 
 using namespace Rot3DLib;
 
@@ -11,6 +12,7 @@ using Generator = decltype(rot3D_1);  // All kernel functions except scalar have
 // Number of vertices and angle of rotation
 const int N = 19200; // 192000
 const float THETA = (float) 3.14159;
+
 
 
 timeval runScalar() {
@@ -91,8 +93,14 @@ timeval runKernel(int index) {
 // Main
 // ============================================================================
 
-int main(int argc, char *argv[])
+int main(int argc, const char *argv[])
 {
+	Parameters params;  // NOTE: putting this in global space causes a segfault
+
+	// TODO: Showing help is not an error, but it should exit here anyway
+	//       Find a solution for this
+	if (!params.handle_commandline(argc, argv, false)) return -1;
+
   timeval tvDiff;
 
 	int index = 3;
