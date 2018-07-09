@@ -481,8 +481,9 @@ bool CmdParameter::init_params(const char *in_usage, DefParameter params[]) {
   bool labels_unique = true;
   for (int index1 = 0; index1 < length - 1; ++index1) {
     for (int index2 = index1 + 1; index2 < length; ++index2) {
-      if (params[length].name != params[length].name) {
-        msg << "Error: Multiple parameter definitions with name '" << item.param_type << "'; "
+      if (params[index1].name == params[index2].name) {
+        std::ostringstream msg;
+        msg << "Error: Multiple parameter definitions with name '" << params[index1].name << "'; "
             << "names should be unique";
         std::cout << msg.str() << std::endl;
         labels_unique = false;
@@ -518,7 +519,7 @@ bool CmdParameter::init_params(const char *in_usage, DefParameter params[]) {
         std::ostringstream msg;
         msg << "Error: Unhandled parameter type " << item.param_type;
         std::cout << msg.str() << std::endl;
-        throw msg.str();  // NOTE: no return
+        return false;
       }
     }
 

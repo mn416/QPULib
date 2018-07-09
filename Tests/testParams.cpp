@@ -1,48 +1,7 @@
 #include "catch.hpp"
-#include <iostream>
-#include <sstream>
-#include "TestParameters.h"
-
-
-/**
- * @brief RAII for stdout interception
- *
- * Source: https://stackoverflow.com/a/6211644/1223531
- */
-class cout_redirect {
-public:
-	cout_redirect() {
-		// Redirect cout.
-		oldCoutStreamBuf = std::cout.rdbuf();
-		std::cout.rdbuf(strCout.rdbuf());
-	}
-
-	~cout_redirect() {
-		close();
-	}
-
-	std::string str() { return strCout.str(); }
-
-	void close() {
-		if (oldCoutStreamBuf == nullptr) return;  // Already closed
-
-		// Restore old cout.
-		std::cout.rdbuf(oldCoutStreamBuf);
-		oldCoutStreamBuf = nullptr;
-		//std::cout << "redirect: " << str() << std::endl;
-	}
-
-
-	/**
-	 * @brief Empty the current buffer
-	 */
-	void clear() { strCout.str(""); strCout.clear(); }
-
-private:
-	std::streambuf* oldCoutStreamBuf{nullptr};
-	std::ostringstream strCout;
-};
-
+#include "../Examples/Rot3DLib/Support/CmdParameter.h"
+#include "Support/cout_redirect.h"
+#include "TestData/TestParameters.h"
 
 
 //////////////////////////////////////////////////
@@ -52,9 +11,13 @@ private:
 const char *PROG = "TestProg";  // Name of dummy executable
 
 
+/**
+ * TODO: check border cases for param's with limits
+ */
 TEST_CASE("Test Command Line parameters", "[params]") {
 	cout_redirect redirect;
 	TestParameters params;  // NOTE: putting this in global space causes a segfault
+
 
 	SECTION("Check help") {
 		redirect.clear();
@@ -72,8 +35,6 @@ TEST_CASE("Test Command Line parameters", "[params]") {
 		REQUIRE(params.handle_commandline(argc2, argv2, false));
 	}
 
-
-	// TODO: check border cases for param's with limits
 
 	SECTION("Check defaults of parameters") {
 		int argc1 = 2;
@@ -97,6 +58,7 @@ TEST_CASE("Test Command Line parameters", "[params]") {
 		REQUIRE(params.m_bool == true);
 		REQUIRE(params.bool_detected == true);
 	}
+
 
 	SECTION("Check good parameters") {
 		redirect.clear();
@@ -127,6 +89,7 @@ TEST_CASE("Test Command Line parameters", "[params]") {
 		REQUIRE(params.bool_detected == true);
 	}
 
+
 	SECTION("Check bad parameters") {
 		int argc1 = 3;
 		const char *argv1[] = { PROG, "-positive=-1", "input_file.txt"	};
@@ -135,5 +98,18 @@ TEST_CASE("Test Command Line parameters", "[params]") {
 		int argc2 = 3;
 		const char *argv2[] = { PROG, "-float=3.14string", "input_file.txt"	};
 		REQUIRE(!params.handle_commandline(argc2, argv2, false));
+	}
+
+
+	SECTION("Same names for parameter definitions should not be allowed") {
+		const char *usage = "blurb";
+
+		DefParameter double_params[] = {
+			{	"Name not unique", "", UNNAMED,	"" },
+			{	"Name not unique", "", UNNAMED,	"" },
+			nullptr
+		};
+
+		REQUIRE(!CmdParameter::init_params(usage, double_params));
 	}
 }

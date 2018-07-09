@@ -232,11 +232,12 @@ endif
 
 
 # Source files for unit tests to include in compilation
-UNIT_TESTS =           \
-	Tests/testMain.cpp   \
-	Tests/TestParameters.cpp \
-	Tests/testParams.cpp \
-	Tests/testRot3D.cpp
+UNIT_TESTS = \
+	Tests/testMain.cpp                \
+	Tests/testParams.cpp              \
+	Tests/testRot3D.cpp               \
+	Tests/Support/cout_redirect.cpp   \
+	Tests/TestData/TestParameters.cpp
 
 #
 # For some reason, doing an interim step to .o results in linkage errors (undefined references).
@@ -244,7 +245,7 @@ UNIT_TESTS =           \
 #
 # Flag `-Wno-psabi` is to surpress a superfluous warning when compiling with GCC 6.3.0
 #
-$(OBJ_DIR)/bin/runTests: $(UNIT_TESTS) $(ROT3DLIB_LIB) | $(QPU_LIB) $(ROT3DLIB_LIB)
+$(OBJ_DIR)/bin/runTests: $(UNIT_TESTS) $(ROT3DLIB_LIB) | $(QPU_LIB)
 	@echo Compiling unit tests
 	@$(CXX) $(CXX_FLAGS) -Wno-psabi $^ -L$(OBJ_DIR) -lRot3DLib -lQPULib $(LIBS) -o $@
 
