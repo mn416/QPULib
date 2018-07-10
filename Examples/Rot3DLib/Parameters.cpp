@@ -39,7 +39,7 @@ DefParameter defined_parameters[] = {
   {
     "Kernel index",
     "-kernel-index=",
-    UNSIGNED_INTEGER,
+    INTEGER,
     "The index of the kernel to run."
     "Index zero is the scalar kernel, which runs on the CPU.\n"
     "Valid values: 0,1,2,3,4 ",
@@ -55,15 +55,14 @@ DefParameter defined_parameters[] = {
 // Class Parameters
 //////////////////////////////////////////////////
 
-Parameters::Parameters() {
-  CmdParameter::init_params(usage, defined_parameters);
-}
-
-
 bool Parameters::handle_commandline(
   int argc,
   const char* argv[],
   bool show_help_on_error) {
+  if (!CmdParameter::init_params(usage, defined_parameters)) {
+    return false;
+  }
+
   if (CmdParameter::handle_commandline(argc, argv, show_help_on_error)) {
     pass_params();
     return true;

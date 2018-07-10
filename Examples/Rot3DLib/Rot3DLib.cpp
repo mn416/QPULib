@@ -4,8 +4,6 @@
 #include "Parameters.h"
 
 using namespace Rot3DLib;
-
-
 using Generator = decltype(rot3D_1);  // All kernel functions except scalar have same prototype
 
 
@@ -13,7 +11,12 @@ using Generator = decltype(rot3D_1);  // All kernel functions except scalar have
 const int N = 19200; // 192000
 const float THETA = (float) 3.14159;
 
+Parameters params;
 
+
+// ============================================================================
+// Local Functions
+// ============================================================================
 
 timeval runScalar() {
 	printf("Running scalar\n");
@@ -95,7 +98,6 @@ timeval runKernel(int index) {
 
 int main(int argc, const char *argv[])
 {
-	Parameters params;  // NOTE: putting this in global space causes a segfault
 
 	// TODO: Showing help is not an error, but it should exit here anyway
 	//       Find a solution for this
@@ -103,12 +105,7 @@ int main(int argc, const char *argv[])
 
   timeval tvDiff;
 
-	int index = 3;
-
-	if (argc > 1) {
- 		index = atoi(argv[1]);
-  }
-
+	int index = params.kernel_index;
 	if (index == 0) {
 		tvDiff = runScalar();
   } else {

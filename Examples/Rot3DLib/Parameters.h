@@ -7,8 +7,6 @@
 
 class Parameters {
 public:
-  Parameters();
-
   bool handle_commandline(
     int argc,
     const char* argv[],
