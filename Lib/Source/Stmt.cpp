@@ -186,26 +186,6 @@ void Print(IntExpr x)
 }
 
 //=============================================================================
-// DMA stride
-//=============================================================================
-
-void dmaSetReadPitch(IntExpr stride)
-{
-  Stmt* s = mkStmt();
-  s->tag = SET_READ_STRIDE;
-  s->stride = stride.expr;
-  stmtStack.replace(mkSeq(stmtStack.top(), s));
-}
-
-void dmaSetWriteStride(IntExpr stride)
-{
-  Stmt* s = mkStmt();
-  s->tag = SET_WRITE_STRIDE;
-  s->stride = stride.expr;
-  stmtStack.replace(mkSeq(stmtStack.top(), s));
-}
-
-//=============================================================================
 // VPM Setup
 //=============================================================================
 
@@ -230,14 +210,72 @@ static void vpmSetupWriteCore(IntExpr addr, bool hor, int stride)
   stmtStack.replace(mkSeq(stmtStack.top(), s));
 }
 
-void vpmSetupRead(Dir d, int n, IntExpr addr, int stride = 1)
+void vpmSetupRead(Dir d, int n, IntExpr addr, int stride)
 {
-  vpmSetupReadCore(n, addr, d == HORIZ, stride);
+  vpmSetupReadCore(n, addr, d == HORIZ ? 1 : 0, stride);
 }
 
-void vpmSetupWrite(Dir d, IntExpr addr, int stride = 1)
+void vpmSetupWrite(Dir d, IntExpr addr, int stride)
 {
-  vpmSetupWriteCore(addr, d == HORIZ, stride);
+  vpmSetupWriteCore(addr, d == HORIZ ? 1 : 0, stride);
+}
+
+// ============================================================================
+// DMA
+// ============================================================================
+
+void dmaSetReadPitch(IntExpr stride)
+{
+  Stmt* s = mkStmt();
+  s->tag = SET_READ_STRIDE;
+  s->stride = stride.expr;
+  stmtStack.replace(mkSeq(stmtStack.top(), s));
+}
+
+void dmaSetWriteStride(IntExpr stride)
+{
+  Stmt* s = mkStmt();
+  s->tag = SET_WRITE_STRIDE;
+  s->stride = stride.expr;
+  stmtStack.replace(mkSeq(stmtStack.top(), s));
+}
+
+void dmaSetupRead(Dir dir, int numRows, IntExpr vpmAddr,
+                    int rowLen, int vpitch)
+{
+  Stmt* s = mkStmt();
+  s->tag = SETUP_DMA_READ;
+  s->setupDMARead.hor = dir == HORIZ ? 1 : 0;
+  s->setupDMARead.numRows = numRows;
+  s->setupDMARead.rowLen = rowLen;
+  s->setupDMARead.vpitch = vpitch;
+  s->setupDMARead.vpmAddr = vpmAddr.expr;
+  stmtStack.replace(mkSeq(stmtStack.top(), s));
+}
+
+void dmaSetupWrite(Dir dir, int numRows, IntExpr vpmAddr, int rowLen)
+{
+  Stmt* s = mkStmt();
+  s->tag = SETUP_DMA_WRITE;
+  s->setupDMAWrite.hor = dir == HORIZ ? 1 : 0;
+  s->setupDMAWrite.numRows = numRows;
+  s->setupDMAWrite.rowLen = rowLen;
+  s->setupDMAWrite.vpmAddr = vpmAddr.expr;
+  stmtStack.replace(mkSeq(stmtStack.top(), s));
+}
+
+void dmaReadWait()
+{
+  Stmt* s = mkStmt();
+  s->tag = DMA_READ_WAIT;
+  stmtStack.replace(mkSeq(stmtStack.top(), s));
+}
+
+void dmaWriteWait()
+{
+  Stmt* s = mkStmt();
+  s->tag = DMA_WRITE_WAIT;
+  stmtStack.replace(mkSeq(stmtStack.top(), s));
 }
 
 // ============================================================================
@@ -246,8 +284,9 @@ void vpmSetupWrite(Dir d, IntExpr addr, int stride = 1)
 
 void kernelFinish()
 {
-  // Ensure outstanding stores have completed
-  flush();
+  // Ensure outstanding DMAs have completed
+  dmaReadWait();
+  dmaWriteWait();
 
   // QPU 0 waits until all other QPUs have finished
   // before sending a host IRQ.

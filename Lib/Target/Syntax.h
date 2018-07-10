@@ -69,16 +69,14 @@ enum Special {
   , SPECIAL_ELEM_NUM
   , SPECIAL_QPU_NUM
   , SPECIAL_VPM_READ
+  , SPECIAL_DMA_ST_WAIT
+  , SPECIAL_DMA_LD_WAIT
 
     // Write-only
   , SPECIAL_RD_SETUP
   , SPECIAL_WR_SETUP
   , SPECIAL_DMA_ST_ADDR
-  , SPECIAL_DMA_ST_WAIT
-  , SPECIAL_DMA_ST_SETUP
   , SPECIAL_DMA_LD_ADDR
-  , SPECIAL_DMA_LD_WAIT
-  , SPECIAL_DMA_LD_SETUP
   , SPECIAL_VPM_WRITE
   , SPECIAL_HOST_INT
   , SPECIAL_TMU0_S
@@ -311,6 +309,11 @@ enum InstrTag {
   , PRS           // Print string
   , PRI           // Print integer
   , PRF           // Print float
+
+  // VPM stall
+  // ---------
+
+  , VPM_STALL     // Marker for VPM read setup
 };
 
 // QPU instructions
@@ -384,6 +387,7 @@ inline Instr nop()
 Instr genLI(Reg dst, int i);
 Instr genMove(Reg dst, Reg src);
 Instr genOR(Reg dst, Reg srcA, Reg srcB);
+Instr genADD(Reg dst, Reg srcA, Reg srcB);
 Instr genLShift(Reg dst, Reg srcA, int n);
 Instr genIncr(Reg dst, Reg srcA, int n);
 

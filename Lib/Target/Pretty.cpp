@@ -3,8 +3,7 @@
 
 namespace QPULib {
 
-#ifdef NOT_USED
-void pretty(SubWord sw)
+const char* pretty(SubWord sw)
 {
   switch (sw) {
     case A8:  return "[7:0]";
@@ -16,8 +15,6 @@ void pretty(SubWord sw)
     default:  assert(false); return "";
   }
 }
-#endif  // NOT_USED
-
 
 const char* specialStr(RegId rid)
 {
@@ -30,6 +27,8 @@ const char* specialStr(RegId rid)
     case SPECIAL_WR_SETUP:     return "WR_SETUP";
     case SPECIAL_DMA_ST_ADDR:  return "DMA_ST_ADDR";
     case SPECIAL_DMA_LD_ADDR:  return "DMA_LD_ADDR";
+    case SPECIAL_DMA_ST_WAIT:  return "DMA_ST_WAIT";
+    case SPECIAL_DMA_LD_WAIT:  return "DMA_LD_WAIT";
     case SPECIAL_VPM_READ:     return "VPM_READ";
     case SPECIAL_VPM_WRITE:    return "VPM_WRITE";
     case SPECIAL_HOST_INT:     return "HOST_INT";
@@ -176,12 +175,6 @@ void pretty(FILE *f, BranchTarget target)
   fprintf(f, "%i", target.immOffset);
 }
 
-void pretty(FILE *f, BufferAorB buffer)
-{
-  if (buffer == A) fprintf(f, "A");
-  if (buffer == B) fprintf(f, "B");
-}
-
 void pretty(FILE *f, Instr instr)
 {
   assert(f != nullptr);
@@ -263,6 +256,9 @@ void pretty(FILE *f, Instr instr)
       return;
     case IRQ:
       fprintf(f, "IRQ\n");
+      return;
+    case VPM_STALL:
+      fprintf(f, "VPM_STALL\n");
       return;
     default:
       fprintf(f, "<<UNKNOWN:%d>>\n", instr.tag);

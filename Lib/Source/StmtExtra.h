@@ -46,22 +46,29 @@ inline void vpmPutExpr(Expr* e)
 }
 
 inline void vpmPut(IntExpr data)
-  { gatherExpr(data.expr); }
+  { vpmPutExpr(data.expr); }
 
 inline void vpmPut(FloatExpr data)
-  { gatherExpr(data.expr); }
+  { vpmPutExpr(data.expr); }
 
 template <typename T> inline void vpmPut(PtrExpr<T> data)
-  { gatherExpr(data.expr); }
+  { vpmPutExpr(data.expr); }
 
-inline void vpmPut(Int& data)
-  { gatherExpr(data.expr); }
+template <typename T> inline void dmaStartRead(PtrExpr<T> memAddr)
+{
+  Stmt* s = mkStmt();
+  s->tag = DMA_START_READ; 
+  s->startDMARead = memAddr.expr;
+  stmtStack.replace(mkSeq(stmtStack.top(), s));
+}
 
-inline void vpmPut(Float& data)
-  { gatherExpr(data.expr); }
-
-template <typename T> inline void vpmPut(Ptr<T>& data)
-  { gatherExpr(data.expr); }
+template <typename T> void dmaStartWrite(PtrExpr<T> memAddr)
+{
+  Stmt* s = mkStmt();
+  s->tag = DMA_START_WRITE; 
+  s->startDMAWrite = memAddr.expr;
+  stmtStack.replace(mkSeq(stmtStack.top(), s));
+}
 
 //=============================================================================
 // Receive, request, store operations
@@ -117,13 +124,6 @@ inline void store(IntExpr data, Ptr<Int> &addr)
 
 inline void store(FloatExpr data, Ptr<Float> &addr)
   { storeExpr(data.expr, addr.expr); }
-
-inline void flush()
-{
-  Stmt* s = mkStmt();
-  s->tag = FLUSH;
-  stmtStack.replace(mkSeq(stmtStack.top(), s));
-}
 
 }  // namespace QPULib
 

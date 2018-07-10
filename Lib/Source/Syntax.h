@@ -41,7 +41,7 @@ bool isUnary(Op op);
 bool isCommutative(Op op);
 
 // Direction for VPM/DMA loads and stores
-enum { HORIZ, VERT } Dir;
+enum Dir { HORIZ, VERT };
 
 // ============================================================================
 // Variables
@@ -209,9 +209,12 @@ enum StmtTag {
   SKIP, ASSIGN, SEQ, WHERE,
   IF, WHILE, PRINT, FOR,
   SET_READ_STRIDE, SET_WRITE_STRIDE,
-  LOAD_RECEIVE, STORE_REQUEST, FLUSH,
+  LOAD_RECEIVE, STORE_REQUEST,
   SEND_IRQ_TO_HOST, SEMA_INC, SEMA_DEC,
-  SETUP_VPM_READ, SETUP_VPM_WRITE };
+  SETUP_VPM_READ, SETUP_VPM_WRITE,
+  SETUP_DMA_READ, SETUP_DMA_WRITE,
+  DMA_READ_WAIT, DMA_WRITE_WAIT,
+  DMA_START_READ, DMA_START_WRITE };
 
 struct Stmt {
   // What kind of statement is it?
@@ -252,10 +255,23 @@ struct Stmt {
     int semaId;
 
     // VPM read setup
-    struct { int numVecs; Expr* addr; bool hor; int stride; } setupVPMRead;
+    struct { int numVecs; Expr* addr; int hor; int stride; } setupVPMRead;
 
-    // VPM write
-    struct { Expr* addr; bool hor; int stride; } setupVPMWrite;
+    // VPM write setup
+    struct { Expr* addr; int hor; int stride; } setupVPMWrite;
+
+    // DMA read setup
+    struct { Expr* vpmAddr; int numRows; int rowLen;
+             int hor; int vpitch; } setupDMARead;
+
+    // DMA write setup
+    struct { Expr* vpmAddr; int numRows; int rowLen; int hor; } setupDMAWrite;
+
+    // DMA start read
+    Expr* startDMARead;
+
+    // DMA start write
+    Expr* startDMAWrite;
   };
 };
 

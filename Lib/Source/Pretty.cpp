@@ -268,7 +268,7 @@ void pretty(FILE *f, int indent, Stmt* s)
     // Set read stride
     case SET_READ_STRIDE:
       indentBy(f, indent);
-      fprintf(f, "setReadStride(");
+      fprintf(f, "dmaSetReadPitch(");
       pretty(f, s->stride);
       fprintf(f, ")\n");
       break;
@@ -276,7 +276,7 @@ void pretty(FILE *f, int indent, Stmt* s)
     // Set write stride
     case SET_WRITE_STRIDE:
       indentBy(f, indent);
-      fprintf(f, "setWriteStride(");
+      fprintf(f, "dmaSetWriteStride(");
       pretty(f, s->stride);
       fprintf(f, ")\n");
       break;
@@ -297,12 +297,6 @@ void pretty(FILE *f, int indent, Stmt* s)
       fprintf(f, ", ");
       pretty(f, s->storeReq.addr);
       fprintf(f, ")\n");
-      break;
-
-    // Flush outstanding stores
-    case FLUSH:
-      indentBy(f, indent);
-      fprintf(f, "flush()\n");
       break;
 
     // Increment semaphore
@@ -329,7 +323,7 @@ void pretty(FILE *f, int indent, Stmt* s)
       fprintf(f, "vpmSetupRead(");
       fprintf(f, "numVecs=%i, ", s->setupVPMRead.numVecs);
       fprintf(f, "dir=%s,", s->setupVPMRead.hor ? "HOR" : "VIR");
-      fprintf(f, "stride=%s,", s->setupVPMRead.stride);
+      fprintf(f, "stride=%i,", s->setupVPMRead.stride);
       pretty(f, s->setupVPMRead.addr);
       fprintf(f, ");\n");
       break;
@@ -339,8 +333,59 @@ void pretty(FILE *f, int indent, Stmt* s)
       indentBy(f, indent);
       fprintf(f, "vpmSetupWrite(");
       fprintf(f, "dir=%s,", s->setupVPMWrite.hor ? "HOR" : "VIR");
-      fprintf(f, "stride=%s,", s->setupVPMWrite.stride);
+      fprintf(f, "stride=%i,", s->setupVPMWrite.stride);
       pretty(f, s->setupVPMWrite.addr);
+      fprintf(f, ");\n");
+      break;
+
+    // DMA read wait
+    case DMA_READ_WAIT:
+      indentBy(f, indent);
+      fprintf(f, "dmaReadWait();\n");
+      break;
+
+    // DMA write wait
+    case DMA_WRITE_WAIT:
+      indentBy(f, indent);
+      fprintf(f, "dmaWriteWait();\n");
+      break;
+
+    // DMA start read
+    case DMA_START_READ:
+      indentBy(f, indent);
+      fprintf(f, "dmaStartRead(");
+      pretty(f, s->startDMARead);
+      fprintf(f, ");\n");
+      break;
+
+    // DMA start write
+    case DMA_START_WRITE:
+      indentBy(f, indent);
+      fprintf(f, "dmaStartWrite(");
+      pretty(f, s->startDMAWrite);
+      fprintf(f, ");\n");
+      break;
+
+    // DMA read setup
+    case SETUP_DMA_READ:
+      indentBy(f, indent);
+      fprintf(f, "dmaSetupRead(");
+      fprintf(f, "numRows=%i,", s->setupDMARead.numRows);
+      fprintf(f, "rowLen=%i,", s->setupDMARead.rowLen);
+      fprintf(f, "dir=%s,", s->setupDMARead.hor ? "HORIZ" : "VERT");
+      fprintf(f, "vpitch=%i,", s->setupDMARead.vpitch);
+      pretty(f, s->setupDMARead.vpmAddr);
+      fprintf(f, ");\n");
+      break;
+
+    // DMA write setup
+    case SETUP_DMA_WRITE:
+      indentBy(f, indent);
+      fprintf(f, "dmaSetupWrite(");
+      fprintf(f, "numRows=%i,", s->setupDMAWrite.numRows);
+      fprintf(f, "rowLen=%i,", s->setupDMAWrite.rowLen);
+      fprintf(f, "dir=%s,", s->setupDMAWrite.hor ? "HORIZ" : "VERT");
+      pretty(f, s->setupDMAWrite.vpmAddr);
       fprintf(f, ");\n");
       break;
 

@@ -274,8 +274,20 @@ void varAssign( Seq<Instr>* seq   // Target instruction sequence to extend
       printf("QPULib: dereferencing not yet supported inside 'where'\n");
       assert(false);
     }
-    printf("QPULib: dereferencing support currently disabled\n");
-    assert(false);
+    // Start DMA load (assuming DMA is already setup)
+    genStartDMALoad(seq, srcReg(e.deref.ptr->var));
+    // Setup VPM
+    Reg addr;
+    addr.tag = SPECIAL;
+    addr.regId = SPECIAL_QPU_NUM;
+    genSetupVPMLoad(seq, 1, addr, 0, 1);
+    // Wait for DMA
+    genWaitDMALoad(seq);
+    // Get from VPM
+    Reg data;
+    data.tag = SPECIAL;
+    data.regId = SPECIAL_VPM_READ;
+    seq->append(genLShift(dstReg(v), data, 0));
     return;
   }
 
@@ -351,8 +363,23 @@ void assign( Seq<Instr>* seq   // Target instruction sequence to extend
   // Case: *v := rhs where v is a var and rhs is a var
   // -------------------------------------------------
   if (lhs.tag == DEREF) {
-    printf("QPULib: dereferencing support currently disabled\n");
-    assert(false);
+    // Setup VPM
+    Reg qpuNum;
+    qpuNum.tag = SPECIAL;
+    qpuNum.regId = SPECIAL_QPU_NUM;
+    Reg addr = freshReg();
+    seq->append(genLI(addr, 16));
+    seq->append(genADD(addr, addr, qpuNum));
+    genSetupVPMStore(seq, addr, 0, 1);
+    // Put to VPM
+    Reg data;
+    data.tag = SPECIAL;
+    data.regId = SPECIAL_VPM_WRITE;
+    seq->append(genLShift(data, srcReg(rhs->var), 0));
+    // Start DMA (assuming DMA is already setup)
+    genStartDMAStore(seq, srcReg(lhs.deref.ptr->var));
+    // Wait for store to complete
+    genWaitDMAStore(seq);
     return;
   }
 
@@ -874,13 +901,13 @@ void setStrideStmt(Seq<Instr>* seq, StmtTag tag, Expr* e)
 {
   if (e->tag == INT_LIT) {
     if (tag == SET_READ_STRIDE)
-      genSetReadStride(seq, e->intLit);
+      genSetReadPitch(seq, e->intLit);
     else
       genSetWriteStride(seq, e->intLit);
   }
   else if (e->tag == VAR) {
     if (tag == SET_READ_STRIDE)
-      genSetReadStride(seq, srcReg(e->var));
+      genSetReadPitch(seq, srcReg(e->var));
     else
       genSetWriteStride(seq, srcReg(e->var));
   }
@@ -890,7 +917,7 @@ void setStrideStmt(Seq<Instr>* seq, StmtTag tag, Expr* e)
     Var v = freshVar();
     varAssign(seq, always, v, e);
     if (tag == SET_READ_STRIDE)
-      genSetReadStride(seq, srcReg(v));
+      genSetReadPitch(seq, srcReg(v));
     else
       genSetWriteStride(seq, srcReg(v));
   }
@@ -900,7 +927,7 @@ void setStrideStmt(Seq<Instr>* seq, StmtTag tag, Expr* e)
 // VPM setup statements
 // ============================================================================
 
-void setupVPMReadStmt(Seq<Instr>* seq, int n, Expr* e, bool hor, int stride)
+void setupVPMReadStmt(Seq<Instr>* seq, int n, Expr* e, int hor, int stride)
 {
   if (e->tag == INT_LIT)
     genSetupVPMLoad(seq, n, e->intLit, hor, stride);
@@ -911,11 +938,11 @@ void setupVPMReadStmt(Seq<Instr>* seq, int n, Expr* e, bool hor, int stride)
     always.tag = ALWAYS;
     Var v = freshVar();
     varAssign(seq, always, v, e);
-    genSetupVPMLoad(seq, n, srcReg(e->var), hor, stride);
+    genSetupVPMLoad(seq, n, srcReg(v), hor, stride);
   }
 }
 
-void setupVPMWriteStmt(Seq<Instr>* seq, Expr* e, bool hor, int stride)
+void setupVPMWriteStmt(Seq<Instr>* seq, Expr* e, int hor, int stride)
 {
   if (e->tag == INT_LIT)
     genSetupVPMStore(seq, e->intLit, hor, stride);
@@ -926,7 +953,69 @@ void setupVPMWriteStmt(Seq<Instr>* seq, Expr* e, bool hor, int stride)
     always.tag = ALWAYS;
     Var v = freshVar();
     varAssign(seq, always, v, e);
-    genSetupVPMStore(seq, srcReg(e->var), hor, stride);
+    genSetupVPMStore(seq, srcReg(v), hor, stride);
+  }
+}
+
+// ============================================================================
+// DMA statements
+// ============================================================================
+
+void setupDMAReadStmt(Seq<Instr>* seq, int numRows, int rowLen,
+                        int hor, Expr* e, int vpitch)
+{
+  if (e->tag == INT_LIT)
+    genSetupDMALoad(seq, numRows, rowLen, hor, vpitch, e->intLit);
+  else if (e->tag == VAR)
+    genSetupDMALoad(seq, numRows, rowLen, hor, vpitch, srcReg(e->var));
+  else {
+    AssignCond always;
+    always.tag = ALWAYS;
+    Var v = freshVar();
+    varAssign(seq, always, v, e);
+    genSetupDMALoad(seq, numRows, rowLen, hor, vpitch, srcReg(v));
+  }
+}
+
+void setupDMAWriteStmt(Seq<Instr>* seq, int numRows, int rowLen,
+                        int hor, Expr* e)
+{
+  if (e->tag == INT_LIT)
+    genSetupDMAStore(seq, numRows, rowLen, hor, e->intLit);
+  else if (e->tag == VAR)
+    genSetupDMAStore(seq, numRows, rowLen, hor, srcReg(e->var));
+  else {
+    AssignCond always;
+    always.tag = ALWAYS;
+    Var v = freshVar();
+    varAssign(seq, always, v, e);
+    genSetupDMAStore(seq, numRows, rowLen, hor, srcReg(v));
+  }
+}
+
+void startDMAReadStmt(Seq<Instr>* seq, Expr* e)
+{
+  if (e->tag == VAR)
+    genStartDMALoad(seq, srcReg(e->var));
+  else {
+    AssignCond always;
+    always.tag = ALWAYS;
+    Var v = freshVar();
+    varAssign(seq, always, v, e);
+    genStartDMALoad(seq, srcReg(e->var));
+  }
+}
+
+void startDMAWriteStmt(Seq<Instr>* seq, Expr* e)
+{
+  if (e->tag == VAR)
+    genStartDMAStore(seq, srcReg(e->var));
+  else {
+    AssignCond always;
+    always.tag = ALWAYS;
+    Var v = freshVar();
+    varAssign(seq, always, v, e);
+    genStartDMAStore(seq, srcReg(e->var));
   }
 }
 
@@ -960,8 +1049,24 @@ void storeRequest(Seq<Instr>* seq, Expr* data, Expr* addr)
     addr = putInVar(seq, addr);
   }
 
-  printf("QPULib: store support currently disabled\n");
-  assert(false);
+  // Setup VPM
+  Reg qpuNum;
+  qpuNum.tag = SPECIAL;
+  qpuNum.regId = SPECIAL_QPU_NUM;
+  Reg addrReg = freshReg();
+  seq->append(genLI(addrReg, 16));
+  seq->append(genADD(addrReg, addrReg, qpuNum));
+  // Ensure no outstanding DMA stores
+  genWaitDMAStore(seq);
+  // Setup new store
+  genSetupVPMStore(seq, addrReg, 0, 1);
+  // Put to VPM
+  Reg dataReg;
+  dataReg.tag = SPECIAL;
+  dataReg.regId = SPECIAL_VPM_WRITE;
+  seq->append(genLShift(dataReg, srcReg(data->var), 0));
+  // Start DMA (assuming DMA is already setup)
+  genStartDMAStore(seq, srcReg(addr->var));
 }
 
 // ============================================================================
@@ -1145,16 +1250,6 @@ void stmt(Seq<Instr>* seq, Stmt* s)
     return;
   }
 
-  // -------------
-  // Case: flush()
-  // -------------
-  if (s->tag == FLUSH) {
-    // Flush outstanding stores
-    Instr instr; instr.tag = ST3;
-    seq->append(instr);
-    return;
-  }
-
   // ---------------------------------------------------------------
   // Case: semaInc(n) or semaDec(n) where n is an int (semaphore id)
   // ---------------------------------------------------------------
@@ -1172,7 +1267,7 @@ void stmt(Seq<Instr>* seq, Stmt* s)
   }
 
   // ----------------------------------------
-  // Case: setupVPMRead(n, addr, hor, stride)
+  // Case: vpmSetupRead(dir, n, addr, stride)
   // ----------------------------------------
   if (s->tag == SETUP_VPM_READ) {
     setupVPMReadStmt(seq,
@@ -1184,13 +1279,70 @@ void stmt(Seq<Instr>* seq, Stmt* s)
   }
 
   // --------------------------------------
-  // Case: setupVPMWrite(addr, hor, stride)
+  // Case: vpmSetupWrite(dir, addr, stride)
   // --------------------------------------
   if (s->tag == SETUP_VPM_WRITE) {
     setupVPMWriteStmt(seq,
       s->setupVPMRead.addr,
       s->setupVPMRead.hor,
       s->setupVPMRead.stride);
+    return;
+  }
+
+  // ------------------------------------------------------
+  // Case: dmaSetupRead(dir, numRows, addr, rowLen, vpitch)
+  // ------------------------------------------------------
+  if (s->tag == SETUP_DMA_READ) {
+    setupDMAReadStmt(seq,
+      s->setupDMARead.numRows,
+      s->setupDMARead.rowLen,
+      s->setupDMARead.hor,
+      s->setupDMARead.vpmAddr,
+      s->setupDMARead.vpitch);
+    return;
+  }
+
+  // -----------------------------------------------
+  // Case: dmaSetupWrite(dir, numRows, addr, rowLen)
+  // -----------------------------------------------
+  if (s->tag == SETUP_DMA_WRITE) {
+    setupDMAWriteStmt(seq,
+      s->setupDMAWrite.numRows,
+      s->setupDMAWrite.rowLen,
+      s->setupDMAWrite.hor,
+      s->setupDMAWrite.vpmAddr);
+    return;
+  }
+
+  // -------------------
+  // Case: dmaReadWait()
+  // -------------------
+  if (s->tag == DMA_READ_WAIT) {
+    genWaitDMALoad(seq);
+    return;
+  }
+
+  // --------------------
+  // Case: dmaWriteWait()
+  // --------------------
+  if (s->tag == DMA_WRITE_WAIT) {
+    genWaitDMAStore(seq);
+    return;
+  }
+
+  // ------------------------
+  // Case: dmaStartRead(addr)
+  // ------------------------
+  if (s->tag == DMA_START_READ) {
+    startDMAReadStmt(seq, s->startDMARead);
+    return;
+  }
+
+  // -------------------------
+  // Case: dmaStartWrite(addr)
+  // -------------------------
+  if (s->tag == DMA_START_WRITE) {
+    startDMAWriteStmt(seq, s->startDMAWrite);
     return;
   }
 
