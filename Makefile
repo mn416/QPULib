@@ -233,11 +233,8 @@ endif
 
 # Source files for unit tests to include in compilation
 UNIT_TESTS = \
-	Tests/testMain.cpp                \
-	Tests/testParams.cpp              \
-	Tests/testRot3D.cpp               \
-	Tests/Support/cout_redirect.cpp   \
-	Tests/TestData/TestParameters.cpp
+	Tests/testMain.cpp  \
+	Tests/testRot3D.cpp
 
 #
 # For some reason, doing an interim step to .o results in linkage errors (undefined references).
