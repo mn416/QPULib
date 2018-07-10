@@ -2,7 +2,7 @@
 #define ITERATOR_PARAMETERS_H
 #include <string>
 #include <vector>
-#include "Support/CmdParameter.h"
+#include "CmdParameter/CmdParameter.h"
 
 
 class Parameters {
