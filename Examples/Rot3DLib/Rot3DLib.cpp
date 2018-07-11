@@ -99,8 +99,8 @@ timeval runKernel(int index) {
 int main(int argc, const char *argv[])
 {
 
-	// TODO: Showing help is not an error, but it should exit here anyway
-	//       Find a solution for this
+	// Showing help will exit within this call. If it returns with
+	// 'false' an error has occurred.
 	if (!params.handle_commandline(argc, argv, false)) return -1;
 
   timeval tvDiff;

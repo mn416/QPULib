@@ -37,11 +37,11 @@ static const char *usage =
 DefParameter defined_parameters[] = {
   {
     "Kernel index",
-    "-kernel-index=",
+    "-kernel=",
     INTEGER,
-    "The index of the kernel to run."
+    "The index of the kernel to run. "
     "Index zero is the scalar kernel, which runs on the CPU.\n"
-    "Valid values: 0,1,2,3,4 ",
+    "Valid values: 0,1,2,3",
     3  // default value
   },
   nullptr   // End marker
