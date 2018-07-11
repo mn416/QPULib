@@ -264,14 +264,14 @@ void dmaSetupWrite(Dir dir, int numRows, IntExpr vpmAddr, int rowLen)
   stmtStack.replace(mkSeq(stmtStack.top(), s));
 }
 
-void dmaReadWait()
+void dmaWaitRead()
 {
   Stmt* s = mkStmt();
   s->tag = DMA_READ_WAIT;
   stmtStack.replace(mkSeq(stmtStack.top(), s));
 }
 
-void dmaWriteWait()
+void dmaWaitWrite()
 {
   Stmt* s = mkStmt();
   s->tag = DMA_WRITE_WAIT;
@@ -285,8 +285,8 @@ void dmaWriteWait()
 void kernelFinish()
 {
   // Ensure outstanding DMAs have completed
-  dmaReadWait();
-  dmaWriteWait();
+  dmaWaitRead();
+  dmaWaitWrite();
 
   // QPU 0 waits until all other QPUs have finished
   // before sending a host IRQ.

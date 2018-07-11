@@ -54,21 +54,36 @@ inline void vpmPut(FloatExpr data)
 template <typename T> inline void vpmPut(PtrExpr<T> data)
   { vpmPutExpr(data.expr); }
 
-template <typename T> inline void dmaStartRead(PtrExpr<T> memAddr)
+template <typename T> inline void vpmPut(Ptr<T> &data)
+  { vpmPutExpr(data.expr); }
+
+inline void dmaStartReadExpr(Expr* e)
 {
   Stmt* s = mkStmt();
-  s->tag = DMA_START_READ; 
-  s->startDMARead = memAddr.expr;
+  s->tag = DMA_START_READ;
+  s->startDMARead = e;
   stmtStack.replace(mkSeq(stmtStack.top(), s));
 }
 
-template <typename T> void dmaStartWrite(PtrExpr<T> memAddr)
+template <typename T> inline void dmaStartRead(PtrExpr<T> memAddr)
+  { dmaStartReadExpr(memAddr.expr); }
+
+template <typename T> inline void dmaStartRead(Ptr<T> &memAddr)
+  { dmaStartReadExpr(memAddr.expr); }
+
+inline void dmaStartWriteExpr(Expr* e)
 {
   Stmt* s = mkStmt();
   s->tag = DMA_START_WRITE; 
-  s->startDMAWrite = memAddr.expr;
+  s->startDMAWrite = e;
   stmtStack.replace(mkSeq(stmtStack.top(), s));
 }
+
+template <typename T> inline void dmaStartWrite(PtrExpr<T> memAddr)
+  { dmaStartWriteExpr(memAddr.expr); }
+
+template <typename T> inline void dmaStartWrite(Ptr<T> &memAddr)
+  { dmaStartWriteExpr(memAddr.expr); }
 
 //=============================================================================
 // Receive, request, store operations

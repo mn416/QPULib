@@ -1283,9 +1283,9 @@ void stmt(Seq<Instr>* seq, Stmt* s)
   // --------------------------------------
   if (s->tag == SETUP_VPM_WRITE) {
     setupVPMWriteStmt(seq,
-      s->setupVPMRead.addr,
-      s->setupVPMRead.hor,
-      s->setupVPMRead.stride);
+      s->setupVPMWrite.addr,
+      s->setupVPMWrite.hor,
+      s->setupVPMWrite.stride);
     return;
   }
 

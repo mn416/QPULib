@@ -48,11 +48,13 @@ static int vpmSetupWriteCode(int hor, int stride)
 
 void genSetupVPMLoad(Seq<Instr>* instrs, int n, int addr, int hor, int stride)
 {
+  assert(addr < 256);
+
   Reg dst;
   dst.tag = SPECIAL;
   dst.regId = SPECIAL_RD_SETUP;
 
-  int setup = vpmSetupReadCode(n, hor, stride);
+  int setup = vpmSetupReadCode(n, hor, stride) | (addr & 0xff);
   instrs->append(genLI(dst, setup));
 
   Instr instr;
@@ -76,11 +78,13 @@ void genSetupVPMLoad(Seq<Instr>* instrs, int n, Reg addr, int hor, int stride)
 
 void genSetupVPMStore(Seq<Instr>* instrs, int addr, int hor, int stride)
 {
+  assert(addr < 256);
+
   Reg dst;
   dst.tag = SPECIAL;
   dst.regId = SPECIAL_WR_SETUP;
 
-  int setup = vpmSetupWriteCode(hor, stride);
+  int setup = vpmSetupWriteCode(hor, stride) | (addr & 0xff);
   instrs->append(genLI(dst, setup));
 }
 

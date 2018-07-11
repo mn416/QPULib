@@ -95,7 +95,8 @@ EXAMPLES =  \
 	Rot3D     \
 	Rot3DLib  \
 	ID        \
-	HeatMap
+	HeatMap   \
+	DMA
 
 EXAMPLE_TARGETS = $(patsubst %,$(OBJ_DIR)/bin/%,$(EXAMPLES))
 
