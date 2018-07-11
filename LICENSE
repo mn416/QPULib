@@ -6,6 +6,7 @@ in the QPULib repository, except for:
   * Lib/VideoCore/Mailbox.cpp
   * Lib/VideoCore/Mailbox.h
   * Tests/catch.hpp
+  * Examples/Rot3DLib/CmdParameter (all files under this directory)
 
 MIT License
 
