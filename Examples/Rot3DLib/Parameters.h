@@ -4,13 +4,9 @@
 #include <vector>
 #include "CmdParameter/CmdParameter.h"
 
-
 class Parameters {
 public:
-  bool handle_commandline(
-    int argc,
-    const char* argv[],
-    bool show_help_on_error = true);
+  void handle_commandline(int argc, const char* argv[]);
 
   // Parameter values
   int kernel_index;
@@ -18,6 +14,5 @@ public:
 private:
   void pass_params();
 };
-
 
 #endif // ITERATOR_PARAMETERS_H

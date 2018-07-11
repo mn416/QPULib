@@ -1,4 +1,13 @@
 /*
+ * CmdParameter Lite v0.1.0
+ * Copyright (c) 2018 Wim Rijnders
+ *
+ * Distributed under the MIT License,
+ * see https://github.com/wimrijnders/CmdParameter/blob/master/LICENSE
+ * --------------------------------------------------------------------
+ * Generated on: 2018-07-11 12:16:21 +0200
+ */
+/*
  * Strings.cpp
  *
  *  Created on: May 26, 2014
@@ -100,4 +109,14 @@ string Strings::trim(const std::string& s, const std::string& delimiters) {
 	}
 
 	return tmp;
+}
+
+
+/**
+ * Determine if the given string haystack has needle as substring.
+ *
+ * @return true if substring present, else false.
+ */
+bool Strings::contains(std::string const& haystack, std::string const& needle) {
+  return (haystack.find(needle) != string::npos);
 }

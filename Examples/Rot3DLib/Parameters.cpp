@@ -29,9 +29,7 @@ static const char *usage =
 "It uses the kernels of the `Rot3D` example.\n"
 "\n"
 "Usage:\n"
-"    Rot3DLib {options}\n"
-;
-
+"    Rot3DLib {options}\n";
 
 
 DefParameter defined_parameters[] = {
@@ -48,31 +46,21 @@ DefParameter defined_parameters[] = {
 };
 
 
-
-
 //////////////////////////////////////////////////
 // Class Parameters
 //////////////////////////////////////////////////
 
-bool Parameters::handle_commandline(
-  int argc,
-  const char* argv[],
-  bool show_help_on_error) {
-  if (!CmdParameter::init_params(usage, defined_parameters)) {
-    return false;
-  }
-
-  if (CmdParameter::handle_commandline(argc, argv, show_help_on_error)) {
-    pass_params();
-    return true;
-  }
-
-  return false;
+void Parameters::handle_commandline(int argc, const char* argv[]) {
+	auto ret = CmdParameter::handle_commandline(usage, defined_parameters, argc, argv, false);
+	if (ret == CmdParameter::ALL_IS_WELL) {
+		pass_params();
+	} else {
+		exit(ret);
+	}
 }
 
 
 void Parameters::pass_params() {
   CmdParameter::List &parameters = CmdParameter::parameters;
-
   kernel_index  = parameters[0]->get_int_value();
 }
