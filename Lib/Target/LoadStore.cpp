@@ -133,7 +133,7 @@ static int dmaSetupLoadCode(int numRows, int rowLen, int hor, int vpitch)
   setup |= rowLen << 20;
   setup |= numRows << 16;
   setup |= vpitch << 12;
-  setup |= (hor == 0 ? 1 : 0) << 12;
+  setup |= (hor == 0 ? 1 : 0) << 11;
   return setup;
 }
 

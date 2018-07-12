@@ -6,8 +6,8 @@ using namespace QPULib;
 
 void oet(Ptr<Int> p)
 {
-  setReadStride(1);
-  setWriteStride(1);
+  dmaSetReadPitch(8);
+  dmaSetWriteStride(4);
 
   Int evens = *p;
   Int odds  = *(p+1);

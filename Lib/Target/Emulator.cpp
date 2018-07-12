@@ -293,7 +293,7 @@ void writeReg(QPUState* s, State* g, bool setFlags,
             VPMLoadReq req;
             req.numVecs = (setup >> 20) & 0xf;
             if (req.numVecs == 0) req.numVecs = 16;
-            req.hor = (setup >> 11) & 1;
+            req.hor = ((setup >> 11) & 1) ? 0 : 1;
             req.addr = setup & 0xff;
             req.stride = (setup >> 12) & 0x3f;
             if (req.stride == 0) req.stride = 64;
