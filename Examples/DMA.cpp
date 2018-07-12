@@ -5,6 +5,7 @@ using namespace QPULib;
 void dma(Ptr<Int> p)
 {
   // Setup load of 16 vectors into VPM, starting at word address 0
+  dmaSetReadPitch(64);
   dmaSetupRead(HORIZ, 16, 0);
   // Start loading from memory at address 'p'
   dmaStartRead(p);
@@ -18,7 +19,7 @@ void dma(Ptr<Int> p)
 
   // Read each vector, increment it, and write it back
   for (int i = 0; i < 16; i++)
-    vpmPut(vpmGetInt() * 2);
+    vpmPut(vpmGetInt() + 1);
 
   // Setup store of 16 vectors into VPM, starting at word address 256
   dmaSetupWrite(HORIZ, 16, 256);
