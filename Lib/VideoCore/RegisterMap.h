@@ -24,8 +24,9 @@ public:
 
 	~RegisterMap();
 
-	static int numSlices();
-	static int numQPUPerSlice();
+	static bool enabled();
+	static int  numSlices();
+	static int  numQPUPerSlice();
 
 private:
 	RegisterMap();

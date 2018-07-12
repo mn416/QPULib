@@ -42,6 +42,8 @@ namespace QPULib {
 
 void *mapmem(unsigned base, unsigned size)
 {
+   //printf("mapmem requested base: 0x%x, size: %d\n", base, size);
+
    int mem_fd;
    unsigned offset = base % PAGE_SIZE;
    base = base - offset;
@@ -63,7 +65,9 @@ void *mapmem(unsigned base, unsigned size)
 #endif  // DEBUG
 
    if (mem == MAP_FAILED) {
-      printf("mmap error %p\n", mem);
+      printf("mmap error value %p: ", mem);
+      fflush(stdout);
+      perror(nullptr);  // Prints error message on stdout
       exit (-1);
    }
    close(mem_fd);

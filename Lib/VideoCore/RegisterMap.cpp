@@ -35,7 +35,6 @@ RegisterMap::RegisterMap() {
 
 
 RegisterMap::~RegisterMap() {
-	// printf("Closing down register map\n");
 	unmapmem((void *) m_addr, m_size);
 	bcm_host_deinit();
 }
@@ -45,6 +44,14 @@ RegisterMap::~RegisterMap() {
  * @brief Get the 32-bit value at the given offset in the map
  */
 uint32_t RegisterMap::read(int offset) const {
+#ifdef DEBUG
+	// Do a spot check on the loaded memory
+	if (m_addr[V3D_BASE] == 0XDEADBEEF) {
+		printf("RegisterMap can not read QPU registers, the VideoCore is not enabled.\n");
+		exit(-1);
+	}
+#endif
+
 	return m_addr[V3D_BASE + offset];
 }
 
@@ -55,7 +62,28 @@ uint32_t RegisterMap::read(int offset) const {
  * This avoids having to use `instance()->` for every read access.
  */
 uint32_t RegisterMap::readRegister(int offset) {
-	return instance()->read(V3D_IDENT1);
+  //printf("Called readRegister, m_instance: %p\n", m_instance.get());
+	return instance()->read(offset);
+}
+
+
+/**
+ * @brief Check if the register map is accessible.
+ *
+ * This depends on the VideoCore being enabled. Enabling and disabling
+ * is done with mailbox call `qpu_enable()`.
+ *
+ * This method can thus be used to detect if the VideoCore is running.
+ *
+ * @return true if register map accessible, false otherwise
+ */
+bool RegisterMap::enabled() {
+	// Detect the signature in register 0
+	uint32_t reg = readRegister(V3D_IDENT0);
+	char *p = (char *) &reg;
+	//printf("Reg 0: '%c%c%c'\n", p[0], p[1], p[2]);
+
+	return (p[0] == 'V' && p[1] == '3' && p[2] == 'D');
 }
 
 
@@ -73,10 +101,14 @@ int RegisterMap::numQPUPerSlice() {
 
 
 RegisterMap *RegisterMap::instance() {
+  //printf("Called instance(), m_instance: %p\n", m_instance.get());
+
 	if (m_instance.get() == nullptr) {
+		//printf("RegisterMap initializing singleton\n");
 		m_instance.reset(new RegisterMap);
 	}
 
+ // printf("m_instance post: %p\n", m_instance.get());
 	return m_instance.get();
 }
 
