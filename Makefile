@@ -30,16 +30,6 @@ endif
 
 # QPU or emulation mode
 ifeq ($(QPU), 1)
-
-# Check platform before building. Can't be indented, otherwise make complains.
-RET := $(shell Tools/detectPlatform.sh 1>/dev/null && echo "yes" || echo "no")
-#$(info  info: '$(RET)')
-ifneq ($(RET), yes)
-$(error QPU-mode specified on a non-Pi platform; aborting)
-else
-$(info Building on a Pi platform)
-endif
-
   CXX_FLAGS += -DQPU_MODE -I /opt/vc/include
   OBJ_DIR := $(OBJ_DIR)-qpu
 	LIBS := -L /opt/vc/lib -l bcm_host
@@ -72,7 +62,6 @@ OBJ =                         \
   Target/LoadStore.o          \
   Target/Emulator.o           \
   Target/Encode.o             \
-  VideoCore/RegisterMap.o     \
   VideoCore/Mailbox.o         \
   VideoCore/Invoke.o          \
   VideoCore/VideoCore.o
