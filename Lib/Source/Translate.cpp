@@ -276,13 +276,13 @@ void varAssign( Seq<Instr>* seq   // Target instruction sequence to extend
     }
     // Start DMA load (assuming DMA is already setup)
     genStartDMALoad(seq, srcReg(e.deref.ptr->var));
+    // Wait for DMA
+    genWaitDMALoad(seq);
     // Setup VPM
     Reg addr;
     addr.tag = SPECIAL;
     addr.regId = SPECIAL_QPU_NUM;
     genSetupVPMLoad(seq, 1, addr, 0, 1);
-    // Wait for DMA
-    genWaitDMALoad(seq);
     // Get from VPM
     Reg data;
     data.tag = SPECIAL;
