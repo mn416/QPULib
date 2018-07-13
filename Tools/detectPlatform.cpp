@@ -1,4 +1,5 @@
 #include <unistd.h>  // geteuid()
+#include <string.h>  // strstr()
 #include <string>
 #include <fstream>
 #include <streambuf>
@@ -35,19 +36,70 @@ bool loadFileInString(const char *filename, std::string & out_str) {
 
 
 /**
- * @brief Detect if this is running on a Rpi.
+ * @brief Pi platform detection for newer Pi versions.
  *
- * @returns 0 if this is so, 1 if it's a different platform.
+ * On success, it displays a string with the model version.
+ *
+ * @return true if Pi detected, false otherwise
  */
-int main(int argc, char *argv[]) {
+bool detect_from_sys() {
 	const char *filename = "/sys/firmware/devicetree/base/model";
 
 	std::string content;
 	bool success = loadFileInString(filename, content);
 	if (success && !content.empty()) {
 		printf("Detected platform: %s\n", content.c_str());
-	} else {
-		printf("This is not a RPi platform\n");
+    return true;
+	}
+
+	return false;
+}
+
+
+/**
+ * @brief Pi platform detection for newer Pi versions.
+ *
+ * Detects if this is a VideoCore. This should be sufficient for detecting Pi,
+ * since it's the only thing to date(!) using this particular chip version.
+ *
+ * @return true if Pi detected, false otherwise
+ */
+bool detect_from_proc() {
+	// The hardware from Pi 2 onward is actually BCM2836, but the call still returns BCM2835
+	const char *BCM_VERSION = "BCM2835";
+
+	const char *filename = "/proc/cpuinfo";
+
+	std::ifstream t(filename);
+	if (!t.is_open()) {
+		return false;
+	}
+
+	std::string line;
+	while (getline(t, line)) {
+	  if (!strstr(line.c_str(), "Hardware")) continue;
+
+		if (strstr(line.c_str(), BCM_VERSION)) {
+	  	// For now, don't try to exactly specify the model.
+			// This could be done with field "Revision' in current input.
+			printf("This is a Pi platform\n");
+			return true;
+		}
+  }
+
+
+	return false;
+}
+
+
+/**
+ * @brief Detect if this is running on a Rpi.
+ *
+ * @returns 0 if this is so, 1 if it's a different platform.
+ */
+int main(int argc, char *argv[]) {
+	if (!detect_from_sys() && !detect_from_proc()) {
+		printf("This is not a Pi platform\n");
 		return 1;
 	}
 
