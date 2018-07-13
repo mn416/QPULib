@@ -273,11 +273,11 @@ void genInitialDMASetup(Seq<Instr>* instrs)
 
   // Load 16 rows, each row being one 32-bit word
   // (Is there any efficiency advantage of loading one row of 16?)
-  genSetupDMALoad(instrs, 16, 1, 0, 1, loadAddr);
+  genSetupDMALoad(instrs, 16, 1, 1, 1, loadAddr);
 
   // Store 16 rows, each row being one 32-bit word
   // (Is there any efficiency advantage of storing one row of 16?)
-  genSetupDMAStore(instrs, 16, 1, 0, storeAddr);
+  genSetupDMAStore(instrs, 16, 1, 1, storeAddr);
 }
 
 // =============================================================================
@@ -308,7 +308,7 @@ void genSetReadPitch(Seq<Instr>* instrs, Reg pitch)
 void genSetWriteStride(Seq<Instr>* instrs, int stride)
 {
   assert(stride < 8192);
-  int setup = 0xc0010000 | stride;
+  int setup = 0xc0000000 | stride;
   Reg dst; dst.tag = SPECIAL; dst.regId = SPECIAL_WR_SETUP;
   Instr instr = genLI(dst, setup);
   instrs->append(instr);
@@ -317,7 +317,7 @@ void genSetWriteStride(Seq<Instr>* instrs, int stride)
 void genSetWriteStride(Seq<Instr>* instrs, Reg stride)
 {
   Reg tmp = freshReg();
-  instrs->append(genLI(tmp, 0xc0010000));
+  instrs->append(genLI(tmp, 0xc0000000));
 
   Reg dst; dst.tag = SPECIAL; dst.regId = SPECIAL_WR_SETUP;
   instrs->append(genOR(dst, tmp, stride));

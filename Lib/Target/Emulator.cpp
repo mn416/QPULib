@@ -18,24 +18,6 @@ uint32_t emuHeapEnd = 0;
 int32_t* emuHeap    = NULL;
 
 // ============================================================================
-// Horizontal/Vertical VPM access
-// ============================================================================
-
-// Convert horizontal VPM index to vertical VPM index
-static uint32_t flip(uint32_t index) {
-  uint32_t x = index % 16;
-  uint32_t y = (index >> 4) % 64;
-  return (x << 6) | y;
-}
-
-// Convert vertical VPM index to horizontal VPM index
-static uint32_t unflip(uint32_t index) {
-  uint32_t x = (index >> 6) % 16;
-  uint32_t y = index % 64;
-  return (y << 4) | x;
-}
-
-// ============================================================================
 // Read a vector register
 // ============================================================================
 
@@ -108,28 +90,30 @@ Vec readReg(QPUState* s, State* g, Reg reg)
         // Perform DMA load to completion
         if (s->dmaLoad.active == false) return v;
         DMALoadReq* req = &s->dmaLoadSetup;
-        uint32_t base = req->vpmAddr;
         if (req->hor) {
           // Horizontal access
+          uint32_t y = (req->vpmAddr >> 4) & 0x3f;
           for (int r = 0; r < req->numRows; r++) {
+            uint32_t x = req->vpmAddr & 0xf;
             for (int i = 0; i < req->rowLen; i++) {
               int addr = s->dmaLoad.addr.intVal + (r * s->readPitch) + i*4;
-              int index = (base+i) % VPM_SIZE;
-              g->vpm[index].intVal = emuHeap[addr >> 2];
+              g->vpm[y*16 + x].intVal = emuHeap[addr >> 2];
+              x = (x+1) % 16;
             }
-            base = (base + (16*req->vpitch)) % VPM_SIZE;
+            y = (y+1) % 64;
           }
         }
         else {
           // Vertical access
-          base = flip(base);
+          uint32_t x = req->vpmAddr & 0xf;
           for (int r = 0; r < req->numRows; r++) {
+            uint32_t y = ((req->vpmAddr >> 4) + r*req->vpitch) & 0x3f;
             for (int i = 0; i < req->rowLen; i++) {
               int addr = s->dmaLoad.addr.intVal + (r * s->readPitch) + i*4;
-              int index = unflip(base+i);
-              g->vpm[index].intVal = emuHeap[addr >> 2];
+              g->vpm[y*16 + x].intVal = emuHeap[addr >> 2];
+              y = (y+1) % 64;
             }
-            base = (base + (64*req->vpitch)) % VPM_SIZE;
+            x = (x+1) % 16;
           }
         }
         s->dmaLoad.active = false;
@@ -140,29 +124,31 @@ Vec readReg(QPUState* s, State* g, Reg reg)
         if (s->dmaStore.active == false) return v;
         DMAStoreReq* req = &s->dmaStoreSetup;
         uint32_t memAddr = s->dmaStore.addr.intVal;
-        uint32_t base = req->vpmAddr;
         if (req->hor) {
           // Horizontal access
+          uint32_t y = (req->vpmAddr >> 4) & 0x3f;
           for (int r = 0; r < req->numRows; r++) {
+            uint32_t x = req->vpmAddr & 0xf;
             for (int i = 0; i < req->rowLen; i++) {
-              int index = base % VPM_SIZE;
-              emuHeap[memAddr >> 2] = g->vpm[index].intVal;
-              base = (base+1) % VPM_SIZE;
-              memAddr += 4;
+              emuHeap[memAddr >> 2] = g->vpm[y*16 + x].intVal;
+              x = (x+1) % 16;
+              memAddr = memAddr + 4;
             }
+            y = (y+1) % 64;
             memAddr += s->writeStride;
           }
         }
         else {
           // Vertical access
-          base = flip(base);
+          uint32_t x = req->vpmAddr & 0xf;
           for (int r = 0; r < req->numRows; r++) {
+            uint32_t y = (req->vpmAddr >> 4) & 0x3f;
             for (int i = 0; i < req->rowLen; i++) {
-              int index = unflip(base);
-              emuHeap[memAddr >> 2] = g->vpm[index].intVal;
-              base = (base+1) % VPM_SIZE;
-              memAddr += 4;
+              emuHeap[memAddr >> 2] = g->vpm[y*16 + x].intVal;
+              y = (y+1) % 64;
+              memAddr = memAddr + 4;
             }
+            x = (x+1) % 16;
             memAddr += s->writeStride;
           }
         }
