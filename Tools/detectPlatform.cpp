@@ -60,6 +60,12 @@ int main(int argc, char *argv[]) {
 	if (geteuid() == 0) {  // Only do this as root (sudo)
 		printf("Number of slices: %d\n", RegisterMap::numSlices());
 		printf("Number of QPU's per slice: %d\n", RegisterMap::numQPUPerSlice());
+
+		// DEBUG: read first three registers
+		printf("Reg 0: %X\n", RegisterMap::readRegister(0));
+		printf("Reg 1: %X\n", RegisterMap::readRegister(1));
+		printf("Reg 2: %X\n", RegisterMap::readRegister(2));
+
 	} else {
 		printf("You can see more if you use sudo\n");
   }
