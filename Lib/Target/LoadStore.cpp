@@ -72,6 +72,10 @@ void genSetupVPMLoad(Seq<Instr>* instrs, int n, Reg addr, int hor, int stride)
   int setup = vpmSetupReadCode(n, hor, stride);
   instrs->append(genLI(tmp, setup));
   instrs->append(genOR(dst, addr, tmp));
+
+  Instr instr;
+  instr.tag = VPM_STALL;
+  instrs->append(instr);
 }
 
 // Generate instructions to setup VPM store.
