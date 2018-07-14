@@ -98,8 +98,8 @@ bool resolveRegFileConflict(Instr* instr, Instr* newInstr)
     int rfa = regFileOf(instr->ALU.srcA.reg);
     int rfb = regFileOf(instr->ALU.srcB.reg);
     if (rfa != NONE && rfb != NONE) {
-      bool conflict = rfa == rfb && instr->ALU.srcA.reg.regId !=
-                                    instr->ALU.srcB.reg.regId;
+      bool conflict = rfa == rfb &&
+           !(instr->ALU.srcA.reg == instr->ALU.srcB.reg);
       if (conflict) {
         *newInstr = remapAToAccum(instr, 0);
         return true;

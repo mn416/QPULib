@@ -6,11 +6,8 @@ using namespace QPULib;
 
 void oet(Ptr<Int> p)
 {
-  dmaSetReadPitch(8);
-  dmaSetWriteStride(4);
-
   Int evens = *p;
-  Int odds  = *(p+1);
+  Int odds  = *(p+16);
 
   For (Int count = 0, count < 16, count++)
     Int evens2 = min(evens, odds);
@@ -31,8 +28,8 @@ void oet(Ptr<Int> p)
     odds  = odds2;
   End
 
-  *p     = evens;
-  *(p+1) = odds;
+  *p      = evens;
+  *(p+16) = odds;
 }
 
 int main()
@@ -48,7 +45,7 @@ int main()
   // Invoke the kernel and display the result
   k.call(&a);
   for (int i = 0; i < 32; i++)
-    printf("%i: %i\n", i, a[i]);
+    printf("%i: %i\n", i, (i & 1) ? a[16+(i>>1)] : a[i>>1]);
   
   return 0;
 }

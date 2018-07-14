@@ -274,7 +274,14 @@ void varAssign( Seq<Instr>* seq   // Target instruction sequence to extend
       printf("QPULib: dereferencing not yet supported inside 'where'\n");
       assert(false);
     }
-    // Start DMA load (assuming DMA is already setup)
+    // Load address
+    Reg loadAddr;
+    loadAddr.tag = SPECIAL;
+    loadAddr.regId = SPECIAL_QPU_NUM;
+    // Setup DMA
+    genSetReadPitch(seq, 4);
+    genSetupDMALoad(seq, 16, 1, 1, 1, loadAddr);
+    // Start DMA load
     genStartDMALoad(seq, srcReg(e.deref.ptr->var));
     // Wait for DMA
     genWaitDMALoad(seq);
@@ -363,20 +370,28 @@ void assign( Seq<Instr>* seq   // Target instruction sequence to extend
   // Case: *v := rhs where v is a var and rhs is a var
   // -------------------------------------------------
   if (lhs.tag == DEREF) {
+    // QPU id
+    Reg qpuId;
+    qpuId.tag = SPECIAL;
+    qpuId.regId = SPECIAL_QPU_NUM;
     // Setup VPM
-    Reg qpuNum;
-    qpuNum.tag = SPECIAL;
-    qpuNum.regId = SPECIAL_QPU_NUM;
     Reg addr = freshReg();
     seq->append(genLI(addr, 16));
-    seq->append(genADD(addr, addr, qpuNum));
+    seq->append(genADD(addr, addr, qpuId));
     genSetupVPMStore(seq, addr, 0, 1);
+    // Store address
+    Reg storeAddr = freshReg();
+    seq->append(genLI(storeAddr, 256));
+    seq->append(genADD(storeAddr, storeAddr, qpuId));
+    // Setup DMA
+    genSetWriteStride(seq, 0);
+    genSetupDMAStore(seq, 16, 1, 1, storeAddr);
     // Put to VPM
     Reg data;
     data.tag = SPECIAL;
     data.regId = SPECIAL_VPM_WRITE;
     seq->append(genLShift(data, srcReg(rhs->var), 0));
-    // Start DMA (assuming DMA is already setup)
+    // Start DMA
     genStartDMAStore(seq, srcReg(lhs.deref.ptr->var));
     // Wait for store to complete
     genWaitDMAStore(seq);
@@ -1049,23 +1064,30 @@ void storeRequest(Seq<Instr>* seq, Expr* data, Expr* addr)
     addr = putInVar(seq, addr);
   }
 
+  // QPU id
+  Reg qpuId;
+  qpuId.tag = SPECIAL;
+  qpuId.regId = SPECIAL_QPU_NUM;
   // Setup VPM
-  Reg qpuNum;
-  qpuNum.tag = SPECIAL;
-  qpuNum.regId = SPECIAL_QPU_NUM;
   Reg addrReg = freshReg();
   seq->append(genLI(addrReg, 16));
-  seq->append(genADD(addrReg, addrReg, qpuNum));
-  // Ensure no outstanding DMA stores
-  genWaitDMAStore(seq);
-  // Setup new store
+  seq->append(genADD(addrReg, addrReg, qpuId));
   genSetupVPMStore(seq, addrReg, 0, 1);
+  // Store address
+  Reg storeAddr = freshReg();
+  seq->append(genLI(storeAddr, 256));
+  seq->append(genADD(storeAddr, storeAddr, qpuId));
+  // Wait for any outstanding store to complete
+  genWaitDMAStore(seq);
+  // Setup DMA
+  genSetWriteStride(seq, 0);
+  genSetupDMAStore(seq, 16, 1, 1, storeAddr);
   // Put to VPM
   Reg dataReg;
   dataReg.tag = SPECIAL;
   dataReg.regId = SPECIAL_VPM_WRITE;
   seq->append(genLShift(dataReg, srcReg(data->var), 0));
-  // Start DMA (assuming DMA is already setup)
+  // Start DMA
   genStartDMAStore(seq, srcReg(addr->var));
 }
 

@@ -1,5 +1,6 @@
 #include "Target/Encode.h"
 #include "Target/Satisfy.h"
+#include "Target/Pretty.h"
 
 #include <stdio.h>
 #include <stdlib.h>

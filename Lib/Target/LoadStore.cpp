@@ -254,36 +254,6 @@ void genWaitDMAStore(Seq<Instr>* instrs)
   instrs->append(instr);
 }
 
-// Setup the DMA unit such that each QPU has a one vector in the
-// VPM for loading, and one vector in the VPM for storing.
-
-void genInitialDMASetup(Seq<Instr>* instrs)
-{
-  // Initialise read pitch to 4 bytes
-  genSetReadPitch(instrs, 4);
-
-  // Initialise store stride to 0
-  genSetWriteStride(instrs, 0);
-
-  // Load address
-  Reg loadAddr;
-  loadAddr.tag = SPECIAL;
-  loadAddr.regId = SPECIAL_QPU_NUM;
-
-  // Store address
-  Reg storeAddr = freshReg();
-  instrs->append(genLI(storeAddr, 256));
-  instrs->append(genADD(storeAddr, storeAddr, loadAddr));
-
-  // Load 16 rows, each row being one 32-bit word
-  // (Is there any efficiency advantage of loading one row of 16?)
-  genSetupDMALoad(instrs, 16, 1, 1, 1, loadAddr);
-
-  // Store 16 rows, each row being one 32-bit word
-  // (Is there any efficiency advantage of storing one row of 16?)
-  genSetupDMAStore(instrs, 16, 1, 1, storeAddr);
-}
-
 // =============================================================================
 // DMA stride setup
 // =============================================================================
@@ -339,9 +309,6 @@ void loadStorePass(Seq<Instr>* instrs)
   //Reg qpuId = freshReg();
   //Reg qpuNum; qpuNum.tag = SPECIAL; qpuNum.regId = SPECIAL_QPU_NUM;
   //newInstrs.append(genMove(qpuId, qpuNum));
-
-  // Initialise DMA registers
-  genInitialDMASetup(&newInstrs);
 
   for (int i = 0; i < instrs->numElems; i++) {
     Instr instr = instrs->elems[i];

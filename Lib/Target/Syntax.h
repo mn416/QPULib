@@ -88,10 +88,11 @@ struct Reg {
 
   // Register identifier
   RegId regId;
-};
 
-inline bool operator==(Reg ra, Reg rb)
-  { return ra.tag == rb.tag && ra.regId == rb.regId; }
+  bool operator==(const Reg &r) {
+    return tag == r.tag && regId == r.regId;
+  }
+};
 
 // ============================================================================
 // Conditions
