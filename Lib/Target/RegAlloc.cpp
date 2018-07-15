@@ -27,6 +27,10 @@ void introduceAccum(CFG* cfg, Liveness* live, Seq<Instr>* instrs)
   UseDef useDefPrev, useDefCurrent;
   LiveSet liveOut;
 
+  Reg acc;
+  acc.tag = ACC;
+  acc.regId = 1;
+
   for (int i = 1; i < instrs->numElems; i++) {
     Instr prev  = instrs->elems[i-1];
     Instr instr = instrs->elems[i];

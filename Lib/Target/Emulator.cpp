@@ -161,11 +161,6 @@ Vec readReg(QPUState* s, State* g, Reg reg)
       for (int i = 0; i < NUM_LANES; i++)
         v.elems[i].intVal = 0;
       return v;
-
-    default:
-      printf("QPULib: Not expecting tag %d in readReg\n", reg.tag);
-      assert(false);
-      return v;
   }
 
   // Unreachable
@@ -227,9 +222,6 @@ inline bool checkBranchCond(QPUState* s, BranchCond cond)
         return false;
       }
   }
-
-  assert(false);  // Not expecting to come here
-  return false;
 }
 
 // ============================================================================
@@ -397,11 +389,6 @@ void writeReg(QPUState* s, State* g, bool setFlags,
       printf("QPULib: can't write to special register\n");
       abort();
       return;
-
-    default:
-      printf("QPULib: Not expecting tag %d in writeReg\n", dest.tag);
-      assert(false);
-      break;
   }
 
   // Unreachable
@@ -683,7 +670,7 @@ void emitStr(Seq<char>* out, const char* s)
   if (out == NULL)
     printf("%s", s);
   else
-    for (int i = 0; i < (int) strlen(s); i++)
+    for (int i = 0; i < strlen(s); i++)
       out->append(s[i]);
 }
 
@@ -693,7 +680,7 @@ void printIntVec(Seq<char>* out, Vec x)
   emitChar(out, '<');
   for (int i = 0; i < NUM_LANES; i++) {
     snprintf(buffer, sizeof(buffer), "%i", x.elems[i].intVal);
-    for (int j = 0; j < (int) strlen(buffer); j++) emitChar(out, buffer[j]);
+    for (int j = 0; j < strlen(buffer); j++) emitChar(out, buffer[j]);
     if (i != NUM_LANES-1) emitChar(out, ',');
   }
   emitChar(out, '>');
@@ -705,7 +692,7 @@ void printFloatVec(Seq<char>* out, Vec x)
   emitChar(out, '<');
   for (int i = 0; i < NUM_LANES; i++) {
     snprintf(buffer, sizeof(buffer), "%f", x.elems[i].floatVal);
-    for (int j = 0; j < (int) strlen(buffer); j++) emitChar(out, buffer[j]);
+    for (int j = 0; j < strlen(buffer); j++) emitChar(out, buffer[j]);
     if (i != NUM_LANES-1) emitChar(out, ',');
   }
   emitChar(out, '>');

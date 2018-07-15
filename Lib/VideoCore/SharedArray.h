@@ -39,7 +39,7 @@ template <typename T> class SharedArray {
  public:
 
   uint32_t address;
-  uint64_t size;
+  uint32_t size;
 
   // Allocation
   void alloc(uint32_t n) {
@@ -47,10 +47,8 @@ template <typename T> class SharedArray {
       emuHeapEnd = 0;
       emuHeap = new int32_t [EMULATOR_HEAP_SIZE];
     }
-
     if (emuHeapEnd+n >= EMULATOR_HEAP_SIZE) {
       printf("QPULib: heap overflow (increase EMULATOR_HEAP_SIZE)\n");
-      //printf("QPULib: emuHeapEnd: %d, n: %u, EMULATOR_HEAP_SIZE: %d\n", emuHeapEnd, n, EMULATOR_HEAP_SIZE);
       abort();
     }
     else {

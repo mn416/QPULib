@@ -92,8 +92,7 @@ Reg dstReg(Var v)
     case ELEM_NUM:
     case VPM_READ:
       printf("QPULib: writing to read-only special register is forbidden\n");
-      exit(-1);
-      return r;
+      assert(false);
     case STANDARD:
       r.tag   = REG_A;
       r.regId = v.id;
@@ -1157,6 +1156,7 @@ void stmt(Seq<Instr>* seq, Stmt* s)
     BranchCond cond  = condExp(seq, s->ifElse.cond);
     
     // Branch to 'else' statement
+    Instr branchElse;
     instr.tag       = BRL;
     instr.BRL.cond  = negBranchCond(cond);
     instr.BRL.label = elseLabel;
@@ -1198,6 +1198,7 @@ void stmt(Seq<Instr>* seq, Stmt* s)
     BranchCond cond  = condExp(seq, s->loop.cond);
  
     // Branch over loop body
+    Instr branchEnd;
     instr.tag       = BRL;
     instr.BRL.cond  = negBranchCond(cond);
     instr.BRL.label = endLabel;
