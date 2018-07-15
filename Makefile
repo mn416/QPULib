@@ -73,7 +73,6 @@ OBJ =                         \
   Target/LoadStore.o          \
   Target/Emulator.o           \
   Target/Encode.o             \
-  VideoCore/RegisterMap.o     \
   VideoCore/Mailbox.o         \
   VideoCore/Invoke.o          \
   VideoCore/VideoCore.o
@@ -96,7 +95,8 @@ EXAMPLES =  \
 	Rot3D     \
 	Rot3DLib  \
 	ID        \
-	HeatMap
+	HeatMap   \
+	DMA
 
 EXAMPLE_TARGETS = $(patsubst %,$(OBJ_DIR)/bin/%,$(EXAMPLES))
 

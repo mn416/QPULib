@@ -195,7 +195,7 @@ template <typename... ts> struct Kernel {
     resetFreshLabelGen();
 
     // Reserved general-purpose variables
-    Int qpuId, qpuCount, readStride, writeStride;
+    Int qpuId, qpuCount;
     qpuId = getUniformInt();
     qpuCount = getUniformInt();
 
