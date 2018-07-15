@@ -85,6 +85,29 @@ Instr genOR(Reg dst, Reg srcA, Reg srcB)
   return instr;
 }
 
+// Generate addition instruction.
+
+Instr genADD(Reg dst, Reg srcA, Reg srcB)
+{
+  AssignCond always;
+  always.tag = ALWAYS;
+
+  Instr instr;
+  instr.tag           = ALU;
+  instr.ALU.setFlags  = false;
+  instr.ALU.cond      = always;
+  instr.ALU.dest      = dst;
+  instr.ALU.srcA.tag  = REG;
+  instr.ALU.srcA.reg  = srcA;
+  instr.ALU.op        = A_ADD;
+  instr.ALU.srcB.tag  = REG;
+  instr.ALU.srcB.reg  = srcB;
+
+  return instr;
+}
+
+
+
 // Generate left-shift instruction.
 
 Instr genLShift(Reg dst, Reg srcA, int n)
