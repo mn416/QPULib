@@ -57,14 +57,20 @@ int main(int argc, char *argv[]) {
 	unsigned revision = get_version(mb);
 	printf("Hardware revision: %04x\n", revision);
 
-	bool wasEnabled = RegisterMap::enabled();
-	if (!wasEnabled) {
-		// VideoCore needs to be enabled, otherwise the registers can't be accessed.
-		//printf("VideoCore not running, enabling for this app\n");
-		qpu_enable(mb, 1);
-	}
-
+	bool wasEnabled = true;  // Default to prevent final call to qpu_enable()
 	if (geteuid() == 0) {  // Only do this as root (sudo)
+		wasEnabled = RegisterMap::enabled();
+		if (!wasEnabled) {
+			// VideoCore needs to be enabled, otherwise the registers can't be accessed.
+			//printf("VideoCore not running, enabling for this app\n");
+			qpu_enable(mb, 1);
+
+			// Videocore apparently needs some time on initial startup
+      // After first, it starts up fast.
+			// Would be better if we could detect the very first call
+			sleep(3);
+		}
+
 		printf("Number of slices: %d\n", RegisterMap::numSlices());
 		printf("Number of QPU's per slice: %d\n", RegisterMap::numQPUPerSlice());
 	} else {

@@ -5,7 +5,22 @@
 #include <cstring>
 #include <stdio.h>
 #include <unistd.h>
+
+// This ugly part is to ensure '__linux__' is set for older versions
+// for the bcm-include.
+#if !defined(__linux__)
+#define LINUX_PREVIOUSLY_UNDEFINED
+#define __linux__
+#endif
+
 #include <bcm_host.h>
+
+#if defined(LINUX_PREVIOUSLY_UNDEFINED)
+#define __linux__
+#undef LINUX_PREVIOUSLY_UNDEFINED
+#endif
+// End ugly part
+
 #include "Mailbox.h"  // for mapmem()
 
 namespace QPULib {
@@ -47,8 +62,7 @@ uint32_t RegisterMap::read(int offset) const {
 #ifdef DEBUG
 	// Do a spot check on the loaded memory
 	if (m_addr[V3D_BASE] == 0XDEADBEEF) {
-		printf("RegisterMap can not read QPU registers, the VideoCore is not enabled.\n");
-		exit(-1);
+		printf("WARNING: RegisterMap can not read QPU registers, the VideoCore is not enabled.\n");
 	}
 #endif
 
@@ -81,9 +95,20 @@ bool RegisterMap::enabled() {
 	// Detect the signature in register 0
 	uint32_t reg = readRegister(V3D_IDENT0);
 	char *p = (char *) &reg;
-	//printf("Reg 0: '%c%c%c'\n", p[0], p[1], p[2]);
+#ifdef DEBUG
+	printf("Reg 0: '%c%c%c'\n", p[0], p[1], p[2]);
+#endif
 
-	return (p[0] == 'V' && p[1] == '3' && p[2] == 'D');
+	bool canRead = (p[0] == 'V' && p[1] == '3' && p[2] == 'D');
+
+#ifdef PROB_NOT_REQUIRED
+	if (!canRead) {
+		// Reset singleton for a next attempt
+		m_instance.reset(nullptr);
+	}
+#endif  // PROB_NOT_REQUIRED
+
+	return canRead;
 }
 
 
