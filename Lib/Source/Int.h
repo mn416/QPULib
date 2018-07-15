@@ -59,6 +59,7 @@ IntExpr getUniformInt();
 IntExpr index();
 IntExpr me();
 IntExpr numQPUs();
+IntExpr vpmGetInt();
 
 IntExpr rotate(IntExpr a, IntExpr b);
 FloatExpr rotate(FloatExpr a, IntExpr b);

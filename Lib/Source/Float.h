@@ -52,6 +52,7 @@ struct Float {
 // ============================================================================
 
 FloatExpr getUniformFloat();
+FloatExpr vpmGetFloat();
 
 FloatExpr operator+(FloatExpr a, FloatExpr b);
 FloatExpr operator-(FloatExpr a, FloatExpr b);
