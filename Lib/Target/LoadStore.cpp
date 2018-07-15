@@ -6,122 +6,295 @@
 namespace QPULib {
 
 // =============================================================================
-// Stride setup
+// VPM setup
 // =============================================================================
 
-// Generate instructions to set the read stride.
-
-void genSetReadStride(Seq<Instr>* instrs, int stride)
+static int vpmSetupReadCode(int n, int hor, int stride)
 {
-  int pitch = (stride+1)*4;
-  assert(pitch < 8192);
-  int setup = 0x90000000 | pitch;
-  Reg dst; dst.tag = REG_A; dst.regId = RSV_READ_STRIDE;
-  Instr instr = genLI(dst, setup);
+  assert(n >= 1 && n <= 16); // A max of 16 vectors can be read
+  assert(stride >= 1 && stride <= 64); // Valid stride
+  assert(hor == 0 || hor == 1); // Horizontal or vertical
+
+  // Max values encoded as 0
+  if (n == 16) n = 0;
+  if (stride == 64) stride = 0;
+
+  // Setup code
+  int code = n << 20;
+  code |= stride << 12;
+  code |= hor << 11;
+  code |= 2 << 8;
+
+  return code;
+}
+
+static int vpmSetupWriteCode(int hor, int stride)
+{
+  assert(stride >= 1 && stride <= 64); // Valid stride
+  assert(hor == 0 || hor == 1); // Horizontal or vertical
+
+  // Max values encoded as 0
+  if (stride == 64) stride = 0;
+  
+  // Setup code
+  int code = stride << 12;
+  code |= hor << 11;
+  code |= 2 << 8;
+  
+  return code;
+}
+
+// Generate instructions to setup VPM load.
+
+void genSetupVPMLoad(Seq<Instr>* instrs, int n, int addr, int hor, int stride)
+{
+  assert(addr < 256);
+
+  Reg dst;
+  dst.tag = SPECIAL;
+  dst.regId = SPECIAL_RD_SETUP;
+
+  int setup = vpmSetupReadCode(n, hor, stride) | (addr & 0xff);
+  instrs->append(genLI(dst, setup));
+
+  Instr instr;
+  instr.tag = VPM_STALL;
   instrs->append(instr);
 }
 
-void genSetReadStride(Seq<Instr>* instrs, Reg stride)
+void genSetupVPMLoad(Seq<Instr>* instrs, int n, Reg addr, int hor, int stride)
 {
-  Reg pitch = freshReg();
+  Reg dst;
+  dst.tag = SPECIAL;
+  dst.regId = SPECIAL_RD_SETUP;
+
   Reg tmp = freshReg();
-  instrs->append(genIncr(pitch, stride, 1));
-  instrs->append(genLI(tmp, 0x90000000));
-  instrs->append(genLShift(pitch, pitch, 2));
+  int setup = vpmSetupReadCode(n, hor, stride);
+  instrs->append(genLI(tmp, setup));
+  instrs->append(genOR(dst, addr, tmp));
 
-  Reg dst; dst.tag = REG_A; dst.regId = RSV_READ_STRIDE;
-  instrs->append(genOR(dst, tmp, pitch));
-}
-
-// Generate instructions to set the write stride.
-
-void genSetWriteStride(Seq<Instr>* instrs, int stride)
-{
-  int strideBytes = stride*4;
-  assert(strideBytes < 8192);
-  int setup = 0xc0010000 | strideBytes;
-  Reg dst; dst.tag = REG_A; dst.regId = RSV_WRITE_STRIDE;
-  Instr instr = genLI(dst, setup);
+  Instr instr;
+  instr.tag = VPM_STALL;
   instrs->append(instr);
 }
 
-void genSetWriteStride(Seq<Instr>* instrs, Reg stride)
-{
-  Reg tmp0 = freshReg();
-  Reg tmp1 = freshReg();
-  instrs->append(genLShift(tmp0, stride, 2));
-  instrs->append(genLI(tmp1, 0xc0010000));
+// Generate instructions to setup VPM store.
 
-  Reg dst; dst.tag = REG_A; dst.regId = RSV_WRITE_STRIDE;
-  instrs->append(genOR(dst, tmp0, tmp1));
+void genSetupVPMStore(Seq<Instr>* instrs, int addr, int hor, int stride)
+{
+  assert(addr < 256);
+
+  Reg dst;
+  dst.tag = SPECIAL;
+  dst.regId = SPECIAL_WR_SETUP;
+
+  int setup = vpmSetupWriteCode(hor, stride) | (addr & 0xff);
+  instrs->append(genLI(dst, setup));
+}
+
+void genSetupVPMStore(Seq<Instr>* instrs, Reg addr, int hor, int stride)
+{
+  Reg dst;
+  dst.tag = SPECIAL;
+  dst.regId = SPECIAL_WR_SETUP;
+
+  Reg tmp = freshReg();
+  int setup = vpmSetupWriteCode(hor, stride);
+  instrs->append(genLI(tmp, setup));
+  instrs->append(genOR(dst, addr, tmp));
 }
 
 // =============================================================================
 // DMA setup
 // =============================================================================
 
+// (rowLen in bytes)
+static int dmaSetupStoreCode(int numRows, int rowLen, int hor)
+{
+  assert(numRows > 0 && numRows <= 128);
+  assert(rowLen > 0 && rowLen <= 128);
+  if (numRows == 128) numRows = 0;
+  if (rowLen == 128) rowLen = 0;
+
+  int setup = 0x80000000;
+  setup |= numRows << 23;
+  setup |= rowLen << 16;
+  setup |= hor << 14;
+  return setup;
+}
+
+// (rowLen in 32-bit words)
+static int dmaSetupLoadCode(int numRows, int rowLen, int hor, int vpitch)
+{
+  assert(numRows > 0 && numRows <= 16);
+  assert(rowLen > 0 && rowLen <= 16);
+  assert(vpitch > 0 && vpitch <= 16);
+  if (numRows == 16) numRows = 0;
+  if (rowLen == 16) rowLen = 0;
+  if (vpitch == 16) vpitch = 0;
+
+  int setup = 0x80000000;
+  setup |= rowLen << 20;
+  setup |= numRows << 16;
+  setup |= vpitch << 12;
+  setup |= (hor == 0 ? 1 : 0) << 11;
+  return setup;
+}
+
 // Generate instructions to setup DMA load.
 
-void assignDMALoadSetup(Seq<Instr>* instrs, Reg dst, BufferAorB b, Reg qpuId)
+void genSetupDMALoad(
+  Seq<Instr>* instrs, int numRows, int rowLen,
+                      int hor, int vpitch, int vpmAddr)
 {
-  int setup = 0x80101800;
-  int buffIdx = (16 * (b == A ? 0 : 1)) << 4;
-  setup |= buffIdx;
+  assert(vpmAddr < 2048);
+  int setup = dmaSetupLoadCode(numRows, rowLen, hor, vpitch);
+  setup |= vpmAddr;
 
-  Reg tmp = freshReg();
-  instrs->append(genLI(tmp, setup));
-  instrs->append(genOR(dst, qpuId, tmp));
+  Reg dst;
+  dst.tag = SPECIAL;
+  dst.regId = SPECIAL_RD_SETUP;
+  instrs->append(genLI(dst, setup));
 }
 
-// Generate instructions to setup DMA store.
-
-void assignDMAStoreSetup(Seq<Instr>* instrs, Reg dst, BufferAorB b, Reg qpuId)
+void genSetupDMALoad(
+  Seq<Instr>* instrs, int numRows, int rowLen,
+                      int hor, int vpitch, Reg vpmAddr)
 {
-  int setup = 0x88014000;
-  int buffIdx = (16 * (b == A ? 2 : 3)) << 7;
-  setup |= buffIdx;
-
-  Reg tmp0 = freshReg();
-  instrs->append(genLI(tmp0, setup));
-
-  Reg tmp1 = freshReg();
-  instrs->append(genLShift(tmp1, qpuId, 3));
-
-  instrs->append(genOR(dst, tmp0, tmp1));
-}
-
-// =============================================================================
-// VPM setup
-// =============================================================================
-
-// Generate instructions to setup VPM load.
-
-void assignVPMLoadSetup(Seq<Instr>* instrs, Reg dst, BufferAorB b, Reg qpuId)
-{
-  int setup = 0x00100200;
-  int buffIdx = (b == A ? 0 : 1) << 4;
-  setup |= buffIdx;
-
-  Reg tmp = freshReg();
-  instrs->append(genLI(tmp, setup));
-  instrs->append(genOR(dst, qpuId, tmp));
-}
-
-// Generate instructions to setup VPM store.
-
-void genSetupVPMStore(Seq<Instr>* instrs, BufferAorB b, Reg qpuId)
-{
-  int setup = 0x00100200;
-  int buffIdx = (b == A ? 2 : 3) << 4;
-  setup |= buffIdx;
+  int setup = dmaSetupLoadCode(numRows, rowLen, hor, vpitch);
 
   Reg tmp = freshReg();
   instrs->append(genLI(tmp, setup));
 
   Reg dst;
-  dst.tag   = SPECIAL;
+  dst.tag = SPECIAL;
+  dst.regId = SPECIAL_RD_SETUP;
+  instrs->append(genOR(dst, vpmAddr, tmp));
+}
+
+void genStartDMALoad(Seq<Instr>* instrs, Reg memAddr)
+{
+  Reg dst;
+  dst.tag = SPECIAL;
+  dst.regId = SPECIAL_DMA_LD_ADDR;
+  instrs->append(genOR(dst, memAddr, memAddr));
+}
+
+void genWaitDMALoad(Seq<Instr>* instrs)
+{
+  Instr instr;
+  instr.tag                   = ALU;
+  instr.ALU.setFlags          = false;
+  instr.ALU.cond.tag          = NEVER;
+  instr.ALU.op                = A_BOR;
+  instr.ALU.dest.tag          = NONE;
+  instr.ALU.srcA.tag          = REG;
+  instr.ALU.srcA.reg.tag      = SPECIAL;
+  instr.ALU.srcA.reg.regId    = SPECIAL_DMA_LD_WAIT;
+  instr.ALU.srcB.tag          = REG;
+  instr.ALU.srcB.reg          = instr.ALU.srcA.reg;
+  instrs->append(instr);
+}
+
+// Generate instructions to do DMA store.
+
+void genSetupDMAStore(
+  Seq<Instr>* instrs, int numRows, int rowLen,
+                      int hor, int vpmAddr)
+{
+  assert(vpmAddr < 2048);
+  int setup = dmaSetupStoreCode(numRows, rowLen, hor);
+  setup |= vpmAddr << 3;
+
+  Reg dst;
+  dst.tag = SPECIAL;
   dst.regId = SPECIAL_WR_SETUP;
-  instrs->append(genOR(dst, qpuId, tmp));
+  instrs->append(genLI(dst, setup));
+}
+
+void genSetupDMAStore(
+  Seq<Instr>* instrs, int numRows, int rowLen,
+                      int hor, Reg vpmAddr)
+{
+  int setup = dmaSetupStoreCode(numRows, rowLen, hor);
+
+  Reg tmp0 = freshReg();
+  instrs->append(genLI(tmp0, setup));
+
+  Reg tmp1 = freshReg();
+  instrs->append(genLShift(tmp1, vpmAddr, 3));
+
+  Reg dst;
+  dst.tag = SPECIAL;
+  dst.regId = SPECIAL_WR_SETUP;
+  instrs->append(genOR(dst, tmp0, tmp1));
+}
+
+void genStartDMAStore(Seq<Instr>* instrs, Reg memAddr)
+{
+  Reg dst;
+  dst.tag = SPECIAL;
+  dst.regId = SPECIAL_DMA_ST_ADDR;
+  instrs->append(genOR(dst, memAddr, memAddr));
+}
+
+void genWaitDMAStore(Seq<Instr>* instrs)
+{
+  Instr instr;
+  instr.tag                   = ALU;
+  instr.ALU.setFlags          = false;
+  instr.ALU.cond.tag          = NEVER;
+  instr.ALU.op                = A_BOR;
+  instr.ALU.dest.tag          = NONE;
+  instr.ALU.srcA.tag          = REG;
+  instr.ALU.srcA.reg.tag      = SPECIAL;
+  instr.ALU.srcA.reg.regId    = SPECIAL_DMA_ST_WAIT;
+  instr.ALU.srcB.tag          = REG;
+  instr.ALU.srcB.reg          = instr.ALU.srcA.reg;
+  instrs->append(instr);
+}
+
+// =============================================================================
+// DMA stride setup
+// =============================================================================
+
+// Generate instructions to set the DMA read pitch.
+
+void genSetReadPitch(Seq<Instr>* instrs, int pitch)
+{
+  assert(pitch < 8192);
+  int setup = 0x90000000 | pitch;
+  Reg dst; dst.tag = SPECIAL; dst.regId = SPECIAL_RD_SETUP;
+  instrs->append(genLI(dst, setup));
+}
+
+void genSetReadPitch(Seq<Instr>* instrs, Reg pitch)
+{
+  Reg tmp = freshReg();
+  instrs->append(genLI(tmp, 0x90000000));
+
+  Reg dst; dst.tag = SPECIAL; dst.regId = SPECIAL_RD_SETUP;
+  instrs->append(genOR(dst, tmp, pitch));
+}
+
+// Generate instructions to set the DMA write stride.
+
+void genSetWriteStride(Seq<Instr>* instrs, int stride)
+{
+  assert(stride < 8192);
+  int setup = 0xc0000000 | stride;
+  Reg dst; dst.tag = SPECIAL; dst.regId = SPECIAL_WR_SETUP;
+  Instr instr = genLI(dst, setup);
+  instrs->append(instr);
+}
+
+void genSetWriteStride(Seq<Instr>* instrs, Reg stride)
+{
+  Reg tmp = freshReg();
+  instrs->append(genLI(tmp, 0xc0000000));
+
+  Reg dst; dst.tag = SPECIAL; dst.regId = SPECIAL_WR_SETUP;
+  instrs->append(genOR(dst, tmp, stride));
 }
 
 // ============================================================================
@@ -133,53 +306,13 @@ void loadStorePass(Seq<Instr>* instrs)
   Seq<Instr> newInstrs(instrs->numElems*2);
 
   // Put QPU number in a register
-  Reg qpuId = freshReg();
-  Reg qpuNum; qpuNum.tag = SPECIAL; qpuNum.regId = SPECIAL_QPU_NUM;
-  newInstrs.append(genMove(qpuId, qpuNum));
+  //Reg qpuId = freshReg();
+  //Reg qpuNum; qpuNum.tag = SPECIAL; qpuNum.regId = SPECIAL_QPU_NUM;
+  //newInstrs.append(genMove(qpuId, qpuNum));
 
-  // Initialise strides
-  genSetReadStride(&newInstrs, 0);
-  genSetWriteStride(&newInstrs, 0);
-
-  // Initialise load/store setup registers
-  Reg vpmLoadSetup  = freshReg();
-  Reg dmaLoadSetup  = freshReg();
-  Reg dmaStoreSetup = freshReg();
-
-  assignDMALoadSetup(&newInstrs, dmaLoadSetup, A, qpuId);
-  assignDMAStoreSetup(&newInstrs, dmaStoreSetup, A, qpuId);
-  assignVPMLoadSetup(&newInstrs, vpmLoadSetup, A, qpuId);
-
-  genSetupVPMStore(&newInstrs, A, qpuId);
-
-  // Elaborate LD1, LD3 and ST2 intermediate instructions
-  Reg sp; sp.tag = SPECIAL;
-  Reg src; src.tag = REG_A;
   for (int i = 0; i < instrs->numElems; i++) {
     Instr instr = instrs->elems[i];
     switch (instr.tag) {
-      case LD1:
-        sp.regId = SPECIAL_RD_SETUP;
-        src.regId = RSV_READ_STRIDE;
-        newInstrs.append(genMove(sp, src));
-        newInstrs.append(genMove(sp, dmaLoadSetup));
-        sp.regId = SPECIAL_DMA_LD_ADDR;
-        newInstrs.append(genMove(sp, instr.LD1.addr));
-        break;
-      case LD3:
-        sp.regId = SPECIAL_RD_SETUP;
-        newInstrs.append(genMove(sp, vpmLoadSetup));
-        for (int j = 0; j < 3; j++)
-          newInstrs.append(nop());
-        break;
-      case ST2:
-        sp.regId = SPECIAL_WR_SETUP;
-        src.regId = RSV_WRITE_STRIDE;
-        newInstrs.append(genMove(sp, src));
-        newInstrs.append(genMove(sp, dmaStoreSetup));
-        sp.regId = SPECIAL_DMA_ST_ADDR;
-        newInstrs.append(genMove(sp, instr.ST2.addr));
-        break;
       case RECV: {
         instr.tag = TMU0_TO_ACC4;
         newInstrs.append(instr);
