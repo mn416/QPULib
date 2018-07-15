@@ -40,6 +40,9 @@ bool isUnary(Op op);
 // Is operator commutative?
 bool isCommutative(Op op);
 
+// Direction for VPM/DMA loads and stores
+enum Dir { HORIZ, VERT };
+
 // ============================================================================
 // Variables
 // ============================================================================
@@ -55,6 +58,8 @@ enum VarTag {
                  // QPU's unique id (replicated 16 times).
   , ELEM_NUM     // (Read-only.) Reading this variable will yield a vector
                  // containing the integers from 0 to 15.
+  , VPM_READ     // (Read-only.) Read a vector from the VPM.
+  , VPM_WRITE    // (Write-only.) Write a vector to the VPM.
   , TMU0_ADDR    // (Write-only.) Initiate load via TMU
 };
 
@@ -69,10 +74,8 @@ struct Var {
 
 // Reserved general-purpose vars
 enum ReservedVarId {
-  RSV_QPU_ID       = 0,
-  RSV_NUM_QPUS     = 1,
-  RSV_READ_STRIDE  = 2,
-  RSV_WRITE_STRIDE = 3
+  RSV_QPU_ID   = 0,
+  RSV_NUM_QPUS = 1
 };
 
 // ============================================================================
@@ -206,8 +209,12 @@ enum StmtTag {
   SKIP, ASSIGN, SEQ, WHERE,
   IF, WHILE, PRINT, FOR,
   SET_READ_STRIDE, SET_WRITE_STRIDE,
-  LOAD_RECEIVE, STORE_REQUEST, FLUSH,
-  SEND_IRQ_TO_HOST, SEMA_INC, SEMA_DEC };
+  LOAD_RECEIVE, STORE_REQUEST,
+  SEND_IRQ_TO_HOST, SEMA_INC, SEMA_DEC,
+  SETUP_VPM_READ, SETUP_VPM_WRITE,
+  SETUP_DMA_READ, SETUP_DMA_WRITE,
+  DMA_READ_WAIT, DMA_WRITE_WAIT,
+  DMA_START_READ, DMA_START_WRITE };
 
 struct Stmt {
   // What kind of statement is it?
@@ -246,6 +253,25 @@ struct Stmt {
 
     // Semaphore id for increment / decrement
     int semaId;
+
+    // VPM read setup
+    struct { int numVecs; Expr* addr; int hor; int stride; } setupVPMRead;
+
+    // VPM write setup
+    struct { Expr* addr; int hor; int stride; } setupVPMWrite;
+
+    // DMA read setup
+    struct { Expr* vpmAddr; int numRows; int rowLen;
+             int hor; int vpitch; } setupDMARead;
+
+    // DMA write setup
+    struct { Expr* vpmAddr; int numRows; int rowLen; int hor; } setupDMAWrite;
+
+    // DMA start read
+    Expr* startDMARead;
+
+    // DMA start write
+    Expr* startDMAWrite;
   };
 };
 
