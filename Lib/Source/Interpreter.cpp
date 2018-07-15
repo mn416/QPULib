@@ -46,6 +46,11 @@ Vec evalVar(CoreState* s, Var v)
       return x;
     }
 
+    // VPM read
+    case VPM_READ:
+      printf("QPULib: vpmGet() not supported by interpreter\n");
+      break;
+
     default:
       printf("QPULib: reading from write-only variable\n");
   }
@@ -145,7 +150,7 @@ Vec eval(CoreState* s, Expr* e)
       Vec v;
       for (int i = 0; i < NUM_LANES; i++) {
         v.elems[i].intVal = emuHeap[hp>>2];
-        hp += 4*(s->readStride+1);
+        hp += s->readStride;
       }
       return v;
   }
@@ -291,6 +296,11 @@ void assignToVar(CoreState* s, Vec cond, Var v, Vec x)
       return;
     }
 
+    // VPM write
+    case VPM_WRITE:
+      printf("QPULib: vpmPut() not supported by interpreter\n");
+      break;
+
     // Others are read-only
     case UNIFORM:
     case QPU_NUM:
@@ -322,7 +332,7 @@ void execAssign(CoreState* s, Vec cond, Expr* lhs, Expr* rhs)
       int hp = index.elems[0].intVal;
       for (int i = 0; i < NUM_LANES; i++) {
         emuHeap[hp>>2] = val.elems[i].intVal;
-        hp += 4*(s->writeStride+1);
+        hp += 4 + s->writeStride;
       }
       return;
     }
@@ -474,7 +484,7 @@ void execStoreRequest(CoreState* s, Expr* data, Expr* addr) {
   int hp = index.elems[0].intVal;
   for (int i = 0; i < NUM_LANES; i++) {
     emuHeap[hp>>2] = val.elems[i].intVal;
-    hp += 4*(s->writeStride+1);
+    hp += 4 + s->writeStride;
   }
 }
 
@@ -575,8 +585,19 @@ void exec(InterpreterState* state, CoreState* s)
       else state->sema[stmt->semaId]--;
       return;
 
-    // Flush outstanding stores
-    case FLUSH: return;
+    case DMA_READ_WAIT:
+    case DMA_WRITE_WAIT:
+    case SETUP_VPM_READ:
+    case SETUP_VPM_WRITE:
+    case SETUP_DMA_READ:
+    case SETUP_DMA_WRITE:
+      // Interpreter ignores these
+      return;
+
+    case DMA_START_READ:
+    case DMA_START_WRITE:
+      printf("QPULib: DMA access not supported by interpreter\n");
+      break;
 
     default:
       printf("QPULib: Not expecting tag %d in exec\n", stmt->tag);

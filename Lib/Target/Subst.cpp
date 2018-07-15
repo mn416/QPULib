@@ -24,14 +24,6 @@ void renameDest(Instr* instr, RegTag vt, RegId v,
       }
       return;
 
-    // LD4 instruction
-    case LD4:
-      if (instr->LD4.dest.tag == vt && instr->LD4.dest.regId == v) {
-        instr->LD4.dest.tag = wt;
-        instr->LD4.dest.regId = w;
-      }
-      return;
-
     // RECV instruction
     case RECV:
       if (instr->RECV.dest.tag == vt && instr->RECV.dest.regId == v) {
@@ -63,30 +55,6 @@ void renameUses(Instr* instr, RegTag vt, RegId v,
           instr->ALU.srcB.reg.regId == v) {
         instr->ALU.srcB.reg.tag = wt;
         instr->ALU.srcB.reg.regId = w;
-      }
-      return;
-
-    // LD1 instruction
-    case LD1:
-      if (instr->LD1.addr.tag == vt && instr->LD1.addr.regId == v) {
-        instr->LD1.addr.tag = wt;
-        instr->LD1.addr.regId = w;
-      }
-      return;
-
-    // ST1 instruction
-    case ST1:
-      if (instr->ST1.data.tag == vt && instr->ST1.data.regId == v) {
-        instr->ST1.data.tag = wt;
-        instr->ST1.data.regId = w;
-      }
-      return;
-
-    // ST2 instruction
-    case ST2:
-      if (instr->ST2.addr.tag == vt && instr->ST2.addr.regId == v) {
-        instr->ST2.addr.tag = wt;
-        instr->ST2.addr.regId = w;
       }
       return;
 
@@ -130,30 +98,6 @@ void substRegTag(Instr* instr, RegTag vt, RegTag wt)
         instr->ALU.srcA.reg.tag = wt;
       if (instr->ALU.srcB.tag == REG && instr->ALU.srcB.reg.tag == vt)
         instr->ALU.srcB.reg.tag = wt;
-      return;
-
-    // LD1 instruction
-    case LD1:
-      if (instr->LD1.addr.tag == vt)
-        instr->LD1.addr.tag = wt;
-      return;
-
-    // LD4 instruction
-    case LD4:
-      if (instr->LD4.dest.tag == vt)
-        instr->LD4.dest.tag = wt;
-      return;
-
-    // ST1 instruction
-    case ST1:
-      if (instr->ST1.data.tag == vt)
-        instr->ST1.data.tag = wt;
-      return;
-
-    // ST2 instruction
-    case ST2:
-      if (instr->ST2.addr.tag == vt)
-        instr->ST2.addr.tag = wt;
       return;
 
     // Print integer instruction

@@ -49,30 +49,6 @@ void useDefReg(Instr instr, UseDefReg* useDef)
         useDef->use.insert(instr.ALU.srcB.reg);
       return;
 
-    // LD1 instruction
-    case LD1:
-      // Add source reg to 'use' set
-      useDef->use.insert(instr.LD1.addr);
-      return;
-
-    // LD4 instruction
-    case LD4:
-      // Add dest reg to 'def' set
-      useDef->def.insert(instr.LD4.dest);
-      return;
-
-    // ST1 instruction
-    case ST1:
-      // Add source reg to 'use' set
-      useDef->use.insert(instr.ST1.data);
-      return;
-
-    // ST2 instruction
-    case ST2:
-      // Add source reg to 'use' set
-      useDef->use.insert(instr.ST2.addr);
-      return;
-
     // Print integer instruction
     case PRI:
       // Add source reg to 'use' set

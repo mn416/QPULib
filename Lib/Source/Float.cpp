@@ -89,6 +89,15 @@ FloatExpr getUniformFloat()
   return mkFloatExpr(e);
 }
 
+// Read vector from VPM
+FloatExpr vpmGetFloat()
+{
+  Expr* e    = mkExpr();
+  e->tag     = VAR;
+  e->var.tag = VPM_READ;
+  return mkFloatExpr(e);
+}
+
 // Add
 FloatExpr operator+(FloatExpr a, FloatExpr b)
   { return mkFloatApply(a, mkOp(ADD, FLOAT), b); }

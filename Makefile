@@ -69,16 +69,6 @@ endif
 
 # QPU or emulation mode
 ifeq ($(QPU), 1)
-
-# Check platform before building. Can't be indented, otherwise make complains.
-RET := $(shell Tools/detectPlatform.sh 1>/dev/null && echo "yes" || echo "no")
-#$(info  info: '$(RET)')
-ifneq ($(RET), yes)
-$(error QPU-mode specified on a non-Pi platform; aborting)
-else
-$(info Building on a Pi platform)
-endif
-
   CXX_FLAGS += -DQPU_MODE -I /opt/vc/include
   OBJ_DIR := $(OBJ_DIR)-qpu
 	LIBS := -L /opt/vc/lib -l bcm_host
@@ -111,12 +101,29 @@ OBJ =                         \
   Target/LoadStore.o          \
   Target/Emulator.o           \
   Target/Encode.o             \
-  VideoCore/RegisterMap.o     \
   VideoCore/Mailbox.o         \
   VideoCore/Invoke.o          \
   VideoCore/VideoCore.o
 
 LIB = $(patsubst %,$(OBJ_DIR)/%,$(OBJ))
+
+# All programs in the Examples directory
+# NOTE: detectPlatform is in the 'Tools' directory, not in 'Examples'
+EXAMPLES =  \
+	detectPlatform \
+	Tri       \
+	GCD       \
+	Print     \
+	MultiTri  \
+	AutoTest  \
+	OET       \
+	Hello     \
+	ReqRecv   \
+	Rot3D     \
+	Rot3DLib  \
+	ID        \
+	HeatMap   \
+	DMA
 
 EXAMPLE_TARGETS = $(patsubst %,$(OBJ_DIR)/bin/%,$(EXAMPLES))
 TOOL_TARGETS = $(patsubst %,$(OBJ_DIR)/bin/%,$(TOOLS))

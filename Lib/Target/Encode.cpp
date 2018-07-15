@@ -1,5 +1,6 @@
 #include "Target/Encode.h"
 #include "Target/Satisfy.h"
+#include "Target/Pretty.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -206,9 +207,9 @@ void encodeInstr(Instr instr, uint32_t* high, uint32_t* low)
       instr.LI.imm.tag    = IMM_INT32;
       instr.LI.imm.intVal = 1;
       break;
-    case LD2:
-    case ST3: {
-      RegId src = instr.tag == LD2 ? SPECIAL_DMA_LD_WAIT :
+    case DMA_LOAD_WAIT:
+    case DMA_STORE_WAIT: {
+      RegId src = instr.tag == DMA_LOAD_WAIT ? SPECIAL_DMA_LD_WAIT :
                   SPECIAL_DMA_ST_WAIT;
       instr.tag                   = ALU;
       instr.ALU.setFlags          = false;
@@ -220,34 +221,6 @@ void encodeInstr(Instr instr, uint32_t* high, uint32_t* low)
       instr.ALU.srcA.reg.regId    = src;
       instr.ALU.srcB.tag          = REG;
       instr.ALU.srcB.reg          = instr.ALU.srcA.reg;
-      break;
-    }
-    case LD4: {
-      Reg dest = instr.LD4.dest;
-      instr.tag                   = ALU;
-      instr.ALU.setFlags          = false;
-      instr.ALU.cond.tag          = ALWAYS;
-      instr.ALU.op                = A_BOR;
-      instr.ALU.dest              = dest;
-      instr.ALU.srcA.tag          = REG;
-      instr.ALU.srcA.reg.tag      = SPECIAL;
-      instr.ALU.srcA.reg.regId    = SPECIAL_VPM_READ;
-      instr.ALU.srcB.tag          = REG;
-      instr.ALU.srcB.reg          = instr.ALU.srcA.reg;
-      break;
-    }
-    case ST1: {
-      Reg src = instr.ST1.data;
-      instr.tag                   = ALU;
-      instr.ALU.setFlags          = false;
-      instr.ALU.cond.tag          = ALWAYS;
-      instr.ALU.op                = A_BOR;
-      instr.ALU.dest.tag          = SPECIAL;
-      instr.ALU.dest.regId        = SPECIAL_VPM_WRITE;
-      instr.ALU.srcA.tag          = REG;
-      instr.ALU.srcA.reg          = src;
-      instr.ALU.srcB.tag          = REG;
-      instr.ALU.srcB.reg          = src;
       break;
     }
 

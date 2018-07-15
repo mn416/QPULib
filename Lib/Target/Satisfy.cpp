@@ -77,8 +77,12 @@ RegTag regFileOf(Reg r)
   if (r.tag == SPECIAL) {
     if (r.regId == SPECIAL_ELEM_NUM) return REG_A;
     if (r.regId == SPECIAL_QPU_NUM) return REG_B;
+    if (r.regId == SPECIAL_RD_SETUP) return REG_A;
+    if (r.regId == SPECIAL_WR_SETUP) return REG_B;
     if (r.regId == SPECIAL_DMA_LD_WAIT) return REG_A;
     if (r.regId == SPECIAL_DMA_ST_WAIT) return REG_B;
+    if (r.regId == SPECIAL_DMA_LD_ADDR) return REG_A;
+    if (r.regId == SPECIAL_DMA_ST_ADDR) return REG_B;
   }
   return NONE;
 }
@@ -94,8 +98,8 @@ bool resolveRegFileConflict(Instr* instr, Instr* newInstr)
     int rfa = regFileOf(instr->ALU.srcA.reg);
     int rfb = regFileOf(instr->ALU.srcB.reg);
     if (rfa != NONE && rfb != NONE) {
-      bool conflict = rfa == rfb && instr->ALU.srcA.reg.regId !=
-                                    instr->ALU.srcB.reg.regId;
+      bool conflict = rfa == rfb &&
+           !(instr->ALU.srcA.reg == instr->ALU.srcB.reg);
       if (conflict) {
         *newInstr = remapAToAccum(instr, 0);
         return true;
@@ -203,17 +207,58 @@ static void insertNops(Seq<Instr>* instrs, Seq<Instr>* newInstrs)
 
 }
 
+// Return true for any instruction that doesn't read from the VPM
+bool notVPMGet(Instr instr)
+{
+  // Use/def sets
+  UseDefReg useDef;
+
+  useDefReg(instr, &useDef);
+  for (int i = 0; i < useDef.use.numElems; i++) {
+    Reg useReg = useDef.use.elems[i];
+    if (useReg.tag == SPECIAL && useReg.regId == SPECIAL_VPM_READ)
+      return false;
+  }
+  return true;
+}
+
+// Insert NOPs between VPM setup and VPM read, if needed
+static void removeVPMStall(Seq<Instr>* instrs, Seq<Instr>* newInstrs)
+{
+  // Use/def sets
+  UseDefReg useDef;
+
+  for (int i = 0; i < instrs->numElems; i++) {
+    Instr instr = instrs->elems[i];
+    if (instr.tag != VPM_STALL)
+      newInstrs->append(instr);
+    else {
+      int numNops = 3;  // Number of nops to insert
+      for (int j = 1; j <= 3; j++) {
+        if ((i+j) >= instrs->numElems) break;
+        Instr next = instrs->elems[i+j];
+        if (next.tag == LAB) break;
+        if (notVPMGet(next)) numNops--; else break;
+      }
+      for (int j = 0; j < numNops; j++)
+        newInstrs->append(nop());
+    }
+  }
+}
+
 // Combine passes
 
 void satisfy(Seq<Instr>* instrs)
 {
   // New instruction sequence
-  Seq<Instr> newInstrs(instrs->numElems * 2);
+  Seq<Instr> newInstrs0(instrs->numElems * 2);
+  Seq<Instr> newInstrs1(instrs->numElems * 2);
 
   // Apply passes
-  insertMoves(instrs, &newInstrs);
+  insertMoves(instrs, &newInstrs0);
+  insertNops(&newInstrs0, &newInstrs1);
   instrs->clear();
-  insertNops(&newInstrs, instrs);
+  removeVPMStall(&newInstrs1, instrs);
 }
 
 }  // namespace QPULib
