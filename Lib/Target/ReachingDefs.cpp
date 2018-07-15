@@ -103,14 +103,6 @@ void computeGenKill(InstrId id, Instr instr, DefsOf* defsOf, GenKill* genKill)
       }
       break;
 
-    // LD4 instruction
-    case LD4:
-      // Add dest reg to 'def' set
-      if (instr.LD4.dest.tag == REG_A) {
-        isDef  = true;
-        defReg = instr.LD4.dest.regId;
-      }
-      break;
   }
 
   if (isDef) {
