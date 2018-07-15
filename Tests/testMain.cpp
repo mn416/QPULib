@@ -20,7 +20,7 @@ using RegMap = QPULib::RegisterMap;
 
 
 //
-// get the base directory right for calling AutoTest
+// get the base directory right for calling compiled apps.
 //
 #ifdef DEBUG
 	#define POSTFIX_DEBUG "-debug"
@@ -52,11 +52,10 @@ TEST_CASE("Check random specifications for interpreter and emulator2", "[specs][
 
 
 TEST_CASE("Detect platform scripts should both return the same thing", "[cmdline]") {
-	printf("Running detectPlatform\n");
-	int ret1 = system(BIN_PATH "/detectPlatform");
+	int ret1 = system(BIN_PATH "/detectPlatform > /dev/null");
 	bool success1 = (ret1 == 0);
 
-	int ret2 = system("Tools/detectPlatform.sh");
+	int ret2 = system("Tools/detectPlatform.sh > /dev/null");
 	bool success2 = (ret2 == 0);
 
 	INFO("C++ script returned " << ret1 << ", shell script returned " << ret2);
