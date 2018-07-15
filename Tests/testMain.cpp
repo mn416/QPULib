@@ -35,8 +35,6 @@ using RegMap = QPULib::RegisterMap;
 	#define POSTFIX_QPU ""
 #endif
 
-const char *AUTOTEST_PATH = "obj" POSTFIX_DEBUG POSTFIX_QPU "/bin/AutoTest";
-
 
 //
 // This is a good place to put simple, global tests
