@@ -122,6 +122,15 @@ IntExpr numQPUs()
   return mkIntExpr(e);
 }
 
+// Read vector from VPM
+IntExpr vpmGetInt()
+{
+  Expr* e    = mkExpr();
+  e->tag     = VAR;
+  e->var.tag = VPM_READ;
+  return mkIntExpr(e);
+}
+
 // Vector rotation
 IntExpr rotate(IntExpr a, IntExpr b)
   { return mkIntApply(a, mkOp(ROTATE, INT32), b); }
