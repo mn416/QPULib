@@ -37,8 +37,6 @@ using RegMap = QPULib::RegisterMap;
 
 #define BIN_PATH "obj" POSTFIX_DEBUG POSTFIX_QPU "/bin"
 
-
-
 //
 // This is a good place to put simple, global tests
 //
