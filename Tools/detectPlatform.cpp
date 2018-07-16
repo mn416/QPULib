@@ -36,7 +36,7 @@ bool loadFileInString(const char *filename, std::string & out_str) {
 
 
 /**
- * @brief Pi platform detection for newer Pi versions.
+ * @brief Detect Pi platform for newer Pi versions.
  *
  * On success, it displays a string with the model version.
  *
@@ -57,7 +57,7 @@ bool detect_from_sys() {
 
 
 /**
- * @brief Pi platform detection for newer Pi versions.
+ * @brief Detect Pi platform for older Pi versions.
  *
  * Detects if this is a VideoCore. This should be sufficient for detecting Pi,
  * since it's the only thing to date(!) using this particular chip version.
@@ -65,8 +65,15 @@ bool detect_from_sys() {
  * @return true if Pi detected, false otherwise
  */
 bool detect_from_proc() {
-	// The hardware from Pi 2 onward is actually BCM2836, but the call still returns BCM2835
-	const char *BCM_VERSION = "BCM2835";
+	// List of allowed model numbers
+	const char *BCM_VERSION[] = { 
+		"BCM2807",
+		"BCM2835",     // This appears to be returned for all higher BCM versions
+		//"BCM2836",   // If that's not the case, enable these as well
+		//"BCM2837",
+		//BCM2837B0",
+		nullptr        // end marker
+	};
 
 	const char *filename = "/proc/cpuinfo";
 
@@ -79,14 +86,15 @@ bool detect_from_proc() {
 	while (getline(t, line)) {
 	  if (!strstr(line.c_str(), "Hardware")) continue;
 
-		if (strstr(line.c_str(), BCM_VERSION)) {
-	  	// For now, don't try to exactly specify the model.
-			// This could be done with field "Revision' in current input.
-			printf("This is a Pi platform\n");
-			return true;
+		for (int i = 0; BCM_VERSION[i] != nullptr; ++i) {
+			if (strstr(line.c_str(), BCM_VERSION[i])) {
+		  	// For now, don't try to exactly specify the model.
+				// This could be done with field "Revision' in current input.
+				printf("This is a Pi platform\n");
+				return true;
+			}
 		}
   }
-
 
 	return false;
 }
@@ -98,7 +106,8 @@ bool detect_from_proc() {
  * @returns 0 if this is so, 1 if it's a different platform.
  */
 int main(int argc, char *argv[]) {
-	if (!detect_from_sys() && !detect_from_proc()) {
+	//if (!detect_from_sys() && !detect_from_proc()) {
+	if (!detect_from_proc()) {
 		printf("This is not a Pi platform\n");
 		return 1;
 	}
