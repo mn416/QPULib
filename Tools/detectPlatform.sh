@@ -38,12 +38,29 @@ fi
 #
 # The hardware from Pi 2 onward is actually BCM2836, but the call still returns BCM2835
 #
-model=$(cat /proc/cpuinfo | grep Hardware | grep BCM2835 )
+
+# List of allowed model numbers
+knownModels=(
+	"BCM2807"
+	"BCM2835"    # This appears to be returned for all higher BCM versions
+	#"BCM2836"   # If that's not the case, enable these as well
+	#"BCM2837"
+	#"BCM2837B0"
+)
+
+
+model=$(cat /proc/cpuinfo | grep Hardware)
 ret=$?
 if [ $ret -eq 0 ]
 then
-	echo This is a Pi platform
-	exit 0
+	for knownModel  in "${knownModels[@]}"
+	do
+		if echo $model | grep $knownModel
+		then
+			echo This is a Pi platform
+			exit 0
+		fi
+	done
 fi
 
 
