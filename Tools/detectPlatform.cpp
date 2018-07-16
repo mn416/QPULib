@@ -69,7 +69,7 @@ bool detect_from_sys() {
  *
  * * The following are valid model numbers:
  *
- *  - BCM2807
+ *  - BCM2708
  *  - BCM2835    - This appears to be returned for all higher BCM versions
  *
  * * The following are also valid, but appear to be represented by 'BCM2835'
@@ -80,7 +80,7 @@ bool detect_from_sys() {
  *  - BCM2837B0
  */
 bool detect_from_proc() {
-	const char *BCM_VERSION_PREFIX = "BCM28";
+	const char *BCM_VERSION_PREFIX = "BCM2";
 	const char *filename = "/proc/cpuinfo";
 
 	std::ifstream t(filename);

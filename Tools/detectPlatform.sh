@@ -36,12 +36,11 @@ fi
 # Detect if this is a VideoCore. This should be sufficient for detecting Pi,
 # since it's the only thing to date(!) using this particular chip version.
 #
-# There are several model numbers possible, but they should all start
-# with 'BCM28'.
+# There are several model numbers possible, but they should all start with 'BCM2'.
 #
 
 # Prefix of allowed model numbers
-modelPrefix=BCM28
+modelPrefix=BCM2
 
 model=$(cat /proc/cpuinfo | grep Hardware | grep $modelPrefix)
 ret=$?
