@@ -36,31 +36,19 @@ fi
 # Detect if this is a VideoCore. This should be sufficient for detecting Pi,
 # since it's the only thing to date(!) using this particular chip version.
 #
-# The hardware from Pi 2 onward is actually BCM2836, but the call still returns BCM2835
+# There are several model numbers possible, but they should all start
+# with 'BCM28'.
 #
 
-# List of allowed model numbers
-knownModels=(
-	"BCM2807"
-	"BCM2835"    # This appears to be returned for all higher BCM versions
-	#"BCM2836"   # If that's not the case, enable these as well
-	#"BCM2837"
-	#"BCM2837B0"
-)
+# Prefix of allowed model numbers
+modelPrefix=BCM28
 
-
-model=$(cat /proc/cpuinfo | grep Hardware)
+model=$(cat /proc/cpuinfo | grep Hardware | grep $modelPrefix)
 ret=$?
 if [ $ret -eq 0 ]
 then
-	for knownModel  in "${knownModels[@]}"
-	do
-		if echo $model | grep $knownModel
-		then
-			echo This is a Pi platform
-			exit 0
-		fi
-	done
+	echo This is a Pi platform
+	exit 0
 fi
 
 
