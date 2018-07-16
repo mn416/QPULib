@@ -112,6 +112,7 @@ OBJ =                         \
   Target/Emulator.o           \
   Target/Encode.o             \
   VideoCore/Mailbox.o         \
+  VideoCore/RegisterMap.o     \
   VideoCore/Invoke.o          \
   VideoCore/VideoCore.o
 
