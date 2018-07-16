@@ -6,8 +6,14 @@
 #include <stdio.h>
 #include <unistd.h>
 
+//
 // This ugly part is to ensure '__linux__' is set for older versions
-// for the bcm-include.
+// for the bcm-include.i
+//
+// Apparently, old distro's have a gcc version
+// which does not support the __linux__ directive, which is required
+// to include certain header files for the Pi.
+//
 #if !defined(__linux__)
 #define LINUX_PREVIOUSLY_UNDEFINED
 #define __linux__
@@ -16,7 +22,7 @@
 #include <bcm_host.h>
 
 #if defined(LINUX_PREVIOUSLY_UNDEFINED)
-#define __linux__
+#undef __linux__
 #undef LINUX_PREVIOUSLY_UNDEFINED
 #endif
 // End ugly part
