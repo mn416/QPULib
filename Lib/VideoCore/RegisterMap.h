@@ -26,6 +26,7 @@ public:
 
 	static int numSlices();
 	static int numQPUPerSlice();
+	static int VPMSize();
 
 private:
 	RegisterMap();
