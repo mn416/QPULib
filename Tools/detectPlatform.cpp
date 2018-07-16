@@ -63,36 +63,38 @@ bool detect_from_sys() {
  * since it's the only thing to date(!) using this particular chip version.
  *
  * @return true if Pi detected, false otherwise
+ *
+ * --------------------------------------------------------------------------
+ * ## NOTES
+ *
+ * * The following are valid model numbers:
+ *
+ *  - BCM2807
+ *  - BCM2835    - This appears to be returned for all higher BCM versions
+ *
+ * * The following are also valid, but appear to be represented by 'BCM2835'
+ *   in `/proc/cpuinfo`:
+ *
+ *  - BCM2836   // If that's not the case, enable these as well
+ *  - BCM2837
+ *  - BCM2837B0
  */
 bool detect_from_proc() {
-	// List of allowed model numbers
-	const char *BCM_VERSION[] = { 
-		"BCM2807",
-		"BCM2835",     // This appears to be returned for all higher BCM versions
-		//"BCM2836",   // If that's not the case, enable these as well
-		//"BCM2837",
-		//BCM2837B0",
-		nullptr        // end marker
-	};
-
+	const char *BCM_VERSION_PREFIX = "BCM28";
 	const char *filename = "/proc/cpuinfo";
 
 	std::ifstream t(filename);
-	if (!t.is_open()) {
-		return false;
-	}
+	if (!t.is_open()) return false;
 
 	std::string line;
 	while (getline(t, line)) {
 	  if (!strstr(line.c_str(), "Hardware")) continue;
 
-		for (int i = 0; BCM_VERSION[i] != nullptr; ++i) {
-			if (strstr(line.c_str(), BCM_VERSION[i])) {
-		  	// For now, don't try to exactly specify the model.
-				// This could be done with field "Revision' in current input.
-				printf("This is a Pi platform\n");
-				return true;
-			}
+		if (strstr(line.c_str(), BCM_VERSION_PREFIX)) {
+	  	// For now, don't try to exactly specify the model.
+			// This could be done with field "Revision' in current input.
+			printf("This is a Pi platform\n");
+			return true;
 		}
   }
 
@@ -106,8 +108,7 @@ bool detect_from_proc() {
  * @returns 0 if this is so, 1 if it's a different platform.
  */
 int main(int argc, char *argv[]) {
-	//if (!detect_from_sys() && !detect_from_proc()) {
-	if (!detect_from_proc()) {
+	if (!detect_from_sys() && !detect_from_proc()) {
 		printf("This is not a Pi platform\n");
 		return 1;
 	}
