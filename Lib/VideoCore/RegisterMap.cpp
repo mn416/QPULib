@@ -8,7 +8,7 @@
 
 //
 // This ugly part is to ensure '__linux__' is set for older versions
-// for the bcm-include.i
+// for the bcm-include.
 //
 // Apparently, old distro's have a gcc version
 // which does not support the __linux__ directive, which is required
