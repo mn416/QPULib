@@ -90,7 +90,15 @@ uint32_t PerformanceCounters::enabled() {
  * The passed counter definitions overwrite anything that is already present.
  */
 void PerformanceCounters::enable(Init list[]) {
-	// Set enabling bitmask first
+	// Set the passed registers
+	for (int i = 0; !list[i].isEnd(); ++i) {
+		RM::Index targetIndex = (RM::Index) (RM::V3D_PCTRS0 + 2*list[i].slotIndex);
+		//printf("targetIndex: %d\n", targetIndex);
+		printf("counterIndex: %d\n", list[i].counterIndex);
+		RM::writeRegister(targetIndex, list[i].counterIndex);
+	}
+
+	// Set enabling bitmask 
 	uint32_t bitMask = enabled();
 
 	for (int i = 0; !list[i].isEnd(); ++i) {
@@ -99,13 +107,6 @@ void PerformanceCounters::enable(Init list[]) {
 	}
 	RM::writeRegister(RM::V3D_PCTRE, bitMask);
 
-	// Set the passed registers
-	for (int i = 0; !list[i].isEnd(); ++i) {
-		RM::Index targetIndex = (RM::Index) (RM::V3D_PCTRS0 + 2*list[i].slotIndex);
-		//printf("targetIndex: %d\n", targetIndex);
-		printf("counterIndex: %d\n", list[i].counterIndex);
-		RM::writeRegister(targetIndex, list[i].counterIndex);
-	}
 }
 
 
@@ -129,7 +130,7 @@ std::string PerformanceCounters::showEnabled() {
 		printf("counterIndex: %d\n", counterIndex);
 		//fflush(stdout);
 
-		os << "  " <<  Description[counterIndex] << ":" << RM::readRegister(counterIndex) << "\n";
+		os << "  " <<  Description[counterIndex] << ":" << RM::readRegister(sourceIndex) << "\n";
 	}
 
 	return os.str();

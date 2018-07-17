@@ -35,7 +35,7 @@ public:
 		//
 	  V3D_PCTRC = (0x00670 >> 2),  // PC Clear     - write only
 		V3D_PCTRE,                   // PC Enables   - read/write
-		V3D_PCTR0,                   // PC Count 0   - read/write
+		V3D_PCTR0 = (0x00680 >> 2),  // PC Count 0   - read/write
 		V3D_PCTRS0,                  // PC Mapping 0 - read/write
 		V3D_PCTR1,                   // PC Count 1
 		V3D_PCTRS1,                  // PC Mapping 1

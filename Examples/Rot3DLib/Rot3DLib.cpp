@@ -1,4 +1,5 @@
 #include <sys/time.h>
+#include <unistd.h>  // sleep()
 #include <math.h>
 #include "VideoCore/PerformanceCounters.h"
 #include "Rot3DKernels.h"
@@ -94,7 +95,11 @@ void initPerfCounters() {
 	PC::Init list[] = {
 		{ 0, PC::QPU_IDLE },
 		{ 1, PC::QPU_INSTRUCTIONS },
-		{ 2, PC::QPU_IDLE },
+		{ 2, PC::QPU_STALLED_TMU },
+		{ 3, PC::L2C_CACHE_HITS },
+		{ 4, PC::L2C_CACHE_MISSES },
+		{ 5, PC::QPU_INSTRUCTION_CACHE_HITS },
+		{ 6, PC::QPU_INSTRUCTION_CACHE_MISSES },
 		{ PC::END_MARKER, PC::END_MARKER }
 	};
 
@@ -108,6 +113,7 @@ void initPerfCounters() {
 
 int main(int argc, char *argv[])
 {
+	//PC::clear();
 	initPerfCounters();
 	printf("Perf Count mask: %0X\n", PC::enabled());
 	std::string output = PC::showEnabled();
@@ -124,9 +130,12 @@ int main(int argc, char *argv[])
 	if (index == 0) {
 		tvDiff = runScalar();
   } else {
+for (int i = 0; i <10; ++i) {
 		tvDiff = runKernel(index);
+}
   }
 
+	//sleep(2);
 	output = PC::showEnabled();
 	printf("%s\n", output.c_str());
 
