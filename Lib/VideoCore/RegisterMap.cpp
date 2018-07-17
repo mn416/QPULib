@@ -18,19 +18,19 @@ RegisterMap::RegisterMap() {
 	bcm_host_init();
 	unsigned addr = bcm_host_get_peripheral_address();
 	m_size = bcm_host_get_peripheral_size();
-	printf("peripheral address: %08X, size: %08X\n", addr, m_size);
+	//printf("peripheral address: %08X, size: %08X\n", addr, m_size);
 
 	check_page_align(addr);
 
 	// Following succeeds if it returns.
 	m_addr = (uint32_t *) mapmem(addr, m_size);
 	assert(m_addr != nullptr);
-	printf("init address: %08X, size: %u\n", m_addr, m_size);
+	//printf("init address: %08X, size: %u\n", m_addr, m_size);
 }
 
 
 RegisterMap::~RegisterMap() {
-	printf("Closing down register map\n");
+	//printf("Closing down register map\n");
 	unmapmem((void *) m_addr, m_size);
 	bcm_host_deinit();
 }
@@ -91,7 +91,7 @@ int RegisterMap::numQPUPerSlice() {
 
 RegisterMap *RegisterMap::instance() {
 	if (m_instance.get() == nullptr) {
-		printf("Creating RegisterMap singleton\n");
+		//printf("Creating RegisterMap singleton\n");
 		m_instance.reset(new RegisterMap);
 	}
 

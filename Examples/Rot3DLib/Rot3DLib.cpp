@@ -4,8 +4,7 @@
 #include "Rot3DKernels.h"
 
 using namespace Rot3DLib;
-
-
+using PC = PerformanceCounters;
 using Generator = decltype(rot3D_1);  // All kernel functions except scalar have same prototype
 
 
@@ -88,13 +87,31 @@ timeval runKernel(int index) {
 }
 
 
+/**
+ * @brief Enable the counters we are interested in
+ */
+void initPerfCounters() {
+	PC::Init list[] = {
+		{ 0, PC::QPU_IDLE },
+		{ 1, PC::QPU_INSTRUCTIONS },
+		{ 2, PC::QPU_IDLE },
+		{ PC::END_MARKER, PC::END_MARKER }
+	};
+
+	PC::enable(list);
+}
+
+
 // ============================================================================
 // Main
 // ============================================================================
 
 int main(int argc, char *argv[])
 {
-	printf("Perf Count mask: %0X\n", PerformanceCounters::enabled());
+	initPerfCounters();
+	printf("Perf Count mask: %0X\n", PC::enabled());
+	std::string output = PC::showEnabled();
+	printf("%s\n", output.c_str());
 
   timeval tvDiff;
 
@@ -109,6 +126,9 @@ int main(int argc, char *argv[])
   } else {
 		tvDiff = runKernel(index);
   }
+
+	output = PC::showEnabled();
+	printf("%s\n", output.c_str());
 
   printf("%ld.%06lds\n", tvDiff.tv_sec, tvDiff.tv_usec);
 

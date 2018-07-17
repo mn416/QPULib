@@ -18,7 +18,7 @@ namespace QPULib {
  */
 class RegisterMap {
 public:
-	enum Indexes {
+	enum Index {
 		V3D_BASE = (0xc00000 >> 2),
 		V3D_IDENT0 = 0,
 		V3D_IDENT1,
