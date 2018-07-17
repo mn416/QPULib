@@ -1,5 +1,6 @@
 #include <sys/time.h>
 #include <math.h>
+#include "VideoCore/PerformanceCounters.h"
 #include "Rot3DKernels.h"
 
 using namespace Rot3DLib;
@@ -93,6 +94,8 @@ timeval runKernel(int index) {
 
 int main(int argc, char *argv[])
 {
+	printf("Perf Count mask: %0X\n", PerformanceCounters::enabled());
+
   timeval tvDiff;
 
 	int index = 3;

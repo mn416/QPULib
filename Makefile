@@ -74,6 +74,7 @@ OBJ =                         \
   Target/Encode.o             \
   VideoCore/Mailbox.o         \
   VideoCore/RegisterMap.o     \
+  VideoCore/PerformanceCounters.o \
   VideoCore/Invoke.o          \
   VideoCore/VideoCore.o
 
@@ -184,7 +185,7 @@ $(OBJ_DIR)/bin/Rot3DLib: $(OBJ_DIR)/Examples/Rot3DLib/Rot3DKernels.o
 
 $(OBJ_DIR)/bin/%: $(OBJ_DIR)/Examples/Rot3DLib/%.o $(QPU_LIB)
 	@echo Linking $@...
-	@$(CXX) $(CXX_FLAGS) $^ -o $@
+	@$(CXX) $(CXX_FLAGS) $(LIBS) $^ -o $@
 
 $(OBJ_DIR)/bin/%: $(OBJ_DIR)/Examples/%.o $(QPU_LIB)
 	@echo Linking $@...
