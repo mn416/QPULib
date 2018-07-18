@@ -1,19 +1,3 @@
-/*
-#include <sys/ioctl.h>
-//nclude <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <assert.h>
-#include <stdint.h>
-#include <sys/mman.h>
-#include <sys/ioctl.h>
-*/
 #include <sys/time.h>
 #include <QPULib.h>
 
@@ -23,7 +7,11 @@ using namespace QPULib;
 #define USE_SCALAR_VERSION
 
 
+#ifdef USE_SCALAR_VERSION
 void output_pgm(int *result, int width, int height, int numIteratiosn) {
+#else
+void output_pgm(SharedArray<int> &result, int width, int height, int numIteratiosn) {
+#endif
   FILE *fd = fopen("mandelbrot.pgm", "w") ;
   if (fd == nullptr) {
     printf("can't open file for pgm output\n");
@@ -47,7 +35,6 @@ void output_pgm(int *result, int width, int height, int numIteratiosn) {
     }
     fprintf(fd, "\n");
   }
-
 
   fclose(fd);
 }
@@ -91,7 +78,65 @@ void mandelbrot(
   }
 }
 
-// TODO: Vector versions
+
+// ============================================================================
+// Vector version
+// ============================================================================
+
+
+void prepare(
+  float topLeftReal, float topLeftIm,
+  float bottomRightReal, float bottomRightIm,
+  int numStepsWidth, int numStepsHeight,
+  SharedArray<float> &real, SharedArray<float> &im)
+{
+  float offsetX = (bottomRightReal - topLeftReal)/((float) numStepsWidth - 1);
+  float offsetY = (topLeftIm - bottomRightIm)/((float) numStepsHeight - 1);
+
+  for (int xStep = 0; xStep < numStepsWidth; xStep++) {
+    for (int yStep = 0; yStep < numStepsHeight; yStep++) {
+      float realC = topLeftReal   + ((float) xStep)*offsetX;
+      float imC   = bottomRightIm + ((float) yStep)*offsetY;
+
+      real[xStep + yStep*numStepsWidth] = realC;
+      im[xStep + yStep*numStepsWidth] = imC;
+    }
+  }
+}
+
+
+void mandelbrot_1(
+  Ptr<Float> inReal, Ptr<Float> inIm,
+  Int num_items,
+  Int numiterations,
+  Ptr<Int> result)
+{
+  For (Int i = 0, i < num_items, i = i+16)
+    Float realC = inReal[i];
+    Float imC = inIm[i];
+
+    Float real = realC;
+    Float im = imC;
+    Int count = 0;
+
+    Float radius = (real*real + im*im);
+    BoolExpr condition = (radius < 4 && count < numiterations);
+
+    While (any(condition))
+      Where (condition)
+        Float tmpReal = real*real - im*im;
+        Float tmpIm   = 2*real*im;
+        real = tmpReal + realC;
+        im   = tmpIm + imC;
+
+        radius = (real*real + im*im);
+        count++;
+      End
+    End
+
+    result[i] = count;
+  End
+}
 
 
 // ============================================================================
@@ -103,26 +148,51 @@ int main()
   // Timestamps
   timeval tvStart, tvEnd, tvDiff;
 
-  // Number of vertices and angle of rotation
-  const int numStepsWidth  = 1024;
-  const int numStepsHeight = 1024;
+  // Initialize constants for the kernels
+  const int numStepsWidth  = 192; //1024;
+  const int numStepsHeight = 192; //1024;
   const int numiterations  = 1024;
+  const float topLeftReal = -2.5f;
+  const float topLeftIm =  2.0f;
+  const float bottomRightReal = 1.5f;
+  const float bottomRightIm = -2.0f;
 
 
 #ifdef USE_SCALAR_VERSION
   // Allocate and initialise
   int *result = new int [numStepsWidth*numStepsHeight];
 #else
-  // TODO: compile kernels, allocate memory
+  const int NUM_ITEMS = numStepsWidth*numStepsHeight;
+
+  SharedArray<float> real(NUM_ITEMS);
+  SharedArray<float> im(NUM_ITEMS);
+  SharedArray<int>   result(NUM_ITEMS);
+
+  // Initialize array values
+  prepare(
+    topLeftReal, topLeftIm,
+    bottomRightReal, bottomRightIm,
+    numStepsWidth, numStepsHeight,
+    real, im);
+
+  // Construct kernel
+  auto k = compile(mandelbrot_1);
+
 #endif
 
   gettimeofday(&tvStart, NULL);
 #ifdef USE_SCALAR_VERSION
-  mandelbrot(-2.5f, 2.0f, 1.5f, -2.0f, numStepsWidth, numStepsHeight, numiterations, result);
-  output_pgm(result, numStepsWidth, numStepsHeight, numiterations);
+  mandelbrot(topLeftReal, topLeftIm,bottomRightReal, bottomRightIm, numStepsWidth, numStepsHeight, numiterations, result);
 #else
   // TODO: run kernels
+  k(
+    &real, &im,
+    NUM_ITEMS,
+    numiterations,
+    &result);
 #endif
+  output_pgm(result, numStepsWidth, numStepsHeight, numiterations);
+
   gettimeofday(&tvEnd, NULL);
   timersub(&tvEnd, &tvStart, &tvDiff);
 
