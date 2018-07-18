@@ -19,7 +19,6 @@
 // th presence/absence of these directives, which may prevent
 // including certain system header files for the Pi.
 //
-#pragma message "__unix__ is NOT defined"
 #if !defined(__unix__)
 #pragma message "__unix__ is NOT defined"
 #define UNIX_PREVIOUSLY_UNDEFINED
