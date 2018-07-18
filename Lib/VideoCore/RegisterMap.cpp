@@ -5,29 +5,49 @@
 #include <cstring>
 #include <stdio.h>
 #include <unistd.h>
+#include "Mailbox.h"  // mapmem()
 
 //
-// This ugly part is to ensure '__linux__' is set for older versions
-// for the bcm-include.
+// This ugly part is to ensure:
 //
-// Apparently, old distro's have a gcc version
-// which does not support the __linux__ directive, which is required
-// to include certain header files for the Pi.
+// -  '__unix__' *is* set
+// -  '__ANDROID__' is *not* set
 //
-#if !defined(__linux__)
-#define LINUX_PREVIOUSLY_UNDEFINED
-#define __linux__
+//  ... for older versions of the bcm-include.
+//
+// Apparently, old distro's have a gcc version which assumes
+// th presence/absence of these directives, which may prevent
+// including certain system header files for the Pi.
+//
+#pragma message "__unix__ is NOT defined"
+#if !defined(__unix__)
+#pragma message "__unix__ is NOT defined"
+#define UNIX_PREVIOUSLY_UNDEFINED
+#define __unix__
+#endif
+
+#if defined(__ANDROID__)
+#pragma message "__ANDROID__ is defined"
+#define ANDROID_PREVIOUSLY_DEFINED
+#undef __ANDROID__
 #endif
 
 #include <bcm_host.h>
 
-#if defined(LINUX_PREVIOUSLY_UNDEFINED)
-#undef __linux__
-#undef LINUX_PREVIOUSLY_UNDEFINED
+#if defined(ANDROID_PREVIOUSLY_DEFINED)
+#define __ANDROID__
+#undef ANDROID_PREVIOUSLY_DEFINED
 #endif
-// End ugly part
 
-#include "Mailbox.h"  // for mapmem()
+#if defined(UNIX_PREVIOUSLY_UNDEFINED)
+#undef __unix__
+#undef UNIX_PREVIOUSLY_UNDEFINED
+#endif
+
+//
+// End ugly part
+//
+
 
 namespace QPULib {
 
