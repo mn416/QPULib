@@ -7,45 +7,54 @@
 #include <unistd.h>
 #include "Mailbox.h"  // mapmem()
 
+#ifdef OLD_PI
+#pragma message "This is an old pi!"
 //
-// This ugly part is to ensure:
+// For old Pi's, calls bcm_host_get_peripheral_address() and
+// bcm_host_get_peripheral_size() don't exist, so we need
+// to supply them ourselves.
 //
-// -  '__unix__' *is* set
-// -  '__ANDROID__' is *not* set
+
+
+/**
+ * This returns the ARM-side physical address where peripherals are mapped.
+ *
+ * Values:
+ *
+ * - 0x20000000  - Pi Zero, Zero W, and the first generation of the Pi and Compute Module
+ * - 0x3f000000  - Pi 2, Pi 3 and Compute Module 3
+ *
+ * NOTE: We only return the second value for now, to get QPULib to compile on an old Pi 2 distro.
+ *       Other values may be added as needed.
+ */
+unsigned bcm_host_get_peripheral_address() {
+	return 0x3f000000;
+}
+
+
+// following is the same for all Pi models
+unsigned bcm_host_get_peripheral_size() { return 0x01000000; }
+
 //
-//  ... for older versions of the bcm-include.
+// This is the only things we need from bcm_host.h, we declare
+// them explicitly to avoid dragging in all the stuff that throws compile errors.
 //
-// Apparently, old distro's have a gcc version which assumes
-// th presence/absence of these directives, which may prevent
-// including certain system header files for the Pi.
-//
-#if !defined(__unix__)
-#pragma message "__unix__ is NOT defined"
-#define UNIX_PREVIOUSLY_UNDEFINED
-#define __unix__
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-#if defined(__ANDROID__)
-#pragma message "__ANDROID__ is defined"
-#define ANDROID_PREVIOUSLY_DEFINED
-#undef __ANDROID__
-#endif
+void bcm_host_init(void);
+void bcm_host_deinit(void);
 
+#ifdef __cplusplus
+}
+#endif
+// End things we need from bcm_host.h, we declare
+
+#else  // OLD_PI
+// Following works for newer distro's
 #include <bcm_host.h>
-
-#if defined(ANDROID_PREVIOUSLY_DEFINED)
-#define __ANDROID__
-#undef ANDROID_PREVIOUSLY_DEFINED
-#endif
-
-#if defined(UNIX_PREVIOUSLY_UNDEFINED)
-#undef __unix__
-#undef UNIX_PREVIOUSLY_UNDEFINED
-#endif
-
-//
-// End ugly part
-//
+#endif  // OLD_PI
 
 
 namespace QPULib {

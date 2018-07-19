@@ -40,9 +40,25 @@ else
 $(info Building on a Pi platform)
 endif
 
-  CXX_FLAGS += -DQPU_MODE -I /opt/vc/include
-  OBJ_DIR := $(OBJ_DIR)-qpu
+  CXX_FLAGS += -DQPU_MODE
 	LIBS := -L /opt/vc/lib -l bcm_host
+
+  OBJ_DIR := $(OBJ_DIR)-qpu
+
+
+#
+# Detect if Pi has bcm_host support (new) or not (old)
+# If old, pass in -DOLD_PI to compilation
+#
+OLD_PI := $(shell grep bcm_host_get_peripheral_address /opt/vc/include/bcm_host.h && echo "no" || echo "yes")
+ifeq ($(OLD_PI), yes)
+$(info old pi)
+CXX_FLAGS+= -DOLD_PI
+else
+$(info new pi)
+	CXX_FLAGS += -I /opt/vc/include
+endif
+
 else
   CXX_FLAGS += -DEMULATION_MODE
 endif
