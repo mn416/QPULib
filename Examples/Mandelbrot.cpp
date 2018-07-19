@@ -7,11 +7,8 @@ using namespace QPULib;
 //#define USE_SCALAR_VERSION
 
 
-#ifdef USE_SCALAR_VERSION
-void output_pgm(int *result, int width, int height, int numIteratiosn) {
-#else
-void output_pgm(SharedArray<int> &result, int width, int height, int numIteratiosn) {
-#endif
+template<class Array>
+void output_pgm(Array &result, int width, int height, int numIteratiosn) {
   FILE *fd = fopen("mandelbrot.pgm", "w") ;
   if (fd == nullptr) {
     printf("can't open file for pgm output\n");
@@ -85,8 +82,8 @@ void mandelbrot(
 
 void mandelbrotCore(
   Float reC, Float imC,
-  Int resultIndex,
-  Int numiterations,
+  Int &resultIndex,
+  Int &numiterations,
   Ptr<Int> &result)
 {
   Float re = reC;
@@ -134,10 +131,11 @@ void mandelbrot_1(
 
     For (Int xStep = 0, xStep < numStepsWidth, xStep = xStep + 16)
       Float reC = reLine + offsetX*toFloat(index());
+			Int resultIndex = (xStep + index() + yStep*numStepsWidth);
 
       mandelbrotCore(
         reC, imC,
-        (xStep + index() + yStep*numStepsWidth),
+				resultIndex,
         numiterations,
         result);
 
