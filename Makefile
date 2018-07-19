@@ -33,7 +33,6 @@ ifeq ($(QPU), 1)
 
 # Check platform before building. Can't be indented, otherwise make complains.
 RET := $(shell Tools/detectPlatform.sh 1>/dev/null && echo "yes" || echo "no")
-#$(info  info: '$(RET)')
 ifneq ($(RET), yes)
 $(error QPU-mode specified on a non-Pi platform; aborting)
 else
@@ -45,17 +44,16 @@ endif
 
   OBJ_DIR := $(OBJ_DIR)-qpu
 
-
 #
 # Detect if Pi has bcm_host support (new) or not (old)
 # If old, pass in -DOLD_PI to compilation
 #
 OLD_PI := $(shell grep bcm_host_get_peripheral_address /opt/vc/include/bcm_host.h && echo "no" || echo "yes")
 ifeq ($(OLD_PI), yes)
-$(info old pi)
+#$(info old pi)
 CXX_FLAGS+= -DOLD_PI
 else
-$(info new pi)
+#$(info new pi)
 	CXX_FLAGS += -I /opt/vc/include
 endif
 

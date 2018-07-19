@@ -8,7 +8,7 @@
 #include "Mailbox.h"  // mapmem()
 
 #ifdef OLD_PI
-#pragma message "This is an old pi!"
+//#pragma message "This is an old pi!"
 //
 // For old Pi's, calls bcm_host_get_peripheral_address() and
 // bcm_host_get_peripheral_size() don't exist, so we need
@@ -36,7 +36,7 @@ unsigned bcm_host_get_peripheral_address() {
 unsigned bcm_host_get_peripheral_size() { return 0x01000000; }
 
 //
-// This is the only things we need from bcm_host.h, we declare
+// These are the only things we need from bcm_host.h, we declare
 // them explicitly to avoid dragging in all the stuff that throws compile errors.
 //
 #ifdef __cplusplus
@@ -49,7 +49,7 @@ void bcm_host_deinit(void);
 #ifdef __cplusplus
 }
 #endif
-// End things we need from bcm_host.h, we declare
+// End things we need from bcm_host.h
 
 #else  // OLD_PI
 // Following works for newer distro's
