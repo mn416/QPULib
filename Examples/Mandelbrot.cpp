@@ -4,7 +4,7 @@
 
 using namespace QPULib;
 
-#define USE_SCALAR_VERSION
+//#define USE_SCALAR_VERSION
 
 
 #ifdef USE_SCALAR_VERSION
@@ -83,58 +83,56 @@ void mandelbrot(
 // Vector version
 // ============================================================================
 
-
-void prepare(
-  float topLeftReal, float topLeftIm,
-  float bottomRightReal, float bottomRightIm,
-  int numStepsWidth, int numStepsHeight,
-  SharedArray<float> &real, SharedArray<float> &im)
-{
-  float offsetX = (bottomRightReal - topLeftReal)/((float) numStepsWidth - 1);
-  float offsetY = (topLeftIm - bottomRightIm)/((float) numStepsHeight - 1);
-
-  for (int xStep = 0; xStep < numStepsWidth; xStep++) {
-    for (int yStep = 0; yStep < numStepsHeight; yStep++) {
-      float realC = topLeftReal   + ((float) xStep)*offsetX;
-      float imC   = bottomRightIm + ((float) yStep)*offsetY;
-
-      real[xStep + yStep*numStepsWidth] = realC;
-      im[xStep + yStep*numStepsWidth] = imC;
-    }
-  }
-}
-
-
 void mandelbrot_1(
-  Ptr<Float> inReal, Ptr<Float> inIm,
-  Int num_items,
+  Float topLeftReal, Float topLeftIm,
+  Float offsetX, Float offsetY,
+  Int numStepsWidth, Int numStepsHeight,
   Int numiterations,
   Ptr<Int> result)
 {
-  For (Int i = 0, i < num_items, i = i+16)
-    Float realC = inReal[i];
-    Float imC = inIm[i];
+  Float imC = topLeftIm;
 
-    Float real = realC;
-    Float im = imC;
-    Int count = 0;
+  For (Int yStep = 0, yStep < numStepsHeight, yStep++)
+    Float reLine = topLeftReal;
 
-    Float radius = (real*real + im*im);
-    BoolExpr condition = (radius < 4 && count < numiterations);
+    For (Int xStep = 0, xStep < numStepsWidth, xStep = xStep + 16)
+      Float reC = reLine + offsetX*toFloat(index());
 
-    While (any(condition))
-      Where (condition)
-        Float tmpReal = real*real - im*im;
-        Float tmpIm   = 2*real*im;
-        real = tmpReal + realC;
-        im   = tmpIm + imC;
+      Float re = reC;
+      Float im = imC;
+      Int count = 0;
 
-        radius = (real*real + im*im);
-        count++;
+      Float reSquare = re*re;
+      Float imSquare = im*im;
+
+      // Following is a float version of boolean expression: ((reSquare + imSquare) < 4 && count < numiterations)
+			// It works because `count` increments monotonically.
+      FloatExpr condition = (4.0f - (reSquare + imSquare))*toFloat(numiterations - count);
+      Float checkvar = condition;
+
+
+      While (any(checkvar > 0))
+        Where (checkvar > 0)
+          Float imTmp = 2*re*im;
+          re   = (reSquare - imSquare) + reC;
+          im   = imTmp  + imC;
+
+          reSquare = re*re;
+          imSquare = im*im;
+          count++;
+
+          checkvar = (4.0f - (reSquare + imSquare))*toFloat(numiterations - count);
+        End
       End
+
+
+      Int resultIndex = xStep + index() + yStep*numStepsWidth;
+      store(count, result + resultIndex);
+
+      reLine = reLine + 16.0f*offsetX;
     End
 
-    result[i] = count;
+    imC = imC - offsetY;
   End
 }
 
@@ -149,8 +147,8 @@ int main()
   timeval tvStart, tvEnd, tvDiff;
 
   // Initialize constants for the kernels
-  const int numStepsWidth  = 192; //1024;
-  const int numStepsHeight = 192; //1024;
+  const int numStepsWidth  = 1024;
+  const int numStepsHeight = 1024;
   const int numiterations  = 1024;
   const float topLeftReal = -2.5f;
   const float topLeftIm =  2.0f;
@@ -163,17 +161,7 @@ int main()
   int *result = new int [numStepsWidth*numStepsHeight];
 #else
   const int NUM_ITEMS = numStepsWidth*numStepsHeight;
-
-  SharedArray<float> real(NUM_ITEMS);
-  SharedArray<float> im(NUM_ITEMS);
-  SharedArray<int>   result(NUM_ITEMS);
-
-  // Initialize array values
-  prepare(
-    topLeftReal, topLeftIm,
-    bottomRightReal, bottomRightIm,
-    numStepsWidth, numStepsHeight,
-    real, im);
+  SharedArray<int> result(NUM_ITEMS);
 
   // Construct kernel
   auto k = compile(mandelbrot_1);
@@ -184,12 +172,17 @@ int main()
 #ifdef USE_SCALAR_VERSION
   mandelbrot(topLeftReal, topLeftIm,bottomRightReal, bottomRightIm, numStepsWidth, numStepsHeight, numiterations, result);
 #else
-  // TODO: run kernels
+  assert(0 == numStepsWidth % 16);  // width needs to be a multiple of 16
+  float offsetX = (bottomRightReal - topLeftReal)/((float) numStepsWidth - 1);
+  float offsetY = (topLeftIm - bottomRightIm)/((float) numStepsHeight - 1);
+
   k(
-    &real, &im,
-    NUM_ITEMS,
+    topLeftReal, topLeftIm,
+    offsetX, offsetY,
+    numStepsWidth, numStepsHeight,
     numiterations,
     &result);
+
 #endif
   output_pgm(result, numStepsWidth, numStepsHeight, numiterations);
 
