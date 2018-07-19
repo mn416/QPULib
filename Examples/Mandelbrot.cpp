@@ -111,7 +111,7 @@ void mandelbrotCore(
       imSquare = im*im;
       count++;
 
-      checkvar = (4.0f - (reSquare + imSquare))*toFloat(numiterations - count);
+      checkvar = condition; 
     End
   End
 
@@ -168,7 +168,8 @@ void mandelbrot_2(
       Int xIndex = index() + xStep;
       Int resultIndex = xIndex + yIndex*numStepsWidth;
 
-      If (resultIndex < (numStepsWidth*numStepsHeight))  // Only calculate if we're within bounds
+      For (Int dummy = 0, dummy < 1 && (resultIndex < (numStepsWidth*numStepsHeight)), dummy++)
+      //Where (resultIndex < (numStepsWidth*numStepsHeight))  // Only calculate if we're within bounds
         mandelbrotCore(
           (topLeftReal + offsetX*toFloat(xIndex)),
           (topLeftIm - toFloat(yIndex)*offsetY),
@@ -228,12 +229,12 @@ int main()
     &result);
 
 #endif
-  output_pgm(result, numStepsWidth, numStepsHeight, numiterations);
 
   gettimeofday(&tvEnd, NULL);
   timersub(&tvEnd, &tvStart, &tvDiff);
 
   printf("%ld.%06lds\n", tvDiff.tv_sec, tvDiff.tv_usec);
+  output_pgm(result, numStepsWidth, numStepsHeight, numiterations);
 
   return 0;
 }
