@@ -83,6 +83,43 @@ void mandelbrot(
 // Vector version
 // ============================================================================
 
+void mandelbrotCore(
+  Float reC, Float imC,
+  Int resultIndex,
+  Int numiterations,
+  Ptr<Int> &result)
+{
+  Float re = reC;
+  Float im = imC;
+  Int count = 0;
+
+  Float reSquare = re*re;
+  Float imSquare = im*im;
+
+  // Following is a float version of boolean expression: ((reSquare + imSquare) < 4 && count < numiterations)
+  // It works because `count` increments monotonically.
+  FloatExpr condition = (4.0f - (reSquare + imSquare))*toFloat(numiterations - count);
+  Float checkvar = condition;
+
+  While (any(checkvar > 0))
+    Where (checkvar > 0)
+      Float imTmp = 2*re*im;
+      re   = (reSquare - imSquare) + reC;
+      im   = imTmp  + imC;
+
+      reSquare = re*re;
+      imSquare = im*im;
+      count++;
+
+      checkvar = (4.0f - (reSquare + imSquare))*toFloat(numiterations - count);
+    End
+  End
+
+  store(count, result + resultIndex);
+  //result[resultIndex] = count;
+}
+
+
 void mandelbrot_1(
   Float topLeftReal, Float topLeftIm,
   Float offsetX, Float offsetY,
@@ -98,36 +135,11 @@ void mandelbrot_1(
     For (Int xStep = 0, xStep < numStepsWidth, xStep = xStep + 16)
       Float reC = reLine + offsetX*toFloat(index());
 
-      Float re = reC;
-      Float im = imC;
-      Int count = 0;
-
-      Float reSquare = re*re;
-      Float imSquare = im*im;
-
-      // Following is a float version of boolean expression: ((reSquare + imSquare) < 4 && count < numiterations)
-			// It works because `count` increments monotonically.
-      FloatExpr condition = (4.0f - (reSquare + imSquare))*toFloat(numiterations - count);
-      Float checkvar = condition;
-
-
-      While (any(checkvar > 0))
-        Where (checkvar > 0)
-          Float imTmp = 2*re*im;
-          re   = (reSquare - imSquare) + reC;
-          im   = imTmp  + imC;
-
-          reSquare = re*re;
-          imSquare = im*im;
-          count++;
-
-          checkvar = (4.0f - (reSquare + imSquare))*toFloat(numiterations - count);
-        End
-      End
-
-
-      Int resultIndex = xStep + index() + yStep*numStepsWidth;
-      store(count, result + resultIndex);
+      mandelbrotCore(
+        reC, imC,
+        (xStep + index() + yStep*numStepsWidth),
+        numiterations,
+        result);
 
       reLine = reLine + 16.0f*offsetX;
     End
@@ -136,6 +148,37 @@ void mandelbrot_1(
   End
 }
 
+
+/**
+ * @brief Multi-QPU version
+ */
+void mandelbrot_2(
+  Float topLeftReal, Float topLeftIm,
+  Float offsetX, Float offsetY,
+  Int numStepsWidth, Int numStepsHeight,
+  Int numiterations,
+  Ptr<Int> result)
+{
+  Int inc = numQPUs();
+
+  For (Int yStep = 0, yStep < numStepsHeight, yStep = yStep + inc)
+    Int yIndex = me() + yStep;
+
+    For (Int xStep = 0, xStep < numStepsWidth, xStep = xStep + 16)
+      Int xIndex = index() + xStep;
+      Int resultIndex = xIndex + yIndex*numStepsWidth;
+
+      If (resultIndex < (numStepsWidth*numStepsHeight))  // Only calculate if we're within bounds
+        mandelbrotCore(
+          (topLeftReal + offsetX*toFloat(xIndex)),
+          (topLeftIm - toFloat(yIndex)*offsetY),
+          resultIndex,
+          numiterations,
+          result);
+      End
+    End
+  End
+}
 
 // ============================================================================
 // Main
@@ -164,7 +207,8 @@ int main()
   SharedArray<int> result(NUM_ITEMS);
 
   // Construct kernel
-  auto k = compile(mandelbrot_1);
+  auto k = compile(mandelbrot_2);
+  k.setNumQPUs(12);
 
 #endif
 
