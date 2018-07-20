@@ -8,7 +8,7 @@ using namespace QPULib;
 
 
 template<class Array>
-void output_pgm(Array &result, int width, int height, int numIteratiosn) {
+void output_pgm(Array &result, int width, int height, int numIterations) {
   FILE *fd = fopen("mandelbrot.pgm", "w") ;
   if (fd == nullptr) {
     printf("can't open file for pgm output\n");
@@ -18,9 +18,9 @@ void output_pgm(Array &result, int width, int height, int numIteratiosn) {
   // Write header
   fprintf(fd, "P2\n");
   fprintf(fd, "%d %d\n", width, height);
-  fprintf(fd, "%d\n", numIteratiosn);
+  fprintf(fd, "%d\n", numIterations);
 
-  int count; // Limit output to 10 elements per line
+  int count = 0; // Limit output to 10 elements per line
   for (int y = 0; y < height; y++) {
     for (int x = 0; x < width; x++) {
       fprintf(fd, "%d ", result[x + width*y]);
@@ -45,7 +45,7 @@ void mandelbrot(
   float topLeftReal, float topLeftIm,
   float bottomRightReal, float bottomRightIm,
   int numStepsWidth, int numStepsHeight,
-  int numiterations,
+  int numIterations,
   int *result)
 {
   float offsetX = (bottomRightReal - topLeftReal)/((float) numStepsWidth - 1);
@@ -60,7 +60,7 @@ void mandelbrot(
       float real = realC;
       float im   = imC;
       float radius = (real*real + im*im);
-      while (radius < 4 && count < numiterations) {
+      while (radius < 4 && count < numIterations) {
         float tmpReal = real*real - im*im;
         float tmpIm   = 2*real*im;
         real = tmpReal + realC;
@@ -83,7 +83,7 @@ void mandelbrot(
 void mandelbrotCore(
   Float reC, Float imC,
   Int &resultIndex,
-  Int &numiterations,
+  Int &numIterations,
   Ptr<Int> &result)
 {
   Float re = reC;
@@ -93,9 +93,9 @@ void mandelbrotCore(
   Float reSquare = re*re;
   Float imSquare = im*im;
 
-  // Following is a float version of boolean expression: ((reSquare + imSquare) < 4 && count < numiterations)
+  // Following is a float version of boolean expression: ((reSquare + imSquare) < 4 && count < numIterations)
   // It works because `count` increments monotonically.
-  FloatExpr condition = (4.0f - (reSquare + imSquare))*toFloat(numiterations - count);
+  FloatExpr condition = (4.0f - (reSquare + imSquare))*toFloat(numIterations - count);
   Float checkvar = condition;
 
   While (any(checkvar > 0))
@@ -121,28 +121,21 @@ void mandelbrot_1(
   Float topLeftReal, Float topLeftIm,
   Float offsetX, Float offsetY,
   Int numStepsWidth, Int numStepsHeight,
-  Int numiterations,
+  Int numIterations,
   Ptr<Int> result)
 {
-  Float imC = topLeftIm;
-
   For (Int yStep = 0, yStep < numStepsHeight, yStep++)
-    Float reLine = topLeftReal;
-
     For (Int xStep = 0, xStep < numStepsWidth, xStep = xStep + 16)
-      Float reC = reLine + offsetX*toFloat(index());
-			Int resultIndex = (xStep + index() + yStep*numStepsWidth);
+      Int xIndex = index() + xStep;
+      Int resultIndex = xIndex + yStep*numStepsWidth;
 
       mandelbrotCore(
-        reC, imC,
+        (topLeftReal + offsetX*toFloat(xIndex)),
+        (topLeftIm   - offsetY*toFloat(yStep)),
 				resultIndex,
-        numiterations,
+        numIterations,
         result);
-
-      reLine = reLine + 16.0f*offsetX;
     End
-
-    imC = imC - offsetY;
   End
 }
 
@@ -154,7 +147,7 @@ void mandelbrot_2(
   Float topLeftReal, Float topLeftIm,
   Float offsetX, Float offsetY,
   Int numStepsWidth, Int numStepsHeight,
-  Int numiterations,
+  Int numIterations,
   Ptr<Int> result)
 {
   Int inc = numQPUs();
@@ -162,19 +155,16 @@ void mandelbrot_2(
   For (Int yStep = 0, yStep < numStepsHeight, yStep = yStep + inc)
     Int yIndex = me() + yStep;
 
-    For (Int xStep = 0, xStep < numStepsWidth, xStep = xStep + 16)
+    For (Int xStep = 0, xStep < numStepsWidth && yIndex < numStepsHeight, xStep = xStep + 16)
       Int xIndex = index() + xStep;
       Int resultIndex = xIndex + yIndex*numStepsWidth;
 
-      For (Int dummy = 0, dummy < 1 && (resultIndex < (numStepsWidth*numStepsHeight)), dummy++)
-      //Where (resultIndex < (numStepsWidth*numStepsHeight))  // Only calculate if we're within bounds
-        mandelbrotCore(
-          (topLeftReal + offsetX*toFloat(xIndex)),
-          (topLeftIm - toFloat(yIndex)*offsetY),
-          resultIndex,
-          numiterations,
-          result);
-      End
+      mandelbrotCore(
+        (topLeftReal + offsetX*toFloat(xIndex)),
+        (topLeftIm   - offsetY*toFloat(yIndex)),
+        resultIndex,
+        numIterations,
+        result);
     End
   End
 }
@@ -189,13 +179,13 @@ int main()
   timeval tvStart, tvEnd, tvDiff;
 
   // Initialize constants for the kernels
-  const int numStepsWidth  = 1024;
-  const int numStepsHeight = 1024;
-  const int numiterations  = 1024;
-  const float topLeftReal = -2.5f;
-  const float topLeftIm =  2.0f;
+  const int numStepsWidth     = 1024;
+  const int numStepsHeight    = 1024;
+  const int numIterations     = 1024;
+  const float topLeftReal     = -2.5f;
+  const float topLeftIm       = 2.0f;
   const float bottomRightReal = 1.5f;
-  const float bottomRightIm = -2.0f;
+  const float bottomRightIm   = -2.0f;
 
 
 #ifdef USE_SCALAR_VERSION
@@ -213,7 +203,7 @@ int main()
 
   gettimeofday(&tvStart, NULL);
 #ifdef USE_SCALAR_VERSION
-  mandelbrot(topLeftReal, topLeftIm,bottomRightReal, bottomRightIm, numStepsWidth, numStepsHeight, numiterations, result);
+  mandelbrot(topLeftReal, topLeftIm,bottomRightReal, bottomRightIm, numStepsWidth, numStepsHeight, numIterations, result);
 #else
   assert(0 == numStepsWidth % 16);  // width needs to be a multiple of 16
   float offsetX = (bottomRightReal - topLeftReal)/((float) numStepsWidth - 1);
@@ -223,7 +213,7 @@ int main()
     topLeftReal, topLeftIm,
     offsetX, offsetY,
     numStepsWidth, numStepsHeight,
-    numiterations,
+    numIterations,
     &result);
 
 #endif
@@ -232,7 +222,7 @@ int main()
   timersub(&tvEnd, &tvStart, &tvDiff);
 
   printf("%ld.%06lds\n", tvDiff.tv_sec, tvDiff.tv_usec);
-  output_pgm(result, numStepsWidth, numStepsHeight, numiterations);
+  output_pgm(result, numStepsWidth, numStepsHeight, numIterations);
 
   return 0;
 }
