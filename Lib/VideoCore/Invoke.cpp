@@ -4,7 +4,7 @@
 #include "VideoCore/Mailbox.h"
 #include "VideoCore/VideoCore.h"
 
-#define QPU_TIMEOUT 10000
+#define QPU_TIMEOUT 100000
 
 namespace QPULib {
 
