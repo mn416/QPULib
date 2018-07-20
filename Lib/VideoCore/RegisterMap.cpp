@@ -14,7 +14,8 @@ enum {
 	V3D_BASE = (0xc00000 >> 2),
 	V3D_IDENT0 = 0,
 	V3D_IDENT1,
-	V3D_IDENT2
+	V3D_IDENT2,
+	V3D_L2CACTL = (0x00020 >> 2)
 };
 
 std::unique_ptr<RegisterMap> RegisterMap::m_instance;
@@ -72,6 +73,11 @@ int RegisterMap::numQPUPerSlice() {
 }
 
 
+int RegisterMap::numTMUPerSlice() {
+	return (readRegister(V3D_IDENT1) >> 12) & 0xf;
+}
+
+
 /**
  * @brief get the size of the VPM.
  *
@@ -83,6 +89,11 @@ int RegisterMap::VPMSize() {
 
 	if (value == 0) return 16;  // According to reference doc p.97
 	return value;
+}
+
+
+int RegisterMap::L2CacheEnabled() {
+	return (readRegister(V3D_L2CACTL) & 0x1);
 }
 
 

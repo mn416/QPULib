@@ -25,8 +25,10 @@ public:
 	~RegisterMap();
 
 	static int numSlices();
+	static int numTMUPerSlice();
 	static int numQPUPerSlice();
 	static int VPMSize();
+	static int L2CacheEnabled();
 
 private:
 	RegisterMap();
