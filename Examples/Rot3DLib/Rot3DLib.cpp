@@ -100,6 +100,8 @@ void initPerfCounters() {
 		{ 4, PC::L2C_CACHE_MISSES },
 		{ 5, PC::QPU_INSTRUCTION_CACHE_HITS },
 		{ 6, PC::QPU_INSTRUCTION_CACHE_MISSES },
+		{ 7, PC::QPU_CACHE_HITS },
+		{ 8, PC::QPU_CACHE_MISSES },
 		{ PC::END_MARKER, PC::END_MARKER }
 	};
 

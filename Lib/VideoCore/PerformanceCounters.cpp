@@ -105,8 +105,8 @@ void PerformanceCounters::enable(Init list[]) {
 		//printf("enable handling counter %d\n", list[i].counterIndex);
 		bitMask = bitMask | (1 << (list[i].slotIndex));
 	}
+  bitMask = bitMask & ALL_COUNTERS;   // Top 16 bits should be zero by specification
 	RM::writeRegister(RM::V3D_PCTRE, bitMask);
-
 }
 
 
@@ -130,7 +130,7 @@ std::string PerformanceCounters::showEnabled() {
 		printf("counterIndex: %d\n", counterIndex);
 		//fflush(stdout);
 
-		os << "  " <<  Description[counterIndex] << ":" << RM::readRegister(sourceIndex) << "\n";
+		os << "  " <<  Description[counterIndex] << ": " << RM::readRegister(sourceIndex) << "\n";
 	}
 
 	return os.str();
