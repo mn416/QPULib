@@ -97,6 +97,7 @@ LIB = $(patsubst %,$(OBJ_DIR)/%,$(OBJ))
 # All programs in the Examples directory
 # NOTE: detectPlatform is in the 'Tools' directory, not in 'Examples'
 EXAMPLES =  \
+	Mandelbrot \
 	detectPlatform \
 	Tri       \
 	GCD       \
