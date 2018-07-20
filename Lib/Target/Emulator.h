@@ -8,7 +8,7 @@
 
 #define NUM_LANES 16
 #define MAX_QPUS 12
-#define EMULATOR_HEAP_SIZE (12*65536)  // This size is required to run HeatMap
+#define EMULATOR_HEAP_SIZE (128*65536)  // factor 12, required to run HeatMapi. Mandelbrot requires 4MB and then some
 #define VPM_SIZE 1024
 
 namespace QPULib {
