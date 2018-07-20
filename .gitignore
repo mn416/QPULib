@@ -3,3 +3,4 @@ tmp
 obj*
 .directory
 *.log
+*.pgm

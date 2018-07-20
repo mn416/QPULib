@@ -8,7 +8,7 @@
 
 #define NUM_LANES 16
 #define MAX_QPUS 12
-#define EMULATOR_HEAP_SIZE 3*65536
+#define EMULATOR_HEAP_SIZE 1024*65536
 #define VPM_SIZE 1024
 
 namespace QPULib {
