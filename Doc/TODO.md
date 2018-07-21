@@ -17,12 +17,12 @@ Feel free to add points here.
 - [ ] Document openGL issue on RPi 3
 - [ ] Explanation code
   - [ ] 16-item vectors
-  - [ ] Code Generation, not direct execution
+  - [ ] Code generation, not direct execution
 - [ ] Drill-down of the bare essentials for understanding `VideoCore`
 - [ ] Examples to separate page under Docs
 - [ ] Mailbox functions link to reference and explanation two size fields
-- [ ] QPUs always round *downward* (in Issue)
-- [ ] Use of `BoolExpr` etc as lambda
+- [ ] QPUs always round *downward* *(in Issue)*
+- [ ] DSL: Use of 'Expr'-constructs, e.g. `BoolExpr`, as a kind of lambda
 
 
 ## Unit Tests
@@ -49,8 +49,8 @@ Feel free to add points here.
 - [ ] Add check in emulator for too many `gather()` calls
 - [x] Determine num QPUs from hardware
 - [x] Add method to determine RPi hardware revision number via mailbox
-- [IP] Add code for using the `Special Functions Unit (SFU)`, operations: `SQRT`, `RECIPSQRT`, `LOG`, `EXP`
-- [ ] Add performance counters to interface of `RegisterMap`
+- [ ] Add code for using the `Special Functions Unit (SFU)`, operations: `SQRT`, `RECIPSQRT`, `LOG`, `EXP` *(in progress)*
+- [ ] Add performance counters to interface of `RegisterMap` *(in progress)*
 - [ ] Add Logging class
 - [ ] Add method for build/platform info, for display on startup of an application
 - [ ] Make QPU execution timeout a runtime setting
@@ -58,7 +58,7 @@ Feel free to add points here.
 
 ## Other
 
-- [ ] `Rot3D` make various versions selectable on command line
+- [ ] `Rot3D` make various versions selectable on command line *(in progress)*
 - [ ] enable `-Wall` on compilation and deal with all the fallout
 - [ ] Scan current docs for typos, good language
 - [ ] enable build for QPU and Emulation mode together
@@ -86,11 +86,11 @@ Feel free to add points here.
 E.g. compare between:
 
   - different iterations of a program
-  - number of QPU's used
+  - number of QPUs used
   - RPi versions
   
   
-### The QPULib compiler doesn't do much in the way of optimisation.
+### The QPULib compiler does not do much in the way of optimisation.
 
 So the question is how far QPULib programs are off hand-written QPU assembly, and what we can do to get closer.
 
