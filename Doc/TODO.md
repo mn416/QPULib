@@ -1,12 +1,15 @@
 
 # TODO
 
-Feel free to add points here. If you complete a point, don't check it off, but remove it from the list.
+Feel free to add points here.
+
+- Checked items are implemented but not merged yet. the PR-s are pending.
+- An item that is completed and merged to `development` is removed from the list.
 
 
 ## Makefile
 
-- [ ] Enable debug-build, for debugging. Currently, an indication is given in the Makefile how to do this.
+- [X] Enable debug-build, for debugging. Currently, an indication is given in the Makefile how to do this.
 
 
 ## Documentation
@@ -18,13 +21,17 @@ Feel free to add points here. If you complete a point, don't check it off, but r
 - [ ] Drill-down of the bare essentials for understanding `VideoCore`
 - [ ] Examples to separate page under Docs
 - [ ] Mailbox functions link to reference and explanation two size fields
-- [ ] QPU's always round *downward*
+- [ ] QPUs always round *downward* (in Issue)
+- [ ] Use of `BoolExpr` etc as lambda
 
 
 ## Unit Tests
 
 - [ ] Add test on expected source and target output for pretty print in `compileKernel`. E.g. for `Rot3D`, `Tri` and `HeatMap`.
 - [ ] Add tests to compare QPU and Emulation mode output (when build can be done with both)
+- [ ] Language
+  - [ ] Test missing `End` on blocks
+  - [ ] Test missing `Else` without `If`
 
 
 ## Investigate
@@ -40,12 +47,13 @@ Feel free to add points here. If you complete a point, don't check it off, but r
 ## Library Code
 
 - [ ] Add check in emulator for too many `gather()` calls
-- [ ] Determine num QPUs from hardware
-- [ ] Add method to determine RPi hardware revision number via mailbox
-- [ ] Add code for using the `Special Functions Unit (SFU)`, operations: `SQRT`, `RECIPSQRT`, `LOG`, `EXP`
+- [x] Determine num QPUs from hardware
+- [x] Add method to determine RPi hardware revision number via mailbox
+- **IP** Add code for using the `Special Functions Unit (SFU)`, operations: `SQRT`, `RECIPSQRT`, `LOG`, `EXP`
 - [ ] Add performance counters to interface of `RegisterMap`
 - [ ] Add Logging class
 - [ ] Add method for build/platform info, for display on startup of an application
+- [ ] Make QPU execution timeout a runtime setting
 
 
 ## Other
@@ -54,12 +62,15 @@ Feel free to add points here. If you complete a point, don't check it off, but r
 - [ ] enable `-Wall` on compilation and deal with all the fallout
 - [ ] Scan current docs for typos, good language
 - [ ] enable build for QPU and Emulation mode together
-- [ ] `Rot3DLib` handler for command line parameters
+- [x] `Rot3DLib` handler for command line parameters
 
 
 ## Long Term
 
 - [ ] Add optional doc generation with `doxygen`. This is only useful if there are a sufficient number of header comments.
+- [ ] Viewer for graphic output (e.g. `Mandelbrot`). Should be really simple
+- [ ] Scheduling of kernels - see VideoCore `fft` project.
+
 
 -----
 
