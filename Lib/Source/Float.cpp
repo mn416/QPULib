@@ -13,9 +13,6 @@ FloatExpr::FloatExpr() { this->expr = NULL; }
 
 FloatExpr::FloatExpr(float x) { this->expr = mkFloatLit(x); }
 
-// Helper constructor
-
-inline FloatExpr mkFloatExpr(Expr* e) { FloatExpr x; x.expr = e; return x; }
 
 // ============================================================================
 // Type 'Float'
