@@ -49,7 +49,7 @@ Feel free to add points here.
 - [ ] Add check in emulator for too many `gather()` calls
 - [x] Determine num QPUs from hardware
 - [x] Add method to determine RPi hardware revision number via mailbox
-- **IP** Add code for using the `Special Functions Unit (SFU)`, operations: `SQRT`, `RECIPSQRT`, `LOG`, `EXP`
+- [IP] Add code for using the `Special Functions Unit (SFU)`, operations: `SQRT`, `RECIPSQRT`, `LOG`, `EXP`
 - [ ] Add performance counters to interface of `RegisterMap`
 - [ ] Add Logging class
 - [ ] Add method for build/platform info, for display on startup of an application
