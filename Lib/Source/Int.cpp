@@ -17,7 +17,6 @@ IntExpr::IntExpr(int x) { this->expr = mkIntLit(x); }
 // Helper constructor
 
 inline IntExpr mkIntExpr(Expr* e) { IntExpr x; x.expr = e; return x; }
-inline FloatExpr mkFloatExpr(Expr* e) { FloatExpr x; x.expr = e; return x; }
 
 // ============================================================================
 // Type 'Int'
