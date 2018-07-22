@@ -37,7 +37,7 @@ Feel free to add points here.
 ## Investigate
 
 - [ ] Is the gather limit 8 or 4? This depends on threading being enabled, check code for this.
-- [ ] Improve heap implementation and usage. the issue is that heap memory can not be reclaimed. Suggestions:
+- [ ] Improve heap implementation and usage. The issue is that heap memory can not be reclaimed. Suggestions:
   - Allocate `astHeap` for each kernel. Perhaps also do this for other heaps
   - Increase heap size dynamically when needed
   - Use `new/delete` instead. This would defeat the purpose of the heaps, which is to contain memory usage
@@ -50,7 +50,7 @@ Feel free to add points here.
 - [x] Determine num QPUs from hardware
 - [x] Add method to determine RPi hardware revision number via mailbox
 - [ ] Add code for using the `Special Functions Unit (SFU)`, operations: `SQRT`, `RECIPSQRT`, `LOG`, `EXP` *(in progress)*
-- [ ] Add performance counters to interface of `RegisterMap` *(in progress)*
+- [x] Add performance counters to interface of `RegisterMap`
 - [ ] Add Logging class
 - [ ] Add method for build/platform info, for display on startup of an application
 - [ ] Make QPU execution timeout a runtime setting
@@ -68,7 +68,10 @@ Feel free to add points here.
 ## Long Term
 
 - [ ] Add optional doc generation with `doxygen`. This is only useful if there are a sufficient number of header comments.
-- [ ] Viewer for graphic output (e.g. `Mandelbrot`). Should be really simple
+- [ ] Viewer for graphic output (e.g. `Mandelbrot`). Should be really simple to set up.
+  - **NOTE:** `Qt` is a good candidate for this. However, while the viewer application itself may be simple, it
+    requires a `Qt Creator` installation of 5.7GB. This might be total overkill.
+  - Alternative to `Qt`: web-page accessing a minimal server.   
 - [ ] Scheduling of kernels - see VideoCore `fft` project.
 
 
