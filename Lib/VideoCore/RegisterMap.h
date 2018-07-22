@@ -31,7 +31,7 @@ public:
 private:
 	RegisterMap();
 
-	volatile uint32_t *m_addr{nullptr};
+	volatile uint32_t *m_addr;
 	unsigned m_size{0};
 
 	static std::unique_ptr<RegisterMap> m_instance;
