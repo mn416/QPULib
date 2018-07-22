@@ -47,6 +47,11 @@ struct Float {
   FloatExpr operator=(FloatExpr rhs);
 };
 
+
+// Helper constructor
+
+inline FloatExpr mkFloatExpr(Expr* e) { FloatExpr x; x.expr = e; return x; }
+
 // ============================================================================
 // Operations
 // ============================================================================

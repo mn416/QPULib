@@ -220,7 +220,8 @@ endif
 # Source files with unit tests to include in compilation
 UNIT_TESTS =          \
 	Tests/testMain.cpp  \
-	Tests/testRot3D.cpp
+	Tests/testRot3D.cpp \
+	Tests/testDSL.cpp
 
 # For some reason, doing an interim step to .o results in linkage errors (undefined references).
 # So this target compiles the source files directly to the executable.
@@ -231,7 +232,9 @@ $(OBJ_DIR)/bin/runTests: $(UNIT_TESTS) $(EXAMPLES_OBJ) | $(QPU_LIB)
 	@echo Compiling unit tests
 	@$(CXX) $(CXX_FLAGS) -Wno-psabi $^ -L$(OBJ_DIR) -lQPULib $(LIBS) -o $@
 
-test : $(OBJ_DIR)/bin/runTests | AutoTest
+make_test: $(OBJ_DIR)/bin/runTests
+
+test : | make_test AutoTest
 	@echo Running unit tests with '$(RUN_TESTS)'
 	@$(RUN_TESTS)
 
