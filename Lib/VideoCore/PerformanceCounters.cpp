@@ -45,10 +45,10 @@ const char *PerformanceCounters::Description[PerformanceCounters::NUM_PERF_COUNT
 	"Stalled waiting for Scoreboard    ",
 	"Stalled waiting for Varyings      ",
 	// QPU Total, for all slices
-	"Instruction cache hits            ",    // index 20
-	"Instruction cache misses          ",
-	"cache hits                        ",
-	"cache misses                      ",
+	"QPU Instruction cache hits        ",    // index 20
+	"QPU Instruction cache misses      ",
+	"QPU cache hits                    ",
+	"QPU cache misses                  ",
 	// TMU texture, total
 	"Quads processed                   ",
 	"cache misses                      ",    // index 25 (number of fetches from memory/L2cache)
@@ -64,6 +64,9 @@ const char *PerformanceCounters::Description[PerformanceCounters::NUM_PERF_COUNT
 /**
  * @brief Reset the currently mapped performance counters
  *
+ * The counters in the slots indicated by the corresponding bit in the passed bitmask
+ * are set to zero.
+ *
  * @param bitMask  setting a bit to '1' clears the counter in the register corresponding to
  *                 that index. Default: clear all counter registers.
  */
@@ -76,7 +79,7 @@ void PerformanceCounters::clear(uint32_t bitMask) {
 /**
  * @brief Return the bitmask for the enabled performance counters
  *
- * @return bitmaskr;, if bit 0 it '1', the performance counter 0 is enabled, etc.
+ * @return bitmask; if bit 0 is '1', the performance counter 0 is enabled, etc.
  */
 uint32_t PerformanceCounters::enabled() {
 	return RM::readRegister(RM::V3D_PCTRE);
@@ -84,17 +87,33 @@ uint32_t PerformanceCounters::enabled() {
 
 
 /**
+ * @brief Initialize counter slots to the given counters
+ *
+ * The input is a list of counter slots paired with the counter to use in that slot.
+ *
+ * Example:
+ * ```c++
+ *	Init list[] = {
+ *		{ 0, PC::L2C_CACHE_HITS },
+ *		{ PC::END_MARKER, PC::END_MARKER }  // End marker required
+ *	};
+ *
+ * 	enable(list);
+ * ```
+ *
  * ---------------------------
  * ## NOTE:
  *
- * The passed counter definitions overwrite anything that is already present.
+ * - The passed counter definitions overwrite anything that is already present.
+ * - The slot indexes need not be consecutive. valid values are 0..15
+ * - There is no problem with designating the same counter index multiple times.
  */
 void PerformanceCounters::enable(Init list[]) {
 	// Set the passed registers
 	for (int i = 0; !list[i].isEnd(); ++i) {
 		RM::Index targetIndex = (RM::Index) (RM::V3D_PCTRS0 + 2*list[i].slotIndex);
 		//printf("targetIndex: %d\n", targetIndex);
-		printf("counterIndex: %d\n", list[i].counterIndex);
+		//printf("counterIndex: %d\n", list[i].counterIndex);
 		RM::writeRegister(targetIndex, list[i].counterIndex);
 	}
 
@@ -105,14 +124,38 @@ void PerformanceCounters::enable(Init list[]) {
 		//printf("enable handling counter %d\n", list[i].counterIndex);
 		bitMask = bitMask | (1 << (list[i].slotIndex));
 	}
-  bitMask = bitMask & ALL_COUNTERS;   // Top 16 bits should be zero by specification
+	bitMask = bitMask & ALL_COUNTERS;   // Top 16 bits should be zero by specification
+
+	// Following is NOT documented in the Ref Doc; I got it from the errata.
+	// Top bit of mask must be set for timers to be enabled.
+	bitMask = bitMask | (1 << 31);
+	
+	RM::writeRegister(RM::V3D_PCTRE, bitMask);
+}
+
+
+/**
+ * @brief Disable the counters in the slots as specified by the bitmask
+ *
+ * 
+ * @param bitMask  setting a bit to '1' disable the counter in the register corresponding to
+ *                 that index. Default: disable all counter registers.
+ */
+void PerformanceCounters::disable(uint32_t bitMask) {
+	bitMask = enabled() & ~bitMask;
+	bitMask = bitMask & ALL_COUNTERS;   // Top 16 bits should be zero by specification
+
+	if (bitMask != 0) {
+		// Some counters still running, set the top enable bit
+		bitMask = bitMask | (1 << 31);
+	}
+
 	RM::writeRegister(RM::V3D_PCTRE, bitMask);
 }
 
 
 /**
  * @brief Create a string representations of the enabled counters and their values.
- *
  */
 std::string PerformanceCounters::showEnabled() {
 	uint32_t bitMask = enabled();
@@ -127,7 +170,7 @@ std::string PerformanceCounters::showEnabled() {
 
 		RM::Index sourceIndex = (RM::Index) (RM::V3D_PCTR0 + 2*i);
 		Index counterIndex = (Index) RM::readRegister(sourceIndex + 1);
-		printf("counterIndex: %d\n", counterIndex);
+		//printf("counterIndex: %d\n", counterIndex);
 		//fflush(stdout);
 
 		os << "  " <<  Description[counterIndex] << ": " << RM::readRegister(sourceIndex) << "\n";

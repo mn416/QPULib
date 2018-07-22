@@ -25,11 +25,17 @@ public:
 		V3D_IDENT2,
 
 		//
-		// Performance counter registers.
+		// Performance counter register slots.
 		//
 		// There are 30 performance counters, but only 16 registers available
-		// to access them. You therefore have to map beforehand the counters
-		// you are interested in to an available slot.
+		// to access them. You therefore have to map the counters you are
+		// interested in to an available slot.
+		//
+		// There is actually no use in specifying all names fully, except to
+		// have the list complete. Internally,  the counter registers are taken as offsets
+		// from the first (V3D_PCTR0 and V3D_PCTRS0), so for the list it's enough to specify
+		// only that one and set an enum for the end of the list.
+		// TODO: perhaps make this so
 		//
 		// PC: 'Performance Counter' below
 		//

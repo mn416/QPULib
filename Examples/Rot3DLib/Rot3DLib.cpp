@@ -93,19 +93,28 @@ timeval runKernel(int index) {
  */
 void initPerfCounters() {
 	PC::Init list[] = {
-		{ 0, PC::QPU_IDLE },
-		{ 1, PC::QPU_INSTRUCTIONS },
-		{ 2, PC::QPU_STALLED_TMU },
-		{ 3, PC::L2C_CACHE_HITS },
-		{ 4, PC::L2C_CACHE_MISSES },
-		{ 5, PC::QPU_INSTRUCTION_CACHE_HITS },
-		{ 6, PC::QPU_INSTRUCTION_CACHE_MISSES },
-		{ 7, PC::QPU_CACHE_HITS },
-		{ 8, PC::QPU_CACHE_MISSES },
+		{ 0, PC::QPU_INSTRUCTIONS },
+		{ 1, PC::QPU_STALLED_TMU },
+		{ 2, PC::L2C_CACHE_HITS },
+		{ 3, PC::L2C_CACHE_MISSES },
+		{ 4, PC::QPU_INSTRUCTION_CACHE_HITS },
+		{ 5, PC::QPU_INSTRUCTION_CACHE_MISSES },
+		{ 6, PC::QPU_CACHE_HITS },
+		{ 7, PC::QPU_CACHE_MISSES },
+		{ 8, PC::QPU_IDLE },
 		{ PC::END_MARKER, PC::END_MARKER }
 	};
 
 	PC::enable(list);
+	PC::clear(PC::enabled());
+
+	//printf("Perf Count mask: %0X\n", PC::enabled());
+
+	// The following will show zeroes for all counters, *except*
+	// for QPU_IDLE, because this was running from the clear statement.
+	// Perhaps there are more counters like that.
+	//std::string output = PC::showEnabled();
+	//printf("%s\n", output.c_str());
 }
 
 
@@ -115,11 +124,7 @@ void initPerfCounters() {
 
 int main(int argc, char *argv[])
 {
-	//PC::clear();
 	initPerfCounters();
-	printf("Perf Count mask: %0X\n", PC::enabled());
-	std::string output = PC::showEnabled();
-	printf("%s\n", output.c_str());
 
   timeval tvDiff;
 
@@ -132,13 +137,11 @@ int main(int argc, char *argv[])
 	if (index == 0) {
 		tvDiff = runScalar();
   } else {
-for (int i = 0; i <10; ++i) {
 		tvDiff = runKernel(index);
-}
   }
 
-	//sleep(2);
-	output = PC::showEnabled();
+	// Show values current counters
+	std::string output = PC::showEnabled();
 	printf("%s\n", output.c_str());
 
   printf("%ld.%06lds\n", tvDiff.tv_sec, tvDiff.tv_usec);

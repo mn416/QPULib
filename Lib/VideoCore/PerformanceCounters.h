@@ -17,7 +17,7 @@ class PerformanceCounters {
 
 
 	/**
-	 * Descriptive names for the counter indexes.
+	 * Descriptive enums for the counter indexes.
 	 *
 	 * These are made up and not part of the reference doc.
 	 * Derived from the counter descriptions.
@@ -71,6 +71,7 @@ class PerformanceCounters {
   static void clear(uint32_t bitMask = ALL_COUNTERS);
 	static uint32_t enabled();
 	static void enable(Init list[]);
+	static void disable(uint32_t bitMask = ALL_COUNTERS);
 	static std::string showEnabled();
 
  private:
