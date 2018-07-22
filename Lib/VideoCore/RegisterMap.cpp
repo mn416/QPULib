@@ -7,7 +7,10 @@
 #include <unistd.h>
 #include "Mailbox.h"  // mapmem()
 
-#ifdef OLD_PI
+#ifdef USE_BCM_HEADERS
+// Following works for newer distro's
+#include <bcm_host.h>
+#else  // USE_BCM_HEADERS
 //#pragma message "This is an old pi!"
 //
 // For old Pi's, calls bcm_host_get_peripheral_address() and
@@ -51,10 +54,7 @@ void bcm_host_deinit(void);
 #endif
 // End things we need from bcm_host.h
 
-#else  // OLD_PI
-// Following works for newer distro's
-#include <bcm_host.h>
-#endif  // OLD_PI
+#endif  // USE_BCM_HEADERS
 
 
 namespace QPULib {

@@ -48,13 +48,14 @@ endif
 # Detect if Pi has bcm_host support (new) or not (old)
 # If old, pass in -DOLD_PI to compilation
 #
-OLD_PI := $(shell grep bcm_host_get_peripheral_address /opt/vc/include/bcm_host.h && echo "no" || echo "yes")
-ifeq ($(OLD_PI), yes)
-#$(info old pi)
-CXX_FLAGS+= -DOLD_PI
+#USE_BCM_HEADERS:= $(shell grep bcm_host_get_peripheral_address /opt/vc/include/bcm_host.h && echo "no" || echo "yes")
+USE_BCM_HEADERS:=no
+ifeq ($(USE_BCM_HEADERS), no)
+$(info not using bcm headers)
 else
-#$(info new pi)
-	CXX_FLAGS += -I /opt/vc/include
+$(info using bcm headers)
+CXX_FLAGS+= -DUSE_BCM_HEADERS
+CXX_FLAGS += -I /opt/vc/include
 endif
 
 else
