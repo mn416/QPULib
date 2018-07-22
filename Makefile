@@ -240,7 +240,8 @@ endif
 # Source files for unit tests to include in compilation
 UNIT_TESTS = \
 	Tests/testMain.cpp  \
-	Tests/testRot3D.cpp
+	Tests/testRot3D.cpp \
+	Tests/testDSL.cpp
 
 #
 # For some reason, doing an interim step to .o results in linkage errors (undefined references).
@@ -255,7 +256,9 @@ $(OBJ_DIR)/bin/runTests: $(UNIT_TESTS) $(ROT3DLIB_LIB) | $(QPU_LIB)
 make_test: $(OBJ_DIR)/bin/runTests
 	@echo building unit tests
 
-test : $(OBJ_DIR)/bin/runTests | make_test AutoTest
+make_test: $(OBJ_DIR)/bin/runTests
+
+test : | make_test AutoTest
 	@echo Running unit tests with '$(RUN_TESTS)'
 	@$(RUN_TESTS)
 
