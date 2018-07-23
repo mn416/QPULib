@@ -69,7 +69,7 @@ enum {
 std::unique_ptr<RegisterMap> RegisterMap::m_instance;
 
 
-RegisterMap::RegisterMap() : m_addr(nullptr) {
+RegisterMap::RegisterMap() : m_addr(nullptr), m_size(0) {
 	bcm_host_init();
 	unsigned addr = bcm_host_get_peripheral_address();
 	m_size = bcm_host_get_peripheral_size();
