@@ -24,14 +24,15 @@ public:
 
 	~RegisterMap();
 
-	static int numSlices();
-	static int numQPUPerSlice();
+	static bool enabled();
+	static int  numSlices();
+	static int  numQPUPerSlice();
 
 private:
 	RegisterMap();
 
-	volatile uint32_t *m_addr{nullptr};
-	unsigned m_size{0};
+	volatile uint32_t *m_addr;
+	unsigned m_size;
 
 	static std::unique_ptr<RegisterMap> m_instance;
 
