@@ -1,14 +1,26 @@
 #
-# There are four builds possible, with output directories:
+# NOTES
+# =====
+#
+# * There are four builds possible, with output directories:
 #
 #   obj              - using emulator
 #   obj-debug        - output debug info, using emulator
 #   obj-qpu          - using hardware
 #   obj-debug-qpu    - output debug info, using hardware
 #
-# To compile for debugging, add flag '-g' to CXX_FLAGS.
 #
-###########################################################
+# * To compile for debugging, add flag '-g' to CXX_FLAGS.
+#
+#
+# * USE_BCM_HEADERS is set to 'no' by default here. This
+#   is to allow a proper build on old distro's (e.g. Raspbian wheezy).
+#
+#   For newer distro's it is recommended to comment this out and use the 
+#   longer assignment to USE_BCM_HEADERS. This works on 'Raspian stretch`,
+#   for 'jessie' it's unknown.
+#
+###########################################################################
 
 # Root directory of QPULib repository
 ROOT = Lib
@@ -46,7 +58,6 @@ endif
 
 #
 # Detect if Pi has bcm_host support (new) or not (old)
-# If old, pass in -DOLD_PI to compilation
 #
 #USE_BCM_HEADERS:= $(shell grep bcm_host_get_peripheral_address /opt/vc/include/bcm_host.h && echo "no" || echo "yes")
 USE_BCM_HEADERS:=no
@@ -55,7 +66,7 @@ $(info not using bcm headers)
 else
 $(info using bcm headers)
 CXX_FLAGS+= -DUSE_BCM_HEADERS
-CXX_FLAGS += -I /opt/vc/include
+CXX_FLAGS+= -I /opt/vc/include
 endif
 
 else

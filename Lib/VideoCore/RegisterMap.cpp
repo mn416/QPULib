@@ -3,8 +3,9 @@
 #include "RegisterMap.h"
 #include <cassert>
 #include <cstring>
-#include <stdio.h>
 #include <unistd.h>
+#include <stdlib.h>   // needed for 'old' compilers, no harm done for new
+#include <errno.h>    // idem
 #include "Mailbox.h"  // mapmem()
 
 #ifdef USE_BCM_HEADERS
@@ -20,18 +21,71 @@
 
 
 /**
- * This returns the ARM-side physical address where peripherals are mapped.
+ * @brief This returns the ARM-side physical address where peripherals are mapped.
  *
  * Values:
  *
  * - 0x20000000  - Pi Zero, Zero W, and the first generation of the Pi and Compute Module
  * - 0x3f000000  - Pi 2, Pi 3 and Compute Module 3
  *
- * NOTE: We only return the second value for now, to get QPULib to compile on an old Pi 2 distro.
- *       Other values may be added as needed.
+ * Source: https://www.elinux.org/RPi_HardwareHistory
+ *
+ * At time of writing (20180723), the list of handled revisions is complete.
+ * New values may be added as new models appear.
  */
 unsigned bcm_host_get_peripheral_address() {
-	return 0x3f000000;
+	unsigned md = QPULib::mbox_open();
+	unsigned revision = QPULib::get_version(md);
+	QPULib::mbox_close(md);
+	printf("bcm_host_get_peripheral_address revision: %x\n", revision);
+
+	switch(revision) {
+		case 0x0007: 	  // A
+		case 0x0008:
+		case 0x0009:
+		case 0x0012: 	  // A+
+		case 0x0015:
+		case 0x900021:
+		case 0x0002: 	  // B
+		case 0x0003:
+		case 0x0004:
+		case 0x0005:
+		case 0x0006:
+		case 0x000d:
+		case 0x000e:
+		case 0x000f:
+		case 0x0010:    // B+
+		case 0x0013:
+		case 0x900032:
+		case 0x0011:    // Compute Module 1
+		case 0x0014:
+		case 0x900092:  // Zero
+		case 0x900093:
+		case 0x920093:
+		case 0x9000c1:  // Zero W
+ 			return 0x20000000;
+		
+		case 0xa01040:  // 2 Model B
+		case 0xa01041:
+		case 0xa21041:
+		case 0xa22042:
+		case 0xa02082:  // 3 Model B
+		case 0xa22082:
+		case 0xa32082:
+		case 0xa020d3:  // 3 Model B+ 
+		case 0xa020a0:  // Compute Module 3 (and CM3 Lite)
+			return 0x3f000000;
+
+		default:
+#ifdef DEBUG
+			printf("bcm_host_get_peripheral_address unknown hardware revision %x\n", revision);
+			exit(-1);
+#else
+			// All newer models have this address, so let's assume it 
+			// for new revision numbers.
+			return 0x3f000000;
+#endif
+	}
 }
 
 
