@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <stdlib.h>   // needed for 'old' compilers, no harm done for new
 #include <errno.h>    // idem
+#include <stdio.h>    // idem
 #include "Mailbox.h"  // mapmem()
 
 #ifdef USE_BCM_HEADERS
