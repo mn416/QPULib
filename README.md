@@ -27,6 +27,7 @@ introduces and documents QPULib.  For build instructions, see the
     * [Scalar version](#scalar-version-2)
     * [Vector version](#vector-version)
     * [Performance](#performance-1)
+* [Compiling](#compiling)
 * [References](#user-content-references)
 
 ## Background
@@ -668,6 +669,20 @@ Times taken to simulate a 512x512 surface for 2000 steps:
   Vector  | 2              | 24.91        |
   Vector  | 4              | 20.36        |
 
+### Compiling
+
+Compiling this project requires CMake (>=3.1).
+
+  * git clone ${clone url}
+  * cd QPULib
+  * cmake
+	* -DENABLE_QPU=ON will enable the QPU (rpi only)
+	* -DBUILD_EXAMPLES=ON will build all examples in the Examples subdirectory
+	* -DENABLE_DEBUG=ON will cause QPULib to compile with debug output to stdout
+  * make
+  * (optional) sudo make install # installs libraries and headers to CMAKE_INSTALL_PREFIX/{lib,include}
+
+This will create two directories, lib and bin, together with some CMake cache files. The examples, if enabled, are statically compiled and put into the bin directory, the lib directory contains both libqpu.a and libqpu.so for dynamic and static linking.
 
 ## References
 
