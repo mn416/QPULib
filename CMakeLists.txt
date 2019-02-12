@@ -7,13 +7,13 @@ option(ENABLE_DEBUG "Output debug information from QPULib" OFF)
 option(ENABLE_QPU "Enable QPU (rpi only), otherwise emulate" OFF)
 
 if(${ENABLE_DEBUG})
-	set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -DDEBUG)
+	set(QPULIB_DEBUG 1)
 endif()
 
 if(${ENABLE_QPU})
-	set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -DQPU_MODE)
+	set(QPULIB_QPU_MODE 1)
 else()
-	set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -DEMULATION_MODE)
+	set(QPULIB_EMULATION_MODE 1)
 endif()
 
 STRING(REPLACE ";" " " CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
@@ -21,7 +21,11 @@ STRING(REPLACE ";" " " CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Lib)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Lib/qpulib_config.h.in ${CMAKE_CURRENT_BINARY_DIR}/qpulib_config.h)
+include_directories(
+	${CMAKE_CURRENT_SOURCE_DIR}/Lib
+	${CMAKE_CURRENT_BINARY_DIR}
+)
 
 set(
 	SOURCES
@@ -67,9 +71,14 @@ install(TARGETS
 )
 
 install(DIRECTORY
-	${CMAKE_CURRENT_SOURCE_DIR}/Lib
+	${CMAKE_CURRENT_SOURCE_DIR}/Lib/
 	DESTINATION include/QPULib
 	FILES_MATCHING PATTERN "*.h"
+)
+
+install(FILES
+	${CMAKE_CURRENT_BINARY_DIR}/qpulib_config.h
+	DESTINATION include
 )
 
 if(${BUILD_EXAMPLES})

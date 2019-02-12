@@ -1,6 +1,7 @@
 #ifndef _QPULIB_H_
 #define _QPULIB_H_
 
+#include "qpulib_config.h"
 #include "Source/Int.h"
 #include "Source/Float.h"
 #include "Source/Ptr.h"

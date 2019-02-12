@@ -1,6 +1,8 @@
 #ifndef _QPULIB_KERNEL_H_
 #define _QPULIB_KERNEL_H_
 
+#include "qpulib_config.h"
+
 #include "Source/Interpreter.h"
 #include "Target/Emulator.h"
 #include "Target/Encode.h"
@@ -10,19 +12,18 @@
 #include "Source/Pretty.h"
 #include "Target/Pretty.h"
 
-
 namespace QPULib {
 
 // ============================================================================
 // Modes of operation
 // ============================================================================
 
-// Two important compile-time macros are EMULATION_MODE and QPU_MODE.
-// With -D EMULATION_MODE, QPULib can be compiled for any architecture.
-// With -D QPU_MODE, QPULib can be compiled only for the Raspberry Pi.
+// Two important compile-time macros are QPULIB_EMULATION_MODE and QPULIB_QPU_MODE.
+// With -D QPULIB_EMULATION_MODE, QPULib can be compiled for any architecture.
+// With -D QPULIB_QPU_MODE, QPULib can be compiled only for the Raspberry Pi.
 // At least one of these macros must be defined.
 
-// IN EMULATION_MODE a memory pool is used for allocating data that
+// IN QPULIB_EMULATION_MODE a memory pool is used for allocating data that
 // can be read by kernels.  Otherwise, a mailbox interface to the
 // VideoCore is used to allocate memory.  In both cases, see
 // 'VideoCore/SharedArray.h'.
@@ -30,19 +31,19 @@ namespace QPULib {
 // The 'Kernel' class provides various ways to invoke a kernel:
 //
 //   * qpu(...)        invoke kernel on physical QPUs
-//                     (only available in QPU_MODE)
+//                     (only available in QPULIB_QPU_MODE)
 //   * emulate(...)    invoke kernel using target code emulator
-//                     (only available in EMULATION_MODE)
+//                     (only available in QPULIB_EMULATION_MODE)
 //   * interpret(...)  invoke kernel using source code interpreter
-//                     (only available in EMULATION_MODE)
-//   * call(...)       in EMULATION_MODE, same as emulate(...)
-//                     in QPU_MODE, same as qpu(...)
-//                     in EMULATION_MODE *and* QPU_MODE, same as emulate(...)
+//                     (only available in QPULIB_EMULATION_MODE)
+//   * call(...)       in QPULIB_EMULATION_MODE, same as emulate(...)
+//                     in QPULIB_QPU_MODE, same as qpu(...)
+//                     in QPULIB_EMULATION_MODE *and* QPULIB_QPU_MODE, same as emulate(...)
 
-// Notice it is OK to compile with both -D EMULATION_MODE *and*
-// -D QPU_MODE.  This feature is provided for doing equivalance
+// Notice it is OK to compile with both -D QPULIB_EMULATION_MODE *and*
+// -D QPULIB_QPU_MODE.  This feature is provided for doing equivalance
 // testing between the physical QPU and the QPU emulator.  However,
-// EMULATION_MODE introduces a performance penalty and should be used
+// QPULIB_EMULATION_MODE introduces a performance penalty and should be used
 // only for testing and debugging purposes.
 
 // Maximum number of kernel parameters allowed
@@ -174,7 +175,7 @@ template <typename... ts> struct Kernel {
   int numQPUs;
 
   // Memory region for QPU code and parameters
-  #ifdef QPU_MODE
+  #ifdef QPULIB_QPU_MODE
   SharedArray<uint32_t>* qpuCodeMem;
   int qpuCodeMemOffset;
   #endif
@@ -209,8 +210,8 @@ template <typename... ts> struct Kernel {
     Stmt* body = stmtStack.top();
     stmtStack.pop();
 
-    // For EMULATION_MODE, the following is needed in the interpreter
-    // For QPU_MODE, it is here in case a pretty-print is requested
+    // For QPULIB_EMULATION_MODE, the following is needed in the interpreter
+    // For QPULIB_QPU_MODE, it is here in case a pretty-print is requested
     sourceCode = body;
 
     // Compile
@@ -219,7 +220,7 @@ template <typename... ts> struct Kernel {
     // Remember the number of variables used
     numVars = getFreshVarCount();
 
-    #ifdef QPU_MODE
+    #ifdef QPULIB_QPU_MODE
     enableQPUs();
 
     // Allocate code mem
@@ -242,7 +243,7 @@ template <typename... ts> struct Kernel {
     #endif
   }
 
-  #ifdef EMULATION_MODE
+  #ifdef QPULIB_EMULATION_MODE
   template <typename... us> void emu(us... args) {
     // Pass params, checking arguments types us against parameter types ts
     uniforms.clear();
@@ -259,7 +260,7 @@ template <typename... ts> struct Kernel {
   #endif
 
   // Invoke the interpreter
-  #ifdef EMULATION_MODE
+  #ifdef QPULIB_EMULATION_MODE
   template <typename... us> void interpret(us... args) {
     // Pass params, checking arguments types us against parameter types ts
     uniforms.clear();
@@ -276,7 +277,7 @@ template <typename... ts> struct Kernel {
   #endif
 
   // Invoke kernel on physical QPU hardware
-  #ifdef QPU_MODE
+  #ifdef QPULIB_QPU_MODE
   template <typename... us> void qpu(us... args) {
     // Pass params, checking arguments types us against parameter types ts
     uniforms.clear();
@@ -289,10 +290,10 @@ template <typename... ts> struct Kernel {
  
   // Invoke the kernel
   template <typename... us> void call(us... args) {
-    #ifdef EMULATION_MODE
+    #ifdef QPULIB_EMULATION_MODE
       emu(args...);
     #else
-      #ifdef QPU_MODE
+      #ifdef QPULIB_QPU_MODE
         qpu(args...);
       #endif
     #endif
@@ -310,7 +311,7 @@ template <typename... ts> struct Kernel {
 
   // Deconstructor
   ~Kernel() {
-    #ifdef QPU_MODE
+    #ifdef QPULIB_QPU_MODE
       delete qpuCodeMem;
       disableQPUs();
     #endif

@@ -3,8 +3,8 @@
 #ifndef _QPULIB_GEN_H_
 #define _QPULIB_GEN_H_
 
-#include "Common/Seq.h"
-#include "Source/Syntax.h"
+#include "../Common/Seq.h"
+#include "../Source/Syntax.h"
 
 namespace QPULib {
 

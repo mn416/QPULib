@@ -2,8 +2,8 @@
 #define _QPULIB_ENCODE_H_
 
 #include <stdint.h>
-#include "Target/Syntax.h"
-#include "Common/Seq.h"
+#include "../Target/Syntax.h"
+#include "../Common/Seq.h"
 
 namespace QPULib {
 

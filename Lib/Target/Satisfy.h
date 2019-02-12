@@ -1,8 +1,8 @@
 #ifndef _QPULIB_SATISFY_H_
 #define _QPULIB_SATISFY_H_
 
-#include "Target/Syntax.h"
-#include "Target/CFG.h"
+#include "../Target/Syntax.h"
+#include "../Target/CFG.h"
 
 namespace QPULib {
 

@@ -3,9 +3,9 @@
 #ifndef _QPULIB_LIVENESS_H_
 #define _QPULIB_LIVENESS_H_
 
-#include "Common/Seq.h"
-#include "Target/Syntax.h"
-#include "Target/CFG.h"
+#include "../Common/Seq.h"
+#include "../Target/Syntax.h"
+#include "../Target/CFG.h"
 
 namespace QPULib {
 

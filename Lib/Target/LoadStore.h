@@ -1,9 +1,9 @@
 #ifndef _QPULIB_LOADSTORE_H_
 #define _QPULIB_LOADSTORE_H_
 
-#include "Common/Seq.h"
-#include "Target/Syntax.h"
-#include "Source/Syntax.h"
+#include "../Common/Seq.h"
+#include "../Target/Syntax.h"
+#include "../Source/Syntax.h"
 
 namespace QPULib {
 

@@ -5,7 +5,7 @@
 #define _QPULIB_SOURCE_PTR_H_
 
 #include <assert.h>
-#include "Source/Syntax.h"
+#include "../Source/Syntax.h"
 
 namespace QPULib {
 

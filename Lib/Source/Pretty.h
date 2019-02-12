@@ -1,7 +1,7 @@
 #ifndef _QPULIB_SOURCE_PRETTY_H_
 #define _QPULIB_SOURCE_PRETTY_H_
 
-#include "Source/Syntax.h"
+#include "../Source/Syntax.h"
 
 namespace QPULib {
 

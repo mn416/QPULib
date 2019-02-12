@@ -2,9 +2,9 @@
 #define _QPULIB_EMULATOR_H_
 
 #include <stdint.h>
-#include "Common/Seq.h"
-#include "Common/Queue.h"
-#include "Target/Syntax.h"
+#include "../Common/Seq.h"
+#include "../Common/Queue.h"
+#include "../Target/Syntax.h"
 
 #define NUM_LANES 16
 #define MAX_QPUS 12

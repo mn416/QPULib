@@ -1,9 +1,9 @@
 #ifndef _QPULIB_TRANSLATE_H_
 #define _QPULIB_TRANSLATE_H_
 
-#include "Common/Seq.h"
-#include "Source/Syntax.h"
-#include "Target/Syntax.h"
+#include "../Common/Seq.h"
+#include "../Source/Syntax.h"
+#include "../Target/Syntax.h"
 
 namespace QPULib {
 

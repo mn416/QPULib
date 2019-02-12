@@ -1,33 +1,35 @@
 #ifndef _QPULIB_SHAREDARRAY_H_
 #define _QPULIB_SHAREDARRAY_H_
 
-#if !defined(QPU_MODE) && !defined(EMULATION_MODE)
+#include "qpulib_config.h"
+
+#if !defined(QPULIB_QPU_MODE) && !defined(QPULIB_EMULATION_MODE)
 //
 // Detect mode, set default if none defined.
 // This is the best place to test it in the code, since it's
 // the first of the header files to be compiled.
 //
-#pragma message "WARNING: QPU_MODE and EMULATION_MODE not defined, defaulting to EMULATION_MODE"
-#define EMULATION_MODE
+#pragma message "WARNING: QPULIB_QPU_MODE and QPULIB_EMULATION_MODE not defined, defaulting to QPULIB_EMULATION_MODE"
+#define QPULIB_EMULATION_MODE
 #endif
 
 #include <stdint.h>
 #include <stdio.h>
 #include <assert.h>
-#include "VideoCore/Mailbox.h"
-#include "VideoCore/VideoCore.h"
+#include "../VideoCore/Mailbox.h"
+#include "../VideoCore/VideoCore.h"
 
 namespace QPULib {
 
-#ifdef EMULATION_MODE
+#ifdef QPULIB_EMULATION_MODE
 
 // ============================================================================
 // Emulation mode
 // ============================================================================
 
-// When in EMULATION_MODE allocate memory from a pre-allocated pool.
+// When in QPULIB_EMULATION_MODE allocate memory from a pre-allocated pool.
 
-#include "Target/Emulator.h"
+#include "../Target/Emulator.h"
 
 // Implementation
 template <typename T> class SharedArray {

@@ -1,10 +1,10 @@
 #ifndef _QPULIB_REMOVELABELS_H_
 #define _QPULIB_REMOVELABELS_H_
 
-#include "Target/Syntax.h"
-#include "Target/CFG.h"
-#include "Target/Liveness.h"
-#include "Common/Seq.h"
+#include "../Target/Syntax.h"
+#include "../Target/CFG.h"
+#include "../Target/Liveness.h"
+#include "../Common/Seq.h"
 
 namespace QPULib {
 
