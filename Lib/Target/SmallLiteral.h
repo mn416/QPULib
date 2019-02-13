@@ -1,8 +1,8 @@
 #ifndef _QPULIB_SMALL_LITERAL_H_
 #define _QPULIB_SMALL_LITERAL_H_
 
-#include "Source/Syntax.h"
-#include "Target/Emulator.h"
+#include "../Source/Syntax.h"
+#include "../Target/Emulator.h"
 
 namespace QPULib {
 

@@ -2,15 +2,15 @@
 #define _QPULIB_INTERPRETER_H_
 
 #include <stdint.h>
-#include "Common/Seq.h"
-#include "Source/Syntax.h"
+#include "../Common/Seq.h"
+#include "../Source/Syntax.h"
 
 // The interpreter works in a similar way to the emulator.  The
 // difference is that the former operates on source code and the
 // latter on target code.  We reuse a number of concepts of the
 // emulator in the interpreter.
 
-#include "Target/Emulator.h"
+#include "../Target/Emulator.h"
 
 namespace QPULib {
 

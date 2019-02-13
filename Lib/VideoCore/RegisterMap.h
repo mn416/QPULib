@@ -1,7 +1,9 @@
-#ifdef QPU_MODE
-
 #ifndef _QPULIB_REGISTERMAP_H
 #define _QPULIB_REGISTERMAP_H
+
+#include "qpulib_config.h"
+#ifdef QPULIB_QPU_MODE
+
 #include <memory>
 #include <stdint.h>
 
@@ -44,6 +46,5 @@ private:
 
 }  // namespace QPULib
 
+#endif  // QPULIB_QPU_MODE
 #endif  // _QPULIB_REGISTERMAP_H
-
-#endif  // QPU_MODE

@@ -1,0 +1,8 @@
+#ifndef _QPULIB_CONFIG_H
+#define _QPULIB_CONFIG_H
+
+#cmakedefine QPULIB_DEBUG
+#cmakedefine QPULIB_QPU_MODE
+#cmakedefine QPULIB_EMULATION_MODE
+
+#endif

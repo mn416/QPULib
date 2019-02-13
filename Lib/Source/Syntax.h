@@ -3,8 +3,8 @@
 #ifndef _QPULIB_SOURCE_SYNTAX_H_
 #define _QPULIB_SOURCE_SYNTAX_H_
 
-#include "Common/Heap.h"
-#include "Common/Stack.h"
+#include "../Common/Heap.h"
+#include "../Common/Stack.h"
 
 namespace QPULib {
 

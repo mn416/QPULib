@@ -2,7 +2,7 @@
 #define _QPULIB_TARGET_PRETTY_H_
 
 #include <stdio.h>
-#include "Target/Syntax.h"
+#include "../Target/Syntax.h"
 
 namespace QPULib {
 

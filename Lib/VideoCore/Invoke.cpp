@@ -1,6 +1,6 @@
-#ifdef QPU_MODE
-
 #include "VideoCore/Invoke.h"
+
+#ifdef QPULIB_QPU_MODE
 #include "VideoCore/Mailbox.h"
 #include "VideoCore/VideoCore.h"
 
@@ -53,4 +53,4 @@ void invoke(
 
 }  // namespace QPULib
 
-#endif  // QPU_MODE
+#endif  // QPULIB_QPU_MODE

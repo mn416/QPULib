@@ -11,12 +11,12 @@
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
 #include "catch.hpp"
 #include <cstdlib>
-#ifdef QPU_MODE
+#ifdef QPULIB_QPU_MODE
 #include "../Lib/Target/Emulator.h"  // MAX_QPUS
 #include "../Lib/VideoCore/RegisterMap.h"
 
 using RegMap = QPULib::RegisterMap;
-#endif  // QPU_MODE
+#endif  // QPULIB_QPU_MODE
 
 
 //
@@ -28,7 +28,7 @@ using RegMap = QPULib::RegisterMap;
 	#define POSTFIX_DEBUG ""
 #endif
 
-#ifdef QPU_MODE
+#ifdef QPULIB_QPU_MODE
 //	#pragma message "QPU mode enabled"
 	#define POSTFIX_QPU "-qpu"
 #else
@@ -61,7 +61,7 @@ TEST_CASE("Detect platform scripts should both return the same thing", "[cmdline
 }
 
 
-#ifdef QPU_MODE
+#ifdef QPULIB_QPU_MODE
 
 TEST_CASE("Test correct working of RegisterMap", "[regmap]") {
 
@@ -79,4 +79,4 @@ TEST_CASE("Test correct working of RegisterMap", "[regmap]") {
 	}
 }
 
-#endif  // QPU_MODE
+#endif  // QPULIB_QPU_MODE

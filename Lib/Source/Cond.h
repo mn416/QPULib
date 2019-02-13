@@ -1,8 +1,8 @@
 #ifndef _QPULIB_SOURCE_COND_H_
 #define _QPULIB_SOURCE_COND_H_
 
-#include "Source/Syntax.h"
-#include "Source/Int.h"
+#include "../Source/Syntax.h"
+#include "../Source/Int.h"
 
 namespace QPULib {
 

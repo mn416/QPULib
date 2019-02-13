@@ -1,10 +1,10 @@
 #ifndef _QPULIB_SOURCE_STMT_H_
 #define _QPULIB_SOURCE_STMT_H_
 
-#include "Source/Cond.h"
-#include "Source/Syntax.h"
-#include "Source/Ptr.h"
-#include "Source/StmtExtra.h"
+#include "../Source/Cond.h"
+#include "../Source/Syntax.h"
+#include "../Source/Ptr.h"
+#include "../Source/StmtExtra.h"
 
 namespace QPULib {
 

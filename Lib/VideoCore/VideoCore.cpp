@@ -1,10 +1,11 @@
-#ifdef QPU_MODE
+#include "VideoCore.h"
+
+#ifdef QPULIB_QPU_MODE
+#include "Mailbox.h"
 
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "VideoCore/VideoCore.h"
-#include "VideoCore/Mailbox.h"
 
 namespace QPULib {
 
@@ -46,4 +47,4 @@ void disableQPUs()
 
 }  // namespace QPULib
 
-#endif  // QPU_MODE
+#endif  // QPULIB_QPU_MODE

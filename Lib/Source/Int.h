@@ -4,8 +4,8 @@
 #define _QPULIB_SOURCE_INT_H_
 
 #include <assert.h>
-#include "Source/Syntax.h"
-#include "Source/Float.h"
+#include "../Source/Syntax.h"
+#include "../Source/Float.h"
 
 namespace QPULib {
 

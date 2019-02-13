@@ -1,6 +1,6 @@
-#ifdef QPU_MODE
-
 #include "RegisterMap.h"
+#ifdef QPULIB_QPU_MODE
+
 #include <cassert>
 #include <cstring>
 #include <stdio.h>
@@ -97,4 +97,4 @@ void RegisterMap::check_page_align(unsigned addr) {
 
 }  // namespace QPULib
 
-#endif  // QPU_MODE
+#endif  // QPULIB_QPU_MODE

@@ -3,8 +3,8 @@
 #ifndef _QPULIB_CFG_H_
 #define _QPULIB_CFG_H_
 
-#include "Common/Seq.h"
-#include "Target/Syntax.h"
+#include "../Common/Seq.h"
+#include "../Target/Syntax.h"
 
 namespace QPULib {
 

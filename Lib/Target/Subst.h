@@ -1,7 +1,7 @@
 #ifndef _QPULIB_SUBST_H_
 #define _QPULIB_SUBST_H_
 
-#include "Target/Syntax.h"
+#include "../Target/Syntax.h"
 
 namespace QPULib {
 
