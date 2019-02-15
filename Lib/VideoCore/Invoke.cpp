@@ -43,6 +43,8 @@ void invoke(
   // Launch QPUs
   unsigned result = 
     execute_qpu(mb, numQPUs, (uint32_t) launchMsgsPtr, 1, QPU_TIMEOUT);
+  
+  delete [] paramsPtr;
 
   if (result != 0) {
     printf("Failed to invoke kernel on QPUs\n");
