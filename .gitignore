@@ -43,3 +43,5 @@ _deps
 *.exe
 *.out
 *.app
+Tests/GCD
+Tests/AutoTest
