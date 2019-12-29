@@ -16,9 +16,8 @@ endif()
 add_library(QPULib "")
 
 #Compile differently for the Raspberry Pi
-include(CheckIncludeFile)
-CHECK_INCLUDE_FILE(/opt/vc/include/bcm_host.h BCMHOST)
-if (BCMHOST) #This is a Pi
+find_path(HAS_BCMHOST bcm_host.h PATHS /opt/vc/include/)
+if (HAS_BCMHOST) #This is a Pi
     message(STATUS "This is a Pi")
     #Set precompiler flags
     add_definitions(-DEMULATION_MODE)
