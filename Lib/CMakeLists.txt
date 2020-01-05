@@ -5,8 +5,6 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 	add_definitions(-fpermissive)
 endif()
 
-
-
 #file(GLOB_RECURSE QPULIB_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.cpp")
 #message(STATUS "QPULib library source files: ${QPULIB_SOURCES}")
 #file(GLOB_RECURSE QPULIB_HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.h" "*.hpp")
