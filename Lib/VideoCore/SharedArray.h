@@ -4,8 +4,11 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <assert.h>
-#include "VideoCore/Mailbox.h"
-#include "VideoCore/VideoCore.h"
+
+#ifdef QPU_MODE
+    #include "VideoCore/Mailbox.h"
+    #include "VideoCore/VideoCore.h"
+#endif
 
 #ifdef EMULATION_MODE
 
