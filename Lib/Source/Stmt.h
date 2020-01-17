@@ -12,7 +12,7 @@
 
 #define If(c)    If_(c); {
 #define Else     } Else_(); {
-#define End      } End_();
+#define EndBlock } End_();
 #define While(c) While_(c); {
 #define Where(b) Where_(b); {
 #define For(init, cond, inc) \
