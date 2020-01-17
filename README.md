@@ -130,11 +130,11 @@ void gcd(Ptr<Int> p, Ptr<Int> q, Ptr<Int> r)
   While (any(a != b))
     Where (a > b)
       a = a-b;
-    End
+    EndBlock
     Where (a < b)
       b = b-a;
-    End
-  End
+    EndBlock
+  EndBlock
   *r = a;
 }
 ```
@@ -156,7 +156,7 @@ Even this simple example introduces a number of concepts:
   * the condition `any(a != b)` is true when *any* of the booleans in the
     vector `a != b` are true;
 
-  * the statement `Where (a > b) a = a-b; End` is a conditional assigment:
+  * the statement `Where (a > b) a = a-b; EndBlock` is a conditional assigment:
     only elements in vector `a` for which `a > b` holds will be
     modified.
 
@@ -264,12 +264,12 @@ void gcd(Ptr<Int> p, Ptr<Int> q, Ptr<Int> r)
     for (int i = 0; i < 32; i++) {
       Where (a > b)
         a = a-b;
-      End
+      EndBlock
       Where (a < b)
         b = b-a;
-      End
+      EndBlock
     }
-  End
+  EndBlock
   *r = a;
 }
 ```
@@ -329,7 +329,7 @@ void rot3D(Int n, Float cosTheta, Float sinTheta, Ptr<Float> x, Ptr<Float> y)
     Float yOld = y[i];
     x[i] = xOld * cosTheta - yOld * sinTheta;
     y[i] = yOld * cosTheta + xOld * sinTheta;
-  End
+  EndBlock
 }
 ```
 
@@ -400,7 +400,7 @@ void rot3D(Int n, Float cosTheta, Float sinTheta, Ptr<Float> x, Ptr<Float> y)
     store(xOld * cosTheta - yOld * sinTheta, p);
     store(yOld * cosTheta + xOld * sinTheta, q);
     p = p+16; q = q+16;
-  End
+  EndBlock
 
   // Discard pre-fetched vectors from final iteration
   receive(xOld); receive(yOld);
@@ -444,7 +444,7 @@ void rot3D(Int n, Float cosTheta, Float sinTheta, Ptr<Float> x, Ptr<Float> y)
     store(xOld * cosTheta - yOld * sinTheta, p);
     store(yOld * cosTheta + xOld * sinTheta, q);
     p = p+inc; q = q+inc;
-  End
+  EndBlock
 
   // Discard pre-fetched vectors from final iteration
   receive(xOld); receive(yOld);
@@ -588,7 +588,7 @@ class Cursor {
     Float nextRot = rotate(next, 15);
     Where (index() == 15)
       result = nextRot;
-    End
+    EndBlock
   }
 
   // Shift the current vector right one element
@@ -597,7 +597,7 @@ class Cursor {
     Float prevRot = rotate(prev, 1);
     Where (index() == 0)
       result = prevRot;
-    End
+    EndBlock
   }
 };
 ```
@@ -647,14 +647,14 @@ void step(Ptr<Float> grid, Ptr<Float> gridOut, Int pitch, Int width, Int height)
       store(row[1].current - K * (row[1].current - sum * 0.125), p);
       p = p + 16;
 
-    End
+    EndBlock
 
     // Cursors are finished for this row
     for (int i = 0; i < 3; i++) row[i].finish();
 
     // Move to the next input rows
     grid = grid + pitch*numQPUs();
-  End
+  EndBlock
 }
 ```
 
