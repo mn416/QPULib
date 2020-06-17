@@ -18,6 +18,8 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 find_path(HAS_BCMHOST bcm_host.h PATHS /opt/vc/include/)
 if (HAS_BCMHOST) #This is a Pi
 	add_definitions(-DQPU_MODE)
+	add_definitions(-fpermissive)
+	add_definitions(-std=c++0x)
 	SET(QPULIB_SOURCES
 		${QPULIB_SOURCES}
 		VideoCore/Invoke.cpp
