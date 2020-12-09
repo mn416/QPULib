@@ -9,6 +9,9 @@ generating and offloading programs to the QPUs at runtime.  This page
 introduces and documents QPULib.  For build instructions, see the
 [Getting Started Guide](Doc/GettingStarted.md).
 
+Note that QPULib is an experimental library, no longer under
+development.
+
 ## Contents
 
 * [Background](#background)
