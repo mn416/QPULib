@@ -5,8 +5,10 @@
 #include "Target/Emulator.h"
 #include "Target/Encode.h"
 #include "VideoCore/SharedArray.h"
+#ifdef QPU_MODE
 #include "VideoCore/Invoke.h"
 #include "VideoCore/VideoCore.h"
+#endif
 
 // ============================================================================
 // Modes of operation

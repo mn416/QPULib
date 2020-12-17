@@ -217,9 +217,9 @@ void kernelFinish()
     Int n = numQPUs()-1;
     For (Int i = 0, i < n, i++)
       semaDec(15);
-    End
+    EndBlock
     hostIRQ();
   Else
     semaInc(15);
-  End
+  EndBlock
 }
